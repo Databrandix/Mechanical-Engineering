@@ -122,7 +122,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9 }}
-            className="flex items-center gap-2 text-white/90 text-xs md:text-[13px] font-medium tracking-wide"
+            className="flex items-center justify-center gap-2 text-white/90 text-xs md:text-[13px] font-medium tracking-wide"
           >
             <a href="#" className="hover:text-button-yellow flex items-center gap-1.5 transition-colors">
               <Home size={13} /> Home
