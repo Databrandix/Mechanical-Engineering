@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Poppins", sans-serif;
+  --font-bangla: "Hind Siliguri", sans-serif;
+
+  --color-primary: #2B3175;
+  --color-accent: #CC1579;
+  --color-secondary-orange: #E97E24;
+  --color-secondary-coral: #DF514E;
+  --color-secondary-red: #DC2428;
+  --color-secondary-dark: #1C1C1A;
+  --color-button-yellow: #F8BD23;
+
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+
+  --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased text-secondary-dark bg-white overflow-x-hidden;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold tracking-tight;
+  }
+}
+
+.gradient-blue-magenta {
+  background: linear-gradient(135deg, #2B3175 0%, #CC1579 100%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #2B3175 0%, #CC1579 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}

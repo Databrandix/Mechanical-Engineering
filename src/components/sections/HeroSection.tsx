@@ -1,0 +1,139 @@
+'use client';
+
+import {useEffect, useState} from 'react';
+import {motion} from 'motion/react';
+import Container from '../ui/Container';
+import {ChevronRight, Home} from 'lucide-react';
+
+const heroImages = [
+  {
+    src: '/assets/hero-img.webp',
+    alt: 'Sonargaon University campus',
+  },
+  {
+    src: '/assets/hero-campus-2021.webp',
+    alt: 'Sonargaon University academic building',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=2070',
+    alt: 'Modern University Lab',
+  },
+];
+
+export default function HeroSection() {
+  const [activeImage, setActiveImage] = useState(0);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActiveImage((current) => (current + 1) % heroImages.length);
+    }, 5000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  return (
+    <section className="relative min-h-[480px] md:min-h-[580px] lg:min-h-[660px] w-full overflow-hidden flex flex-col pt-[100px] md:pt-[140px] lg:pt-[200px] pb-20">
+      {/* Background Images with subtle Ken Burns */}
+      <div className="absolute inset-0 z-0">
+        {heroImages.map((image, index) => (
+          <motion.img
+            key={image.src}
+            src={image.src}
+            alt={image.alt}
+            animate={index === activeImage ? { scale: 1.06 } : { scale: 1 }}
+            transition={{ duration: 6, ease: 'easeOut' }}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${index === activeImage ? 'opacity-100' : 'opacity-0'}`}
+            referrerPolicy={image.src.startsWith('http') ? 'no-referrer' : undefined}
+          />
+        ))}
+        {/* Layered overlays for depth and readability */}
+        <div className="absolute inset-0 bg-black/45" />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/10 to-black/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(0,0,0,0.5)_100%)]" />
+      </div>
+
+      {/* Hero Content */}
+      <Container className="relative z-10 w-full !max-w-[1600px] flex-1 flex items-center justify-center">
+        <div className="flex max-w-4xl flex-col items-center gap-5 md:gap-6 text-center">
+          {/* Overline tag */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.7 }}
+            className="flex items-center gap-3"
+          >
+            <span className="h-px w-8 md:w-10 bg-button-yellow" />
+            <span className="text-button-yellow text-[10px] md:text-[11px] font-bold tracking-[0.3em] uppercase">
+              Department of
+            </span>
+            <span className="h-px w-8 md:w-10 bg-button-yellow" />
+          </motion.div>
+
+          {/* Main title */}
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.8 }}
+            className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white uppercase tracking-tight leading-tight drop-shadow-2xl"
+          >
+            Mechanical <br /> Engineering <span className="text-button-yellow">(ME)</span>
+          </motion.h1>
+
+          {/* Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.7 }}
+            className="text-sm md:text-base lg:text-lg text-white/85 font-light max-w-2xl leading-relaxed"
+          >
+            Shaping engineers who design tomorrow&rsquo;s machines, systems, and innovations.
+          </motion.p>
+        </div>
+      </Container>
+
+      {/* Image Dots Indicator (vertical, right side) */}
+      <div className="absolute top-1/2 right-3 md:right-6 lg:right-10 z-20 -translate-y-1/2 hidden md:flex flex-col gap-2.5">
+        {heroImages.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveImage(index)}
+            aria-label={`Show slide ${index + 1}`}
+            className={`relative h-7 w-[3px] rounded-full transition-all overflow-hidden ${
+              index === activeImage ? 'bg-white/30' : 'bg-white/15 hover:bg-white/25'
+            }`}
+          >
+            {index === activeImage && (
+              <motion.span
+                key={activeImage}
+                initial={{ height: 0 }}
+                animate={{ height: '100%' }}
+                transition={{ duration: 5, ease: 'linear' }}
+                className="absolute top-0 left-0 w-full bg-button-yellow rounded-full"
+              />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Breadcrumb — bottom left */}
+      <div className="absolute bottom-6 md:bottom-8 left-0 w-full z-10">
+        <Container className="!max-w-[1600px]">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="flex items-center gap-2 text-white/90 text-xs md:text-[13px] font-medium tracking-wide"
+          >
+            <a href="#" className="hover:text-button-yellow flex items-center gap-1.5 transition-colors">
+              <Home size={13} /> Home
+            </a>
+            <ChevronRight size={13} className="opacity-50" />
+            <a href="#" className="hover:text-button-yellow transition-colors">Dept</a>
+            <ChevronRight size={13} className="opacity-50" />
+            <span className="text-button-yellow font-semibold">ME</span>
+          </motion.div>
+        </Container>
+      </div>
+    </section>
+  );
+}

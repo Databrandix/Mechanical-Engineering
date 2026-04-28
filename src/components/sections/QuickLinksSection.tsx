@@ -1,0 +1,41 @@
+'use client';
+
+import {motion} from 'motion/react';
+import Container from '../ui/Container';
+import {quickLinks} from '../../lib/data';
+import {Link as LinkIcon} from 'lucide-react';
+
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+export default function QuickLinksSection() {
+  return (
+    <section id="admission" className="py-8 md:py-16 bg-white overflow-hidden border-b border-gray-100">
+      <Container>
+        <div className="flex items-center gap-4 mb-6 md:mb-8">
+           <LinkIcon className="text-accent" size={24} />
+           <h3 className="text-xl font-display font-bold text-primary uppercase tracking-wider">Quick Links</h3>
+        </div>
+        
+        <div className="flex overflow-x-auto pb-4 gap-4 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+          {quickLinks.map((link, idx) => (
+            <motion.a
+              key={link}
+              href="#"
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.05 }}
+              whileHover={{ scale: 1.05, backgroundColor: '#f3f4f6' }}
+              className="flex-shrink-0 px-8 py-3 bg-gray-50 border border-gray-200 rounded-full text-secondary-dark font-medium shadow-sm whitespace-nowrap"
+            >
+              {link}
+            </motion.a>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
