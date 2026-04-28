@@ -39,11 +39,11 @@ export default function ServicesSection() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
               
-              <div className="absolute bottom-0 left-0 p-8 w-full">
-                <h3 className="text-white text-xl font-display font-bold mb-2 transition-colors group-hover:text-accent">
+              <div className="absolute bottom-0 left-0 p-6 md:p-8 w-full">
+                <h3 className="text-white text-lg md:text-xl font-display font-bold mb-2 transition-colors group-hover:text-accent">
                   {service.name}
                 </h3>
-                <p className="text-white/70 text-sm mb-6 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <p className="text-white/70 text-sm mb-4 md:mb-6 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {service.description}
                 </p>
                 <div className="flex justify-between items-center">

@@ -15,12 +15,12 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-primary text-white pt-20 pb-10 relative overflow-hidden">
+    <footer className="bg-primary text-white pt-12 md:pt-20 pb-8 md:pb-10 relative overflow-hidden">
       {/* Decorative background element */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
       
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-16">
           {/* Brand Column */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">

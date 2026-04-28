@@ -24,33 +24,33 @@ export default function NewsSection() {
           subtitle="Stay updated with the recent breakthroughs, campus highlights, and academic achievements from the heart of our community."
         />
 
-        <div className="flex flex-col lg:flex-row gap-12">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* Main Featured News */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             className="lg:w-3/5 group cursor-pointer"
           >
-            <div className="relative rounded-[32px] overflow-hidden shadow-2xl h-full flex flex-col">
-              <div className="h-[400px] relative overflow-hidden">
-                <img 
-                  src={mainNews.image} 
-                  alt={mainNews.title} 
+            <div className="relative rounded-2xl md:rounded-[32px] overflow-hidden shadow-2xl h-full flex flex-col">
+              <div className="h-[220px] sm:h-[280px] md:h-[340px] lg:h-[400px] relative overflow-hidden">
+                <img
+                  src={mainNews.image}
+                  alt={mainNews.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute top-6 left-6 flex items-center gap-2 bg-accent px-4 py-2 rounded-xl text-white font-bold text-xs uppercase tracking-widest shadow-lg">
+                <div className="absolute top-4 left-4 md:top-6 md:left-6 flex items-center gap-2 bg-accent px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-white font-bold text-[10px] md:text-xs uppercase tracking-widest shadow-lg">
                   <div className="w-2 h-2 bg-white rounded-full animate-ping" />
                   {mainNews.category}
                 </div>
               </div>
-              <div className="p-10 bg-white flex-1 flex flex-col justify-center border-t border-gray-100">
-                <div className="flex items-center gap-2 text-secondary-dark/40 text-sm mb-4">
+              <div className="p-6 md:p-8 lg:p-10 bg-white flex-1 flex flex-col justify-center border-t border-gray-100">
+                <div className="flex items-center gap-2 text-secondary-dark/40 text-sm mb-3 md:mb-4">
                   <Calendar size={16} />
                   <span>{mainNews.date}</span>
                 </div>
-                <h3 className="text-3xl font-display font-bold text-primary mb-6 leading-tight group-hover:text-accent transition-colors">
+                <h3 className="text-xl md:text-2xl lg:text-3xl font-display font-bold text-primary mb-4 md:mb-6 leading-tight group-hover:text-accent transition-colors">
                   {mainNews.title}
                 </h3>
                 <div className="flex justify-end mt-auto">
@@ -72,9 +72,9 @@ export default function NewsSection() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                className="flex gap-6 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group"
+                className="flex gap-4 md:gap-6 bg-white p-3 md:p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group"
               >
-                <div className="w-32 h-32 rounded-xl overflow-hidden shrink-0">
+                <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl overflow-hidden shrink-0">
                   <img 
                     src={item.image} 
                     alt={item.title} 

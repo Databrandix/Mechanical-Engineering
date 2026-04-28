@@ -50,11 +50,11 @@ export default function EventsSection() {
                   <span className="text-xs font-bold text-primary">{event.date}</span>
                 </div>
               </div>
-              <div className="p-8 flex flex-col flex-1">
-                <h3 className="text-xl font-display font-bold text-primary mb-4 leading-tight group-hover:text-accent transition-colors">
+              <div className="p-6 md:p-8 flex flex-col flex-1">
+                <h3 className="text-lg md:text-xl font-display font-bold text-primary mb-3 md:mb-4 leading-tight group-hover:text-accent transition-colors">
                   {event.title}
                 </h3>
-                <p className="text-secondary-dark/60 text-sm mb-8 flex-1 leading-relaxed line-clamp-3">
+                <p className="text-secondary-dark/60 text-sm mb-6 md:mb-8 flex-1 leading-relaxed line-clamp-3">
                   {event.description}
                 </p>
                 <div className="pt-4 border-t border-gray-50 flex justify-between items-center mt-auto">

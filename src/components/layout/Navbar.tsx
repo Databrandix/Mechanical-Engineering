@@ -192,7 +192,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-[110px] bg-white z-40 overflow-y-auto">
+        <div className="lg:hidden fixed inset-0 top-[72px] bg-white z-40 overflow-y-auto">
           <div className="p-6 flex flex-col gap-6">
             {navLinks.map((link) => (
               <div key={link.name} className="border-b border-gray-100 pb-4">

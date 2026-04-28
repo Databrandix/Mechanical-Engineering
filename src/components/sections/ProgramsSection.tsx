@@ -12,7 +12,7 @@ export default function ProgramsSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-6 md:mb-8 text-center text-3xl font-bold text-primary"
+          className="mb-6 md:mb-8 text-center text-2xl md:text-3xl font-bold text-primary"
         >
           Programmes Offered
         </motion.h2>

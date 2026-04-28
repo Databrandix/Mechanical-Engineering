@@ -68,8 +68,8 @@ export default function ResearchLabsSection() {
       <Container>
         <div className="flex justify-between items-end mb-6 md:mb-8">
           <div className="max-w-2xl">
-            <p className="text-accent font-semibold tracking-wider uppercase text-sm mb-2">Research That Advances Technology</p>
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-primary">Cutting-Edge Research & Labs</h2>
+            <p className="text-accent font-semibold tracking-wider uppercase text-xs md:text-sm mb-1.5 md:mb-2">Research That Advances Technology</p>
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-display font-bold text-primary leading-tight">Cutting-Edge Research & Labs</h2>
           </div>
           <div className="hidden md:flex gap-4">
             <button
