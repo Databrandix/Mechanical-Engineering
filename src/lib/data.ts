@@ -44,7 +44,11 @@ export const labs = [
   { id: 'workshop', name: 'Mechanical Workshop', location: 'Room No- ME 101, ME Building', image: 'https://picsum.photos/seed/lab1/800/600' },
   { id: 'heat-lab', name: 'Heat Transfer & Thermodynamics Lab', location: 'Room No- ME 203, ME Building', image: 'https://picsum.photos/seed/lab2/800/600' },
   { id: 'cad-lab', name: 'CAD/CAM & Simulation Lab', location: 'Room No- 502, Knowledge Tower', image: 'https://picsum.photos/seed/lab3/800/600' },
-  { id: 'robotics-lab', name: 'Robotics & Automation Lab', location: '203 (B) Knowledge Tower, Savar', image: 'https://picsum.photos/seed/lab4/800/600' }
+  { id: 'robotics-lab', name: 'Robotics & Automation Lab', location: '203 (B) Knowledge Tower, Savar', image: 'https://picsum.photos/seed/lab4/800/600' },
+  { id: 'fluid-lab', name: 'Fluid Mechanics & Hydraulics Lab', location: 'Room No- ME 105, ME Building', image: 'https://picsum.photos/seed/lab5/800/600' },
+  { id: 'materials-lab', name: 'Materials Testing Lab', location: 'Room No- ME 207, ME Building', image: 'https://picsum.photos/seed/lab6/800/600' },
+  { id: 'manufacturing-lab', name: 'Manufacturing Process Lab', location: 'Room No- ME 109, ME Building', image: 'https://picsum.photos/seed/lab7/800/600' },
+  { id: 'engine-lab', name: 'Engine & Automotive Lab', location: 'Room No- ME 112, ME Building', image: 'https://picsum.photos/seed/lab8/800/600' }
 ];
 
 export const researchAreas = [
