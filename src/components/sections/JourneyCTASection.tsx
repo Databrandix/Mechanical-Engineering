@@ -1,0 +1,49 @@
+'use client';
+
+import { motion } from 'motion/react';
+import Container from '../ui/Container';
+
+export default function JourneyCTASection() {
+  return (
+    <section className="relative">
+      {/* Hero image with overlays */}
+      <div
+        className="relative h-[420px] md:h-[480px] bg-cover bg-center"
+        style={{ backgroundImage: "url(/assets/site-school-1024x576.webp)" }}
+      >
+        {/* Left dark overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/75 to-transparent" />
+        {/* Bottom fade for smooth transition to footer */}
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-primary/90 to-transparent" />
+
+        <Container className="relative z-10 h-full flex items-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="max-w-xl text-white"
+          >
+            <h2 className="font-display text-4xl md:text-5xl font-bold mb-5 leading-tight">
+              Start Your Journey<br />with Us
+            </h2>
+            <p className="text-base md:text-lg text-white/85 mb-8 leading-relaxed">
+              Explore our programs, meet inspiring faculty, and become part of a thriving academic network. Your future begins here.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <button className="px-7 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-md shadow-xl transition-all hover:brightness-110 hover:-translate-y-0.5 hover:shadow-2xl">
+                Apply Now
+              </button>
+              <button className="px-7 py-3 border-2 border-white text-white hover:bg-white hover:text-primary font-semibold rounded-md transition-all hover:-translate-y-0.5">
+                Request for Information
+              </button>
+            </div>
+          </motion.div>
+        </Container>
+      </div>
+
+      {/* Gradient divider — project theme colors */}
+      <div className="h-1 gradient-blue-magenta shadow-[0_-4px_12px_rgba(204,21,121,0.25)]" />
+    </section>
+  );
+}
