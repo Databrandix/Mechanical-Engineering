@@ -34,7 +34,7 @@ export default function Navbar() {
       title: 'About',
       children: [
         { name: 'Message from Head', href: '/about/message-from-head' },
-        { name: 'Mission & Vision', href: '#' },
+        { name: 'Mission & Vision', href: '/about/mission-vision' },
         { name: 'Laboratory Facility', href: '#' },
         { name: 'ME Club', href: '#' },
         { name: 'Lab Facility', href: '#' },
