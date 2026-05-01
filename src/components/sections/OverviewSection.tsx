@@ -24,12 +24,12 @@ export default function OverviewSection() {
             className="space-y-6"
           >
             <p className="text-justify text-[16px] font-medium leading-[1.75] tracking-[0.035em] text-black">
-              The Department of Mechanical Engineering stands out for its diverse range of programs in Thermal Engineering, Design & Manufacturing, Automotive Engineering, Robotics & Automation, Materials Science, and Renewable Energy Systems. Our unique approach to education empowers students with the knowledge and skills needed to excel in the dynamic field of Mechanical Engineering. We foster a culture of hands-on learning by encouraging students to undertake challenging projects in our state-of-the-art workshops and labs, exposing them to industry-relevant practices.
+              At the heart of innovation and excellence, the Department of Mechanical Engineering is committed to shaping future leaders in the field. Explore the dynamic world of mechanical engineering, where creativity meets technology, and where ideas transform into groundbreaking solutions. With a focus on interdisciplinary collaboration and real-world applications, our department prepares students to tackle complex challenges and contribute to the advancement of technology and society.
             </p>
 
             <div className="grid gap-5 sm:grid-cols-2">
               <a
-                href="#"
+                href="/about/overview"
                 className="rounded-full bg-gradient-to-r from-primary to-accent px-8 py-3 text-center text-base font-semibold text-white shadow-md transition-all hover:shadow-premium"
               >
                 Explore More

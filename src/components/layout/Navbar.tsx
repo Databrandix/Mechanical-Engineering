@@ -33,7 +33,7 @@ export default function Navbar() {
       hasDropdown: true,
       title: 'About',
       children: [
-        { name: 'Message from Head', href: '#' },
+        { name: 'Message from Head', href: '/about/message-from-head' },
         { name: 'Mission & Vision', href: '#' },
         { name: 'Laboratory Facility', href: '#' },
         { name: 'ME Club', href: '#' },
@@ -133,13 +133,13 @@ export default function Navbar() {
       <div className={`transition-all duration-500 border-b ${isScrolled ? 'bg-white/95 backdrop-blur-md border-gray-50 py-2 shadow-[0_4px_20px_rgba(0,0,0,0.02)]' : 'bg-white border-gray-100 py-4'}`}>
         <Container className="flex justify-between items-center !max-w-[1600px]">
           {/* Logo */}
-          <div className="flex items-center shrink-0">
+          <a href="/" aria-label="Sonargaon University — Home" className="flex items-center shrink-0">
             <img
               src="/assets/su-colour-logo.png"
               alt="Sonargaon University"
               className={`${isScrolled ? 'h-7 md:h-8' : 'h-8 md:h-9 xl:h-10'} w-auto max-w-[42vw] object-contain transition-all duration-500`}
             />
-          </div>
+          </a>
 
           {/* Compact Scroll Navigation — only render when scrolled (saves layout space when not scrolled) */}
           {isScrolled && (
