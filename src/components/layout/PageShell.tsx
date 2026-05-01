@@ -20,6 +20,8 @@ interface PageShellProps {
   children: ReactNode;
   /** Background image for the hero. Defaults to the campus shot. */
   image?: string;
+  /** CSS object-position for the hero image. e.g. 'top', 'center 30%'. Default 'center'. */
+  imagePosition?: string;
   /** Tailwind classes applied to the content wrapper around children. */
   contentClassName?: string;
 }
@@ -30,6 +32,7 @@ export default function PageShell({
   overline,
   children,
   image = '/assets/site-school-1024x576.webp',
+  imagePosition = 'center',
   contentClassName = 'py-12 md:py-16',
 }: PageShellProps) {
   const pathname = usePathname();
@@ -50,6 +53,7 @@ export default function PageShell({
             animate={{ scale: 1.06 }}
             transition={{ duration: 8, ease: 'easeOut' }}
             className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: imagePosition }}
           />
           {/* Layered overlays for depth and readability */}
           <div className="absolute inset-0 bg-black/45" />
