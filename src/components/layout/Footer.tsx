@@ -21,6 +21,14 @@ export default function Footer() {
   };
 
   const usefulLinks = ['Tution Fee', 'Faculty Staff', 'Alumni', 'Career', 'Event', 'Our Blogs'];
+  const getInTouch = [
+    'Contact',
+    'Meet With Us',
+    'Privacy Statement',
+    'Newsletters',
+    'Location Map',
+    'FAQ',
+  ];
   const quickLinks = ['SU News', 'Forum', 'Students', 'Parents', 'Teachers', 'Administration'];
 
   const socials = [
@@ -37,9 +45,9 @@ export default function Footer() {
       <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-8 mb-12">
           {/* Brand + Contact */}
-          <div className="space-y-5">
+          <div className="space-y-5 lg:col-span-2">
             <div className="inline-block">
               <img
                 src="/assets/footer-logo.png"
@@ -86,6 +94,18 @@ export default function Footer() {
             <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Useful Link</h4>
             <ul className="space-y-3 text-sm text-white/70">
               {usefulLinks.map((link) => (
+                <li key={link}>
+                  <a href="#" className="hover:text-accent transition-colors">{link}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Get in Touch */}
+          <div>
+            <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Get in Touch</h4>
+            <ul className="space-y-3 text-sm text-white/70">
+              {getInTouch.map((link) => (
                 <li key={link}>
                   <a href="#" className="hover:text-accent transition-colors">{link}</a>
                 </li>

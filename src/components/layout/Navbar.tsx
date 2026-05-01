@@ -12,6 +12,11 @@ import Container from '../ui/Container';
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openMobileSection, setOpenMobileSection] = useState<string | null>(null);
+
+  const toggleMobileSection = (name: string) => {
+    setOpenMobileSection((prev) => (prev === name ? null : name));
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -278,23 +283,43 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 top-[72px] bg-white z-40 overflow-y-auto">
           <div className="p-6 flex flex-col gap-6">
-            {navLinks.map((link) => (
-              <div key={link.name} className="border-b border-gray-100 pb-4">
-                <a href={link.href} className="text-xl font-bold text-[#2B3175] flex justify-between items-center">
-                  {link.name}
-                  {link.hasDropdown && <ChevronDown size={20} />}
-                </a>
-                {link.children && (
-                  <div className="mt-4 flex flex-col gap-3 pl-4">
-                    {link.children.map((child) => (
-                      <a key={child.name} href={child.href} className="text-base font-semibold text-gray-700">
-                        {child.name}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+            {navLinks.map((link) => {
+              const isOpen = openMobileSection === link.name;
+              return (
+                <div key={link.name} className="border-b border-gray-100 pb-4">
+                  {link.hasDropdown ? (
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileSection(link.name)}
+                      aria-expanded={isOpen}
+                      className="w-full text-xl font-bold text-[#2B3175] flex justify-between items-center"
+                    >
+                      {link.name}
+                      <ChevronDown
+                        size={20}
+                        className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+                  ) : (
+                    <a
+                      href={link.href}
+                      className="text-xl font-bold text-[#2B3175] flex justify-between items-center"
+                    >
+                      {link.name}
+                    </a>
+                  )}
+                  {link.children && isOpen && (
+                    <div className="mt-4 flex flex-col gap-3 pl-4">
+                      {link.children.map((child) => (
+                        <a key={child.name} href={child.href} className="text-base font-semibold text-gray-700">
+                          {child.name}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
             <div className="flex flex-col gap-3 mt-4">
               <button className="w-full py-4 gradient-blue-magenta text-white rounded-xl font-bold shadow-lg shadow-accent/20 transition-all">
                 Apply Now
