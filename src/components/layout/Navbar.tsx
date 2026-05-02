@@ -40,7 +40,7 @@ export default function Navbar() {
         { name: 'Lab Facility', href: '#' },
       ],
     },
-    { name: 'Faculty Member', href: '#' },
+    { name: 'Faculty Member', href: '/faculty-member' },
     {
       name: 'Admission',
       href: '#admission',
