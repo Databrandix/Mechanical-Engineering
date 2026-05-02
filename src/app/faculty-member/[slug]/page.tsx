@@ -2,7 +2,13 @@ import { notFound } from 'next/navigation';
 import { Mail, Phone, IdCard, Building2, MapPin, Plus } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { faculty, getFacultyBySlug, departmentName, type Faculty } from '@/lib/faculty-data';
+import {
+  faculty,
+  getFacultyBySlug,
+  departmentName,
+  type Faculty,
+  type SectionContent,
+} from '@/lib/faculty-data';
 
 export function generateStaticParams() {
   return faculty.map((f) => ({ slug: f.slug }));
@@ -18,8 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-type DetailKey =
-  | 'personalInfo'
+type SectionKey =
   | 'academicQualification'
   | 'trainingExperience'
   | 'teachingArea'
@@ -29,8 +34,7 @@ type DetailKey =
   | 'membership'
   | 'previousEmployment';
 
-const SECTIONS: { key: DetailKey; label: string }[] = [
-  { key: 'personalInfo', label: 'Personal Information' },
+const SECTIONS: { key: SectionKey; label: string }[] = [
   { key: 'academicQualification', label: 'Academic Qualification' },
   { key: 'trainingExperience', label: 'Training Experience' },
   { key: 'teachingArea', label: 'Teaching Area' },
@@ -40,6 +44,48 @@ const SECTIONS: { key: DetailKey; label: string }[] = [
   { key: 'membership', label: 'Membership' },
   { key: 'previousEmployment', label: 'Previous Employment' },
 ];
+
+const PLACEHOLDER = (
+  <p className="text-gray-400 italic text-sm">Information will be updated soon.</p>
+);
+
+function renderSection(value: SectionContent | undefined) {
+  if (value === undefined) return PLACEHOLDER;
+
+  // Plain paragraph
+  if (typeof value === 'string') {
+    return value.trim().length > 0 ? <p>{value}</p> : PLACEHOLDER;
+  }
+
+  if (!Array.isArray(value) || value.length === 0) return PLACEHOLDER;
+
+  // Simple bullet list
+  if (typeof value[0] === 'string') {
+    return (
+      <ul className="list-disc list-outside pl-5 space-y-2">
+        {(value as string[]).map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+    );
+  }
+
+  // Grouped subsections
+  return (
+    <div className="space-y-6">
+      {(value as { heading: string; items: string[] }[]).map((group, gi) => (
+        <div key={gi}>
+          <h4 className="font-semibold text-primary mb-3 text-[15px]">{group.heading}</h4>
+          <ul className="list-disc list-outside pl-5 space-y-2">
+            {group.items.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default async function FacultyDetailPage({
   params,
@@ -142,47 +188,51 @@ export default async function FacultyDetailPage({
 
         {/* Accordion sections */}
         <div className="space-y-3 max-w-5xl mx-auto">
-          {SECTIONS.map(({ key, label }) => {
-            const value = (member as Faculty)[key];
-            const hasContent =
-              (typeof value === 'string' && value.trim().length > 0) ||
-              (Array.isArray(value) && value.length > 0);
+          {/* Personal Information — structured label/value list */}
+          <AccordionPanel label="Personal Information">
+            {member.personalInfo && member.personalInfo.length > 0 ? (
+              <dl className="grid sm:grid-cols-[180px_1fr] gap-x-6 gap-y-3 text-[14px]">
+                {member.personalInfo.map(({ label, value }) => (
+                  <div key={label} className="contents">
+                    <dt className="font-semibold text-primary">{label}</dt>
+                    <dd className="text-gray-700">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : (
+              PLACEHOLDER
+            )}
+          </AccordionPanel>
 
-            return (
-              <details
-                key={key}
-                className="group bg-white rounded-md border border-gray-200 overflow-hidden"
-              >
-                <summary className="flex items-center justify-between gap-3 px-5 py-3.5 bg-primary text-white cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-primary/95 transition-colors">
-                  <span className="font-semibold text-[15px]">{label}</span>
-                  <Plus
-                    size={18}
-                    className="group-open:rotate-45 transition-transform duration-200 shrink-0"
-                  />
-                </summary>
-                <div className="px-5 py-5 text-[14px] leading-relaxed text-gray-700">
-                  {hasContent ? (
-                    typeof value === 'string' ? (
-                      <p>{value}</p>
-                    ) : (
-                      <ul className="list-disc list-inside space-y-2">
-                        {(value as string[]).map((item, i) => (
-                          <li key={i}>{item}</li>
-                        ))}
-                      </ul>
-                    )
-                  ) : (
-                    <p className="text-gray-400 italic text-sm">
-                      Information will be updated soon.
-                    </p>
-                  )}
-                </div>
-              </details>
-            );
-          })}
+          {SECTIONS.map(({ key, label }) => (
+            <AccordionPanel key={key} label={label}>
+              {renderSection((member as Faculty)[key] as SectionContent | undefined)}
+            </AccordionPanel>
+          ))}
         </div>
       </Container>
     </PageShell>
+  );
+}
+
+function AccordionPanel({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <details className="group bg-white rounded-md border border-gray-200 overflow-hidden">
+      <summary className="flex items-center justify-between gap-3 px-5 py-3.5 bg-primary text-white cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-primary/95 transition-colors">
+        <span className="font-semibold text-[15px]">{label}</span>
+        <Plus
+          size={18}
+          className="group-open:rotate-45 transition-transform duration-200 shrink-0"
+        />
+      </summary>
+      <div className="px-5 py-5 text-[14px] leading-relaxed text-gray-700">{children}</div>
+    </details>
   );
 }
 

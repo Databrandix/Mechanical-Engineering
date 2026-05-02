@@ -1,5 +1,16 @@
 export type FacultyType = 'leadership' | 'full-time' | 'part-time';
 
+/**
+ * Flexible section content. A section can be:
+ *  - a plain paragraph (string)
+ *  - a simple bullet list (string[])
+ *  - grouped lists with subheadings ({ heading, items }[])
+ */
+export type SectionContent =
+  | string
+  | string[]
+  | { heading: string; items: string[] }[];
+
 export interface Faculty {
   slug: string;
   name: string;
@@ -15,15 +26,15 @@ export interface Faculty {
   phone?: string;
 
   // Detail sections — optional, fill in as content arrives.
-  personalInfo?: string;
-  academicQualification?: string[];
-  trainingExperience?: string[];
-  teachingArea?: string[];
-  publications?: string[];
-  research?: string[];
-  awards?: string[];
-  membership?: string[];
-  previousEmployment?: string[];
+  personalInfo?: { label: string; value: string }[];
+  academicQualification?: SectionContent;
+  trainingExperience?: SectionContent;
+  teachingArea?: SectionContent;
+  publications?: SectionContent;
+  research?: SectionContent;
+  awards?: SectionContent;
+  membership?: SectionContent;
+  previousEmployment?: SectionContent;
 }
 
 const DEPARTMENT = 'Department of Mechanical Engineering';
@@ -49,6 +60,81 @@ export const faculty: Faculty[] = [
     email: 'mosto1956@gmail.com',
     suId: 'SU1603141114',
     phone: '01955529729',
+
+    personalInfo: [
+      { label: 'Name', value: 'Prof. Md. Mostofa Hossain' },
+      { label: 'Designation', value: 'Professor' },
+      { label: 'Department', value: 'Mechanical Engineering' },
+      { label: 'Faculty', value: 'Faculty of Science & Engineering' },
+      { label: 'Contact', value: '01955529729' },
+    ],
+
+    academicQualification: [
+      'SSC Certification — Passing Year: 1972 | Group: Science | School: Mohadevpur High School',
+      'HSC Certification — Passing Year: 1981 | Group: Mechanical Technology | College: Rajshahi Polytechnic Institute',
+      'Honours Certification — Passing Year: 1989 | Group: Mechanical Engineering | University: DUET (Former BIT, Dhaka)',
+      'Masters Certification — Passing Year: 2003 | Group: Mechanical Engineering | University: BUET, Dhaka',
+    ],
+
+    trainingExperience: [
+      {
+        heading: 'Training at Home',
+        items: [
+          'Successfully completed training on Industrial Control and Mechatronics (19–22 January 2003), Directorate of Continuing Education, BUET.',
+          'Successfully completed training on Industrial & Control Applications of Basic Pneumatics and Basic Electro-Pneumatics (22–27 April 2006), Green Field Automation Technologies Ltd., Dhaka.',
+          'Successfully completed National Training Session in the field of Vocational and Technical Training (26–28 May 2009).',
+          'Successfully completed training on Green Composites (21 December 2011), BUET & Tuskegee University, USA.',
+          'Successfully completed training on Multimedia Class Room and Digital Content Development (14–19 September 2013).',
+          'Successfully completed training on Teaching on Active Learning (05–07 January 2017).',
+        ],
+      },
+      {
+        heading: 'Training Abroad',
+        items: [
+          'Successfully completed training in the field of Welding (12 May – 25 June 1994), South Korea.',
+          'Successfully completed Managerial Training on Head of the Department (05–15 December 2015), Singapore.',
+        ],
+      },
+    ],
+
+    teachingArea: 'No information provided on the website.',
+
+    publications: [
+      {
+        heading: 'Journals',
+        items: [
+          'Thermal Performance Analysis of Thermal Energy Storage Tank using Solid Rocks with HITEC Salt (2022).',
+          'Performance Analysis of Biodiesel Generated Continuously by using Newly Developed PLC Processor (2021).',
+          'An Experimental Study of Passive Flow Separation Control by Backward Facing Step with Different Aspect Ratios of NACA 0012 Wing (2021).',
+          'An Experimental Investigation of the Effect of Aspect Ratio on the Airfoil Characteristics of NACA 0012 Wing (2020).',
+          'A Review on Renovation of Gas Turbine to Improve Efficiency using Compressor Water Wash (2017).',
+          'Scenario of Safety Issues Prevailing Accident in Rural Engineering Workshop in Bangladesh (2017).',
+          'Study of Natural Convection Heat Transfer in a Rectangular Enclosure from One Cooled Side Wall (2017).',
+          'Numerical Simulation of Non-Newtonian Spiral Flow Through Stenosed Artery with 75% and 96% Area Reductions (2017).',
+          'Improvement of Conventional Electric Heater to Reduce Energy Loss and Its Performance Test (2016).',
+          'A Comparative Study of Performances of Different Types of Barrier Constructions for Attenuating Low Frequency Noise (2016).',
+        ],
+      },
+      {
+        heading: 'Books',
+        items: [
+          'Hossain, M. M. — Basic Workshop Practice-1 (MT-113), 1st Edition, Boi Bitan Publication, Bangla Bazar, Dhaka.',
+        ],
+      },
+    ],
+
+    research: [
+      {
+        heading: 'Field of Interest',
+        items: ['Thermofluid Engineering', 'Energy Engineering'],
+      },
+    ],
+
+    awards: 'No information provided on the website.',
+
+    membership: ['Fellow IEB — F08561'],
+
+    previousEmployment: 'No information provided on the website.',
   },
 
   // ───── Full-time faculty (#2–30 from the SU list) ─────
