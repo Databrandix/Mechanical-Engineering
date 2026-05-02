@@ -48,7 +48,7 @@ export default function Navbar() {
       title: 'Admission',
       children: [
         { name: 'Admission Requirements', href: '/admission/requirements' },
-        { name: 'Tuition Fees', href: '#admission' },
+        { name: 'Tuition Fees', href: '/admission/tuition-fees' },
         { name: 'Transfer Credits', href: '#admission' },
         { name: 'Waiver & Scholarship', href: '#admission' },
         { name: 'Admission Notice', href: '#admission' },
