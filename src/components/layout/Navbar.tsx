@@ -63,7 +63,7 @@ export default function Navbar() {
       title: 'Student Society',
       children: [
         { name: 'Notice Board', href: '/student-society/notice-board' },
-        { name: 'Events', href: '#' },
+        { name: 'Events', href: '/student-society/events' },
         { name: 'Alumni', href: '#' },
         { name: 'Visitor', href: '#' },
         { name: 'FAQ', href: '#' },
