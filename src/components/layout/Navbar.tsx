@@ -3,7 +3,7 @@
 import {useState, useEffect} from 'react';
 import {
   Menu, X, Facebook, Linkedin, Youtube,
-  GraduationCap, User, CheckCircle, ChevronDown,
+  GraduationCap, User, CheckCircle, ChevronDown, ChevronRight,
   LayoutGrid, BookOpen, Image as ImageIcon, Users, Globe,
   ClipboardList, Building2, Award,
 } from 'lucide-react';
@@ -62,7 +62,7 @@ export default function Navbar() {
       hasDropdown: true,
       title: 'Student Society',
       children: [
-        { name: 'Notice Board', href: '#' },
+        { name: 'Notice Board', href: '/student-society/notice-board' },
         { name: 'Events', href: '#' },
         { name: 'Alumni', href: '#' },
         { name: 'Visitor', href: '#' },
@@ -166,9 +166,15 @@ export default function Navbar() {
                             key={child.name}
                             href={child.href}
                             {...(child.href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
-                            className="block px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-accent/5 hover:text-accent"
+                            className="group/item block px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-accent/5 hover:text-accent"
                           >
-                            {child.name}
+                            <span className="inline-flex items-center gap-2">
+                              {child.name}
+                              <ChevronRight
+                                size={14}
+                                className="opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200"
+                              />
+                            </span>
                           </a>
                         ))}
                       </div>
@@ -265,9 +271,15 @@ export default function Navbar() {
                               key={child.name}
                               href={child.href}
                               {...(child.href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
-                              className="block px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-accent/5 hover:text-accent"
+                              className="group/item block px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-accent/5 hover:text-accent"
                             >
-                              {child.name}
+                              <span className="inline-flex items-center gap-2">
+                                {child.name}
+                                <ChevronRight
+                                  size={14}
+                                  className="opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200"
+                                />
+                              </span>
                             </a>
                           ))}
                         </div>
