@@ -12,7 +12,7 @@ export default function MissionVisionPage() {
   return (
     <PageShell title="Mission & Vision" overline="About" contentClassName="bg-gray-50 py-12 md:py-20">
       <Container>
-        <div className="max-w-5xl mx-auto space-y-8 lg:space-y-10">
+        <div className="space-y-8 lg:space-y-10">
           {/* Mission Card — icon left */}
           <article className="relative bg-primary text-white rounded-2xl shadow-2xl">
             <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">

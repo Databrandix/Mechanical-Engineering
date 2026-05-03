@@ -12,7 +12,7 @@ export default function OverviewPage() {
       title="Department Overview"
       subtitle="Shaping future leaders where creativity meets technology."
     >
-      <div className="max-w-4xl mx-auto space-y-6 text-[16px] md:text-[17px] leading-[1.85] text-gray-800 text-justify">
+      <div className="space-y-6 text-[16px] md:text-[17px] leading-[1.85] text-gray-800 text-justify">
         <p>
           At the heart of innovation and excellence, the Department of Mechanical Engineering is committed to shaping future leaders in the field. Explore the dynamic world of mechanical engineering, where creativity meets technology, and where ideas transform into groundbreaking solutions.
         </p>

@@ -153,7 +153,7 @@ export default function TuitionFeesPage() {
 
         {/* Program Overview */}
         <section className="mb-16 md:mb-20">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {overviewStats.map(({ Icon, label, value }) => (
               <div
                 key={label}
@@ -185,7 +185,7 @@ export default function TuitionFeesPage() {
             <div className="mt-3 mx-auto h-1 w-16 bg-accent rounded-full" />
           </div>
 
-          <div className="space-y-8 max-w-5xl mx-auto">
+          <div className="space-y-8">
             {shifts.map((shift) => (
               <article
                 key={shift.name}
@@ -273,7 +273,7 @@ export default function TuitionFeesPage() {
             <div className="mt-3 mx-auto h-1 w-16 bg-accent rounded-full" />
           </div>
 
-          <div className="grid gap-5 md:grid-cols-3 max-w-5xl mx-auto">
+          <div className="grid gap-5 md:grid-cols-3">
             {policies.map(({ Icon, title, text }) => (
               <article
                 key={title}

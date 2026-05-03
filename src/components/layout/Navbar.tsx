@@ -50,7 +50,7 @@ export default function Navbar() {
         { name: 'Admission Requirements', href: '/admission/requirements' },
         { name: 'Tuition Fees', href: '/admission/tuition-fees' },
         { name: 'Transfer Credits', href: '/admission/transfer-credits' },
-        { name: 'Waiver & Scholarship', href: '#admission' },
+        { name: 'Waiver & Scholarship', href: '/admission/waiver-scholarship' },
         { name: 'Admission Notice', href: '#admission' },
         { name: 'Prospectus', href: '#admission' },
         { name: 'Apply Online', href: '#admission' },

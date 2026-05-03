@@ -53,13 +53,9 @@ export default function AdmissionRequirementsPage() {
 
         {/* ───── Undergraduate Programs ───── */}
         <section className="mb-16 md:mb-20">
-          <SectionHeader
-            Icon={GraduationCap}
-            overline="Section 01"
-            title="Undergraduate Programs"
-          />
+          <SectionHeader Icon={GraduationCap} title="Undergraduate Programs" />
 
-          <div className="space-y-4 max-w-5xl mx-auto">
+          <div className="space-y-4">
             {undergraduateRequirements.map((req, i) => (
               <article
                 key={i}
@@ -76,7 +72,7 @@ export default function AdmissionRequirementsPage() {
           </div>
 
           {/* Additional notes */}
-          <div className="max-w-5xl mx-auto mt-8 space-y-4">
+          <div className="mt-8 space-y-4">
             {additionalNotes.map((note, i) => (
               <div
                 key={i}
@@ -91,7 +87,7 @@ export default function AdmissionRequirementsPage() {
 
         {/* ───── Graduate Programs ───── */}
         <section className="mb-16 md:mb-20">
-          <SectionHeader Icon={GraduationCap} overline="Section 02" title="Graduate Programs" />
+          <SectionHeader Icon={GraduationCap} title="Graduate Programs" />
 
           <div className="bg-white rounded-2xl border border-dashed border-gray-300 p-12 md:p-14 text-center max-w-3xl mx-auto">
             <div className="inline-flex w-16 h-16 rounded-2xl bg-accent/10 items-center justify-center mb-5">
@@ -108,13 +104,9 @@ export default function AdmissionRequirementsPage() {
 
         {/* ───── Diploma (Engineering) Students ───── */}
         <section>
-          <SectionHeader
-            Icon={Wrench}
-            overline="Section 03"
-            title="For Diploma (Engineering) Students"
-          />
+          <SectionHeader Icon={Wrench} title="For Diploma (Engineering) Students" />
 
-          <div className="max-w-5xl mx-auto grid lg:grid-cols-[1fr_320px] gap-6">
+          <div className="grid lg:grid-cols-[1fr_320px] gap-6">
             {/* Main eligibility */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-7">
               <h3 className="font-display text-lg font-bold text-primary mb-4">
@@ -168,11 +160,9 @@ export default function AdmissionRequirementsPage() {
 
 function SectionHeader({
   Icon,
-  overline,
   title,
 }: {
   Icon: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>;
-  overline: string;
   title: string;
 }) {
   return (
@@ -180,9 +170,6 @@ function SectionHeader({
       <div className="inline-flex w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-accent text-white items-center justify-center shadow-md mb-3">
         <Icon size={22} strokeWidth={1.75} />
       </div>
-      <span className="block text-accent text-[11px] font-bold tracking-[0.3em] uppercase mb-1">
-        {overline}
-      </span>
       <h2 className="font-display text-2xl md:text-3xl font-bold text-primary leading-tight">
         {title}
       </h2>
