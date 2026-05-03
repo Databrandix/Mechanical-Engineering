@@ -51,9 +51,9 @@ export default function Navbar() {
         { name: 'Tuition Fees', href: '/admission/tuition-fees' },
         { name: 'Transfer Credits', href: '/admission/transfer-credits' },
         { name: 'Waiver & Scholarship', href: '/admission/waiver-scholarship' },
-        { name: 'Admission Notice', href: '#admission' },
-        { name: 'Prospectus', href: '#admission' },
-        { name: 'Apply Online', href: '#admission' },
+        { name: 'Admission Notice', href: '/admission/notice' },
+        { name: 'Prospectus', href: '/admission/prospectus' },
+        { name: 'Apply Online', href: 'http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/create_smart_panel' },
       ],
     },
     {
@@ -165,6 +165,7 @@ export default function Navbar() {
                           <a
                             key={child.name}
                             href={child.href}
+                            {...(child.href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
                             className="block px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-accent/5 hover:text-accent"
                           >
                             {child.name}
@@ -263,6 +264,7 @@ export default function Navbar() {
                             <a
                               key={child.name}
                               href={child.href}
+                              {...(child.href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
                               className="block px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-accent/5 hover:text-accent"
                             >
                               {child.name}
@@ -311,7 +313,12 @@ export default function Navbar() {
                   {link.children && isOpen && (
                     <div className="mt-4 flex flex-col gap-3 pl-4">
                       {link.children.map((child) => (
-                        <a key={child.name} href={child.href} className="text-base font-semibold text-gray-700">
+                        <a
+                          key={child.name}
+                          href={child.href}
+                          {...(child.href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
+                          className="text-base font-semibold text-gray-700"
+                        >
                           {child.name}
                         </a>
                       ))}
