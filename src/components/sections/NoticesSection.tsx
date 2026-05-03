@@ -1,17 +1,16 @@
 'use client';
 
-import {motion} from 'motion/react';
+import { motion } from 'motion/react';
+import { ChevronRight, Eye } from 'lucide-react';
 import Container from '../ui/Container';
 import Button from '../ui/Button';
-import {notices} from '../../lib/data';
-import {ChevronRight, Eye} from 'lucide-react';
+import { notices, NOTICE_BOARD_PATH } from '@/lib/notices-data';
 
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+const HOME_NOTICE_LIMIT = 5;
 
 export default function NoticesSection() {
+  const recent = notices.slice(0, HOME_NOTICE_LIMIT);
+
   return (
     <section className="py-8 md:py-16 bg-primary relative overflow-hidden">
       {/* Decorative patterns */}
@@ -21,25 +20,31 @@ export default function NoticesSection() {
       <Container className="relative z-10">
         <div className="max-w-4xl mx-auto text-center mb-6 md:mb-8">
           <h2 className="text-2xl md:text-4xl lg:text-5xl font-display font-bold text-white mb-3 md:mb-4 leading-tight">
-            Academic Notices & Announcements
+            Academic Notices &amp; Announcements
           </h2>
           <p className="text-white/70 text-base md:text-lg">
-            Each card links to full program details—including curriculum, admissions requirements, and faculty contacts.
+            Stay up to date with the latest from the Department of Mechanical Engineering — registration, holidays, and student services.
           </p>
         </div>
 
         <div className="bg-white/5 backdrop-blur-md rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-          {notices.map((notice, idx) => (
-            <motion.div
-              key={idx}
+          {recent.map((notice, idx) => (
+            <motion.a
+              key={notice.slug}
+              href={notice.file}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`View notice: ${notice.title}`}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              className={`flex items-center justify-between p-4 md:p-6 lg:p-8 hover:bg-white/10 transition-colors border-b border-white/10 last:border-0 group cursor-pointer`}
+              className="flex items-center justify-between p-4 md:p-6 lg:p-8 hover:bg-white/10 transition-colors border-b border-white/10 last:border-0 group cursor-pointer"
             >
               <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8 lg:gap-12 flex-1 min-w-0">
-                <span className="text-accent text-sm md:text-base font-bold md:min-w-[120px] shrink-0">{notice.date}</span>
+                <span className="text-accent text-sm md:text-base font-bold md:min-w-[120px] shrink-0">
+                  {notice.date}
+                </span>
                 <h3 className="text-white font-medium text-base md:text-lg leading-snug group-hover:text-accent transition-colors">
                   {notice.title}
                 </h3>
@@ -47,15 +52,17 @@ export default function NoticesSection() {
               <div className="shrink-0 ml-3 md:ml-4 opacity-50 group-hover:opacity-100 transition-opacity">
                 <Eye size={20} className="text-white" />
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
 
         <div className="mt-8 md:mt-12 text-center">
-           <Button variant="yellow" className="px-10 py-3 group">
-             View All Notices
-             <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
-           </Button>
+          <a href={NOTICE_BOARD_PATH}>
+            <Button variant="yellow" className="px-10 py-3 group">
+              View All Notices
+              <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
+            </Button>
+          </a>
         </div>
       </Container>
     </section>

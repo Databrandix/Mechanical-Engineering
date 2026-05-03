@@ -22,14 +22,14 @@ export const programs = [
   }
 ];
 
-export const quickLinks = [
-  'Admission Requirements',
-  'Tuition Fees',
-  'Transfer Credits',
-  'Waiver & Scholarship',
-  'Student Portal',
-  'e-Learn',
-  'Library'
+export const quickLinks: { name: string; href: string; external?: boolean }[] = [
+  { name: 'Admission Requirements', href: '/admission/requirements' },
+  { name: 'Tuition Fees', href: '/admission/tuition-fees' },
+  { name: 'Transfer Credits', href: '/admission/transfer-credits' },
+  { name: 'Waiver & Scholarship', href: '/admission/waiver-scholarship' },
+  { name: 'Student Portal', href: '#' },
+  { name: 'e-Learn', href: '#' },
+  { name: 'Library', href: '#' },
 ];
 
 export const notices = [
