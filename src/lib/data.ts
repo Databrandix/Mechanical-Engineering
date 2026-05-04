@@ -110,5 +110,5 @@ export const news = [
 export const campusServices: { name: string; description: string; image: string; href?: string }[] = [
   { name: 'Transport Service', description: 'Free buses on 10 routes covering Dhaka & nearby areas.', image: '/assets/transport/dsc01671.jpg', href: '/transport-service' },
   { name: 'Scholarships & Waivers', description: 'Merit grants up to 100% + need-based aid calculator.', image: '/assets/scholarship-cover.jpg', href: '/admission/waiver-scholarship' },
-  { name: 'Student Life', description: '50+ clubs, festivals, sports & volunteering.', image: 'https://picsum.photos/seed/studentlife/800/600' }
+  { name: 'Student Life', description: '50+ clubs, festivals, sports & volunteering.', image: '/assets/student-life-cover.jpg', href: '/student-society/club-list' }
 ];
