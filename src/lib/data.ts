@@ -97,6 +97,13 @@ export const news = [
     title: 'Bangladesh Telecommunication Regulatory Commission (BTRC) and DIU join hands...',
     date: '11/27/2023',
     image: 'https://picsum.photos/seed/news4/400/300'
+  },
+  {
+    id: 5,
+    category: 'Archive',
+    title: 'Department of Computer Science & Engineering (CSE) organized Seminar on “Lecture from Industry-Academia”',
+    date: '10/15/2023',
+    image: 'https://picsum.photos/seed/news5/400/300'
   }
 ];
 
