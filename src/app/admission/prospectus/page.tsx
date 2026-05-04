@@ -118,8 +118,8 @@ export default function ProspectusPage() {
                 }`}
               >
                 {/* Cover */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-gray-50 flex items-center justify-center">
-                  <img src={p.cover} alt={p.title} className="w-full h-full object-contain" />
+                <div className="bg-gray-50">
+                  <img src={p.cover} alt={p.title} className="block w-full h-auto" />
                 </div>
 
                 {/* Body */}
