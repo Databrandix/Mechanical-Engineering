@@ -5,20 +5,6 @@ export const programs = [
     description: 'The department offers B.Sc in Mechanical Engineering with specializations in Thermal, Design & Manufacturing, and Robotics & Automation.',
     image: 'https://picsum.photos/seed/undergrad/800/600',
     cta: 'View More'
-  },
-  {
-    id: 'postgrad',
-    title: 'Postgraduate',
-    description: 'The department offers an M.Sc programme in Mechanical Engineering with research tracks in Thermal Systems, Manufacturing, and Robotics.',
-    image: 'https://picsum.photos/seed/postgrad/800/600',
-    cta: 'View More'
-  },
-  {
-    id: 'phd',
-    title: 'Ph.D',
-    description: 'The department offers full-time Ph.D. Programme, supporting advanced research and academic development in Mechanical Engineering.',
-    image: 'https://picsum.photos/seed/phd/800/600',
-    cta: 'View More'
   }
 ];
 

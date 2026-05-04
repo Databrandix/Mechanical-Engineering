@@ -17,7 +17,7 @@ export default function ProgramsSection() {
           Programmes Offered
         </motion.h2>
 
-        <div className="grid gap-4 md:gap-6 md:grid-cols-3">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6">
           {programs.map((program, idx) => (
             <motion.article
               key={program.id}
@@ -25,7 +25,7 @@ export default function ProgramsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.08, duration: 0.5 }}
-              className="flex flex-col"
+              className="flex flex-col w-full md:w-[340px]"
             >
               <img
                 src="/assets/site-school-1024x576.webp"
@@ -42,7 +42,7 @@ export default function ProgramsSection() {
               </p>
 
               <a
-                href="#"
+                href="/admission/requirements"
                 className="mt-auto w-fit rounded-full bg-gradient-to-r from-primary to-accent px-8 py-3 text-center text-base font-bold text-white shadow-md transition-all hover:shadow-premium"
               >
                 {program.cta}
