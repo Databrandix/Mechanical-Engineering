@@ -71,7 +71,7 @@ export default function Navbar() {
         { name: 'Club list', href: '/student-society/club-list' },
       ],
     },
-    { name: 'Contact', href: '#' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   const topLinks = ['Virtual Tour', 'Admission', 'IQAC', 'Career', 'Archive', 'Contact'];
