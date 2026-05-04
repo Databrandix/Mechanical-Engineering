@@ -3,7 +3,6 @@
 import {motion} from 'motion/react';
 import Container from '../ui/Container';
 import SectionTitle from '../ui/SectionTitle';
-import Button from '../ui/Button';
 import {researchAreas} from '../../lib/data';
 import {ChevronRight, Flame, Waves, Bot, Wrench, Layers, Leaf, Car} from 'lucide-react';
 
@@ -59,10 +58,9 @@ export default function MajorResearchSection() {
             className="lg:w-1/3 relative rounded-2xl md:rounded-[32px] overflow-hidden group shadow-2xl min-h-[360px] md:min-h-[480px] lg:min-h-0"
           >
             <img
-              src="https://picsum.photos/seed/biotech/600/800"
+              src="/assets/research-featured.jpg"
               alt="Research spotlight"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/40 to-transparent" />
             <div className="absolute bottom-0 left-0 p-6 md:p-8">
@@ -75,10 +73,13 @@ export default function MajorResearchSection() {
               <p className="text-white/70 text-sm mb-4 md:mb-6 leading-relaxed">
                 This research cell operates at the intersection of mechanical design and intelligent control, building autonomous systems for next-generation manufacturing...
               </p>
-              <Button variant="magenta" className="w-full group">
+              <a
+                href="/research"
+                className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-accent/90 hover:scale-[1.02]"
+              >
                 Read More
                 <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
-              </Button>
+              </a>
             </div>
           </motion.div>
         </div>
