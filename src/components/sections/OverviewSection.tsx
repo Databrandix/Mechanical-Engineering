@@ -35,7 +35,7 @@ export default function OverviewSection() {
                 Explore More
               </a>
               <a
-                href="#"
+                href="/about/deans-message"
                 className="rounded-full bg-gradient-to-r from-primary to-accent px-8 py-3 text-center text-base font-semibold text-white shadow-md transition-all hover:shadow-premium"
               >
                 Dean's Message
