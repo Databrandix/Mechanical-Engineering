@@ -67,7 +67,7 @@ export default function Navbar() {
         { name: 'Alumni', href: '#' },
         { name: 'Visitor', href: '#' },
         { name: 'FAQ', href: '/student-society/faq' },
-        { name: 'Syllabus', href: '#' },
+        { name: 'Syllabus', href: '/student-society/syllabus' },
         { name: 'Layout Plan', href: '#' },
         { name: 'Club list', href: '#' },
       ],
