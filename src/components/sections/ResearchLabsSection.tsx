@@ -1,16 +1,12 @@
 'use client';
 
-import {useEffect, useRef, useState} from 'react';
-import {motion} from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { motion } from 'motion/react';
+import { ChevronLeft, ChevronRight, FlaskConical } from 'lucide-react';
 import Container from '../ui/Container';
-import SectionTitle from '../ui/SectionTitle';
-import {labs} from '../../lib/data';
-import {ChevronLeft, ChevronRight, MapPin} from 'lucide-react';
+import { labs } from '@/lib/labs-data';
 
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+const LAB_FACILITY_PATH = '/about/lab-facility';
 
 export default function ResearchLabsSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -37,7 +33,6 @@ export default function ResearchLabsSection() {
     };
   }, []);
 
-  // Auto-slider: advance every 4s, loop back to start at end. Pauses on hover.
   useEffect(() => {
     if (isPaused) return;
     const intervalId = window.setInterval(() => {
@@ -68,8 +63,12 @@ export default function ResearchLabsSection() {
       <Container>
         <div className="flex justify-between items-end mb-6 md:mb-8">
           <div className="max-w-2xl">
-            <p className="text-accent font-semibold tracking-wider uppercase text-xs md:text-sm mb-1.5 md:mb-2">Research That Advances Technology</p>
-            <h2 className="text-2xl md:text-4xl lg:text-5xl font-display font-bold text-primary leading-tight">Cutting-Edge Research & Labs</h2>
+            <p className="text-accent font-semibold tracking-wider uppercase text-xs md:text-sm mb-1.5 md:mb-2">
+              Research That Advances Technology
+            </p>
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-display font-bold text-primary leading-tight">
+              Cutting-Edge Research &amp; Labs
+            </h2>
           </div>
           <div className="hidden md:flex gap-4">
             <button
@@ -100,37 +99,42 @@ export default function ResearchLabsSection() {
           className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 pt-4 pb-8 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0"
         >
           {labs.map((lab, idx) => (
-            <motion.div
-              key={lab.id}
+            <motion.a
+              key={lab.slug}
+              href={`${LAB_FACILITY_PATH}#${lab.slug}`}
               data-lab-card
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.05 }}
               whileHover={{ y: -8 }}
-              className="snap-start shrink-0 w-[78%] sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] h-[460px] md:h-[500px] relative rounded-3xl overflow-hidden group shadow-xl"
+              className="snap-start shrink-0 w-[78%] sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] h-[460px] md:h-[500px] relative rounded-3xl overflow-hidden group shadow-xl bg-primary"
             >
-              <img
-                src={lab.image}
-                alt={lab.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
+              {lab.heroImage ? (
+                <img
+                  src={lab.heroImage}
+                  alt={lab.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <FlaskConical size={64} className="text-white/30" strokeWidth={1.25} />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/30 to-transparent" />
 
               <div className="absolute bottom-0 left-0 p-6 md:p-8 w-full">
-                <h3 className="text-white text-xl md:text-2xl font-display font-bold mb-2 leading-tight">{lab.name}</h3>
-                <div className="flex items-start gap-2 text-white/70 text-sm">
-                  <MapPin size={16} className="shrink-0 mt-0.5 text-accent" />
-                  <span>{lab.location}</span>
-                </div>
+                <h3 className="text-white text-xl md:text-2xl font-display font-bold mb-2 leading-tight">
+                  {lab.name}
+                </h3>
+                <p className="text-white/80 text-sm leading-snug">{lab.tagline}</p>
                 <div className="mt-6 flex justify-end">
-                   <div className="w-10 h-10 rounded-full bg-white/10 hover:bg-accent border border-white/20 flex items-center justify-center text-white transition-all cursor-pointer">
-                     <ChevronRight size={20} />
-                   </div>
+                  <div className="w-10 h-10 rounded-full bg-white/10 group-hover:bg-accent border border-white/20 flex items-center justify-center text-white transition-all">
+                    <ChevronRight size={20} />
+                  </div>
                 </div>
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
       </Container>

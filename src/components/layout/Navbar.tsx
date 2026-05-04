@@ -37,7 +37,7 @@ export default function Navbar() {
         { name: 'Mission & Vision', href: '/about/mission-vision' },
         { name: 'Laboratory Facility', href: '/about/laboratory-facility' },
         { name: 'Mecha Club', href: '/about/mecha-club' },
-        { name: 'Lab Facility', href: '#' },
+        { name: 'Lab Facility', href: '/about/lab-facility' },
       ],
     },
     { name: 'Faculty Member', href: '/faculty-member' },
