@@ -107,9 +107,8 @@ export const news = [
   }
 ];
 
-export const campusServices = [
-  { name: 'Transport Service', description: '25 AC buses covering Dhaka & nearby districts.', image: 'https://picsum.photos/seed/transport/800/600' },
-  { name: 'Hostel Facility', description: 'Safe, Smart residences five minutes from class.', image: 'https://picsum.photos/seed/hostel/800/600' },
-  { name: 'Scholarships & Waivers', description: 'Merit grants up to 100% + need-based aid calculator.', image: 'https://picsum.photos/seed/scholarship/800/600' },
+export const campusServices: { name: string; description: string; image: string; href?: string }[] = [
+  { name: 'Transport Service', description: 'Free buses on 10 routes covering Dhaka & nearby areas.', image: '/assets/transport/dsc01671.jpg', href: '/transport-service' },
+  { name: 'Scholarships & Waivers', description: 'Merit grants up to 100% + need-based aid calculator.', image: '/assets/scholarship-cover.jpg', href: '/admission/waiver-scholarship' },
   { name: 'Student Life', description: '50+ clubs, festivals, sports & volunteering.', image: 'https://picsum.photos/seed/studentlife/800/600' }
 ];
