@@ -111,15 +111,15 @@ export default function Navbar() {
         {/* Right Side - Socials with Dark Blue Background */}
         <div className="bg-[#2B3175] h-full flex items-center px-10">
           <div className="flex items-center gap-6 text-white text-[11px] font-medium">
-            <a href="#" className="flex items-center gap-1.5 hover:text-accent transition-colors">
+            <a href="https://www.facebook.com/SonargaonUniversity" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
               <Facebook size={12} fill="currentColor" />
               <span className="uppercase tracking-widest">Facebook</span>
             </a>
-            <a href="#" className="flex items-center gap-1.5 hover:text-accent transition-colors">
+            <a href="https://www.linkedin.com/school/14451954/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
               <Linkedin size={12} fill="currentColor" />
               <span className="uppercase tracking-widest">LinkedIn</span>
             </a>
-            <a href="#" className="flex items-center gap-1.5 hover:text-accent transition-colors">
+            <a href="https://www.youtube.com/@SonargaonUniversityEdu" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
               <Youtube size={14} fill="currentColor" />
               <span className="uppercase tracking-widest">Youtube</span>
             </a>

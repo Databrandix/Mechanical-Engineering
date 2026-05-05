@@ -126,12 +126,12 @@ export default function ContactPage() {
               </div>
               <h3 className="font-bold text-primary mb-2">Facebook</h3>
               <a
-                href="https://www.facebook.com/SonargaonUniversityOfficial"
+                href="https://www.facebook.com/SonargaonUniversity"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[14px] font-semibold text-accent hover:text-primary transition-colors"
               >
-                Sonargaon University Official
+                Sonargaon University
               </a>
             </div>
           </div>

@@ -19,6 +19,7 @@ export const programs: {
       'Thermal Engineering',
       'Design & Manufacturing',
       'Robotics & Automation',
+      'Energy Systems',
     ],
     cta: 'View More',
   },
