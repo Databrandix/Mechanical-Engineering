@@ -1,11 +1,27 @@
-export const programs = [
+export const programs: {
+  id: string;
+  title: string;
+  subtitle?: string;
+  duration?: string;
+  description: string;
+  image: string;
+  specializations?: string[];
+  cta: string;
+}[] = [
   {
     id: 'undergrad',
     title: 'Undergraduate',
-    description: 'The department offers B.Sc in Mechanical Engineering with specializations in Thermal, Design & Manufacturing, and Robotics & Automation.',
-    image: 'https://picsum.photos/seed/undergrad/800/600',
-    cta: 'View More'
-  }
+    subtitle: 'B.Sc in Mechanical Engineering',
+    duration: '4 Years · 8 Semesters',
+    description: 'Our flagship undergraduate program builds a strong foundation in core mechanical engineering — combining rigorous theory, modern lab practice, and design projects that prepare graduates for industry, research, and global postgraduate study.',
+    image: '/assets/site-school-1024x576.webp',
+    specializations: [
+      'Thermal Engineering',
+      'Design & Manufacturing',
+      'Robotics & Automation',
+    ],
+    cta: 'View More',
+  },
 ];
 
 export const quickLinks: { name: string; href: string; external?: boolean }[] = [
