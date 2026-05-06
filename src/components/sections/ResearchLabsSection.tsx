@@ -10,28 +10,19 @@ const LAB_FACILITY_PATH = '/about/lab-facility';
 
 export default function ResearchLabsSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
 
-  const updateScrollState = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 4);
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  // After a smooth scroll settles, jump silently across the duplicate boundary
+  // so forward and backward feel infinite.
+  const wrapIfNeeded = (el: HTMLElement) => {
+    const halfWidth = el.scrollWidth / 2;
+    if (halfWidth <= 0) return;
+    if (el.scrollLeft >= halfWidth) {
+      el.scrollLeft = el.scrollLeft - halfWidth;
+    } else if (el.scrollLeft < 1) {
+      el.scrollLeft = el.scrollLeft + halfWidth;
+    }
   };
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    updateScrollState();
-    el.addEventListener('scroll', updateScrollState, { passive: true });
-    window.addEventListener('resize', updateScrollState);
-    return () => {
-      el.removeEventListener('scroll', updateScrollState);
-      window.removeEventListener('resize', updateScrollState);
-    };
-  }, []);
 
   useEffect(() => {
     if (isPaused) return;
@@ -42,8 +33,8 @@ export default function ResearchLabsSection() {
       if (!firstCard) return;
       const gap = parseFloat(getComputedStyle(el).columnGap || '0') || 24;
       const step = firstCard.offsetWidth + gap;
-      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
-      el.scrollTo({ left: atEnd ? 0 : el.scrollLeft + step, behavior: 'smooth' });
+      el.scrollBy({ left: step, behavior: 'smooth' });
+      window.setTimeout(() => wrapIfNeeded(el), 700);
     }, 4000);
     return () => window.clearInterval(intervalId);
   }, [isPaused]);
@@ -55,7 +46,12 @@ export default function ResearchLabsSection() {
     if (!firstCard) return;
     const gap = parseFloat(getComputedStyle(el).columnGap || '0') || 24;
     const step = firstCard.offsetWidth + gap;
+    // For backward press at the very start, hop forward to the duplicate before scrolling
+    if (direction === 'left' && el.scrollLeft < 1) {
+      el.scrollLeft = el.scrollWidth / 2;
+    }
     el.scrollBy({ left: direction === 'left' ? -step : step, behavior: 'smooth' });
+    window.setTimeout(() => wrapIfNeeded(el), 700);
   };
 
   return (
@@ -73,22 +69,37 @@ export default function ResearchLabsSection() {
           <div className="hidden md:flex gap-4">
             <button
               onClick={() => scroll('left')}
-              disabled={!canScrollLeft}
               aria-label="Previous labs"
-              className="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-current"
+              className="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-white transition-all"
             >
               <ChevronLeft size={24} />
             </button>
             <button
               onClick={() => scroll('right')}
-              disabled={!canScrollRight}
               aria-label="Next labs"
-              className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-all shadow-lg disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-primary"
+              className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-all shadow-lg"
             >
               <ChevronRight size={24} />
             </button>
           </div>
         </div>
+
+        <div className="relative -mx-4 sm:mx-0">
+          {/* Mobile-only side arrows (overlay) */}
+          <button
+            onClick={() => scroll('left')}
+            aria-label="Previous labs"
+            className="md:hidden absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/95 shadow-lg border border-gray-200 flex items-center justify-center text-primary transition-opacity"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            aria-label="Next labs"
+            className="md:hidden absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-primary text-white shadow-lg flex items-center justify-center transition-opacity"
+          >
+            <ChevronRight size={20} />
+          </button>
 
         <div
           ref={scrollRef}
@@ -96,11 +107,11 @@ export default function ResearchLabsSection() {
           onMouseLeave={() => setIsPaused(false)}
           onTouchStart={() => setIsPaused(true)}
           onTouchEnd={() => setIsPaused(false)}
-          className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 pt-4 pb-8 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0"
+          className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 pt-4 pb-8 no-scrollbar px-4 sm:px-0"
         >
-          {labs.map((lab, idx) => (
+          {[...labs, ...labs].map((lab, idx) => (
             <motion.a
-              key={lab.slug}
+              key={`${lab.slug}-${idx}`}
               href={`${LAB_FACILITY_PATH}#${lab.slug}`}
               data-lab-card
               initial={{ opacity: 0, scale: 0.95 }}
@@ -108,7 +119,7 @@ export default function ResearchLabsSection() {
               viewport={{ once: true }}
               transition={{ delay: idx * 0.05 }}
               whileHover={{ y: -8 }}
-              className="snap-start shrink-0 w-[78%] sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] h-[460px] md:h-[500px] relative rounded-3xl overflow-hidden group shadow-xl bg-primary"
+              className="snap-center shrink-0 w-[88%] sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] h-[460px] md:h-[500px] relative rounded-3xl overflow-hidden group shadow-xl bg-primary"
             >
               {lab.heroImage ? (
                 <img
@@ -136,6 +147,7 @@ export default function ResearchLabsSection() {
               </div>
             </motion.a>
           ))}
+        </div>
         </div>
       </Container>
     </section>

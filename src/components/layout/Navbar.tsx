@@ -2,17 +2,19 @@
 
 import {useState, useEffect} from 'react';
 import {
-  Menu, X, Facebook, Linkedin, Youtube,
+  Menu, X, Search, Facebook, Linkedin, Youtube,
   GraduationCap, User, CheckCircle, ChevronDown, ChevronRight,
   LayoutGrid, BookOpen, Image as ImageIcon, Users, Globe,
   ClipboardList, Building2, Award,
 } from 'lucide-react';
 import Container from '../ui/Container';
+import { quickLinks } from '../../lib/data';
+import SearchOverlay from './SearchOverlay';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileQuickAccessOpen, setMobileQuickAccessOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [openMobileSection, setOpenMobileSection] = useState<string | null>(null);
 
   const toggleMobileSection = (name: string) => {
@@ -21,12 +23,6 @@ export default function Navbar() {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen((prev) => !prev);
-    setMobileQuickAccessOpen(false);
-  };
-
-  const toggleMobileQuickAccess = () => {
-    setMobileQuickAccessOpen((prev) => !prev);
-    setMobileMenuOpen(false);
   };
 
   useEffect(() => {
@@ -37,12 +33,15 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Lock body scroll while the mobile drawer is open
   useEffect(() => {
-    if (!mobileQuickAccessOpen) return;
-    const close = () => setMobileQuickAccessOpen(false);
-    window.addEventListener('scroll', close, { passive: true });
-    return () => window.removeEventListener('scroll', close);
-  }, [mobileQuickAccessOpen]);
+    if (!mobileMenuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileMenuOpen]);
 
   const navLinks = [
     {
@@ -148,17 +147,12 @@ export default function Navbar() {
       {/* 2. MIDDLE BAR - Logo & Action Buttons */}
       <div className={`transition-all duration-500 border-b ${isScrolled ? 'bg-white/95 backdrop-blur-md border-gray-50 py-2 shadow-[0_4px_20px_rgba(0,0,0,0.02)]' : 'bg-white border-gray-100 py-4'}`}>
         <Container className="flex justify-between items-center !max-w-[1600px]">
-          {/* Logo — square shield on mobile, wide wordmark on desktop */}
+          {/* Logo */}
           <a href="/" aria-label="Sonargaon University — Home" className="flex items-center shrink-0">
-            <img
-              src="/assets/su-shield-icon.png"
-              alt="Sonargaon University"
-              className={`block lg:hidden ${isScrolled ? 'h-9' : 'h-11'} w-auto object-contain transition-all duration-500`}
-            />
             <img
               src="/assets/su-colour-logo.png"
               alt="Sonargaon University"
-              className={`hidden lg:block ${isScrolled ? 'h-7 md:h-8' : 'h-8 md:h-9 xl:h-10'} w-auto max-w-[42vw] object-contain transition-all duration-500`}
+              className={`${isScrolled ? 'h-7 md:h-8' : 'h-8 md:h-9 xl:h-10'} w-auto max-w-[42vw] object-contain transition-all duration-500`}
             />
           </a>
 
@@ -224,8 +218,8 @@ export default function Navbar() {
               </button>
             </div>
 
-            {/* Apply Now — always visible (primary CTA) */}
-            <button className="flex items-center gap-2 px-3 lg:px-3 xl:px-5 py-2 xl:py-2.5 bg-gradient-to-r from-primary to-accent text-white rounded-lg text-xs lg:text-xs xl:text-sm font-bold whitespace-nowrap transition-all shadow-md hover:shadow-lg hover:brightness-110 shrink-0">
+            {/* Apply Now — desktop only (mobile users use the drawer button) */}
+            <button className="hidden lg:flex items-center gap-2 px-3 lg:px-3 xl:px-5 py-2 xl:py-2.5 bg-gradient-to-r from-primary to-accent text-white rounded-lg text-xs lg:text-xs xl:text-sm font-bold whitespace-nowrap transition-all shadow-md hover:shadow-lg hover:brightness-110 shrink-0">
               Apply Now
             </button>
 
@@ -255,23 +249,24 @@ export default function Navbar() {
               </div>
             )}
 
-            {/* Mobile Quick Access Toggle */}
-            <button
-              type="button"
-              aria-label="Quick access"
-              aria-expanded={mobileQuickAccessOpen}
-              onClick={toggleMobileQuickAccess}
-              className="lg:hidden p-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-primary border border-blue-100 transition-colors"
-            >
-              <LayoutGrid size={22} />
-            </button>
+            {/* Search Toggle — hidden while the mobile menu is open */}
+            {!mobileMenuOpen && (
+              <button
+                type="button"
+                aria-label="Search"
+                onClick={() => setSearchOpen(true)}
+                className="lg:hidden p-2 text-primary relative z-[70]"
+              >
+                <Search size={24} />
+              </button>
+            )}
 
-            {/* Mobile Menu Toggle */}
+            {/* Mobile Menu Toggle — sits above drawer when open */}
             <button
               type="button"
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={mobileMenuOpen}
-              className="lg:hidden p-2 text-primary"
+              className="lg:hidden p-2 text-primary relative z-[70]"
               onClick={toggleMobileMenu}
             >
               {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
@@ -331,55 +326,61 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Mobile Menu — slide-in drawer from right */}
+      {/* Mobile Menu — slide-in drawer from right (covers navbar; only hamburger X stays visible) */}
       {/* Backdrop */}
       <div
         onClick={() => setMobileMenuOpen(false)}
         aria-hidden="true"
-        className={`lg:hidden fixed inset-0 top-[72px] bg-black/40 z-30 transition-opacity duration-300 ${
+        className={`lg:hidden fixed inset-0 bg-black/40 z-[50] transition-opacity duration-300 ${
           mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       />
-      {/* Drawer */}
+      {/* Full-height drawer — slides in from right edge */}
       <div
-        className={`lg:hidden fixed top-[72px] right-0 bottom-0 w-[min(85vw,340px)] bg-white z-40 shadow-2xl overflow-y-auto transform transition-transform duration-300 ${
+        className={`lg:hidden fixed inset-y-0 right-0 w-[min(85vw,340px)] overflow-y-auto overscroll-contain bg-white z-[55] shadow-2xl transform transition-transform duration-300 pb-6 ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
         }`}
       >
-        <div className="p-6 flex flex-col gap-6">
+        {/* Menu header — aligned with navbar logo position */}
+        <div className="px-4 pt-8 pb-3">
+          <h3 className="text-base font-bold text-primary">Menu</h3>
+        </div>
+
+        {/* Nav list */}
+        <div className="px-4">
           {navLinks.map((link) => {
             const isOpen = openMobileSection === link.name;
             return (
-              <div key={link.name} className="border-b border-gray-100 pb-4">
+              <div key={link.name} className="border-b border-gray-100 last:border-b-0">
                 {link.hasDropdown ? (
                   <button
                     type="button"
                     onClick={() => toggleMobileSection(link.name)}
                     aria-expanded={isOpen}
-                    className="w-full text-xl font-bold text-[#2B3175] flex justify-between items-center"
+                    className="w-full py-3 text-[14px] font-semibold text-primary flex justify-between items-center"
                   >
                     {link.name}
                     <ChevronDown
-                      size={20}
+                      size={16}
                       className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
                     />
                   </button>
                 ) : (
                   <a
                     href={link.href}
-                    className="text-xl font-bold text-[#2B3175] flex justify-between items-center"
+                    className="block py-3 text-[14px] font-semibold text-primary"
                   >
                     {link.name}
                   </a>
                 )}
                 {link.children && isOpen && (
-                  <div className="mt-4 flex flex-col gap-3 pl-4">
+                  <div className="pb-2 pl-3 flex flex-col gap-1">
                     {link.children.map((child) => (
                       <a
                         key={child.name}
                         href={child.href}
                         {...(child.href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
-                        className="text-base font-semibold text-gray-700"
+                        className="py-1.5 text-[13px] font-medium text-gray-700 hover:text-accent transition-colors"
                       >
                         {child.name}
                       </a>
@@ -389,51 +390,60 @@ export default function Navbar() {
               </div>
             );
           })}
-          <div className="flex flex-col gap-3 mt-4">
-            <button className="w-full py-4 gradient-blue-magenta text-white rounded-xl font-bold shadow-lg shadow-accent/20 transition-all">
-              Apply Now
-            </button>
-            <button className="w-full py-4 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-xl font-bold transition-all shadow-sm border border-gray-100">
-              ERP Login
-            </button>
+        </div>
+
+        {/* Apply Now */}
+        <div className="px-4 pt-3">
+          <a
+            href="http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/create_smart_panel"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full py-3 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-bold text-center shadow-md transition-all"
+          >
+            Apply Now
+          </a>
+        </div>
+
+        {/* Quick Links section */}
+        <div className="mt-4 px-4 pt-4 border-t border-gray-100">
+          <h4 className="text-[13px] font-bold text-primary mb-2.5">Quick Links</h4>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+            {quickLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                {...(link.external && { target: '_blank', rel: 'noopener noreferrer' })}
+                className="text-[12.5px] text-gray-700 hover:text-accent transition-colors py-1"
+              >
+                {link.name}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Services section */}
+        <div className="mt-4 px-4 pt-4 pb-4 border-t border-gray-100">
+          <h4 className="text-[13px] font-bold text-primary mb-3">Services</h4>
+          <div className="grid grid-cols-3 gap-2">
+            {quickAccess.map(({ name, href, Icon }) => (
+              <a
+                key={name}
+                href={href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg bg-gray-50 hover:bg-accent/5 active:bg-accent/10 transition-colors text-center"
+              >
+                <Icon size={20} className="text-primary" />
+                <span className="text-[10.5px] font-semibold text-gray-700 leading-tight">
+                  {name}
+                </span>
+              </a>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Mobile Quick Access Popup */}
-      {mobileQuickAccessOpen && (
-        <>
-          {/* Click-outside backdrop */}
-          <div
-            className="lg:hidden fixed inset-0 top-[72px] bg-black/30 z-30"
-            onClick={() => setMobileQuickAccessOpen(false)}
-            aria-hidden="true"
-          />
-          {/* Popup card — anchored top-right under navbar */}
-          <div className="lg:hidden absolute right-3 top-[80px] z-40 w-[min(92vw,340px)] rounded-xl border border-gray-100 bg-white shadow-premium overflow-hidden">
-            <div className="px-4 pt-3 pb-2 border-b border-gray-100">
-              <h3 className="text-[11px] font-bold uppercase tracking-wider text-gray-500">
-                Quick Access
-              </h3>
-            </div>
-            <div className="grid grid-cols-3 gap-2 p-3">
-              {quickAccess.map(({ name, href, Icon }) => (
-                <a
-                  key={name}
-                  href={href}
-                  onClick={() => setMobileQuickAccessOpen(false)}
-                  className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-lg hover:bg-accent/5 active:bg-accent/10 transition-colors text-center"
-                >
-                  <Icon size={22} className="text-primary" />
-                  <span className="text-[11px] font-semibold text-gray-700 leading-tight">
-                    {name}
-                  </span>
-                </a>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
+      {/* Search Overlay */}
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </nav>
   );
 }
