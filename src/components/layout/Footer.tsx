@@ -32,7 +32,7 @@ export default function Footer() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const usefulLinks = ['Tution Fee', 'Faculty Staff', 'Alumni', 'Career', 'Event', 'Our Blogs'];
+  const usefulLinks = ['Tuition Fee', 'Faculty Staff', 'Alumni', 'Career', 'Event', 'Our Blogs'];
   const getInTouch = [
     'Contact',
     'Meet With Us',
