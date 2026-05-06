@@ -63,7 +63,7 @@ export default function ResearchLabsSection() {
               Research That Advances Technology
             </p>
             <h2 className="text-2xl md:text-4xl lg:text-5xl font-display font-bold text-primary leading-tight">
-              Cutting-Edge Research &amp; Labs
+              Research &amp; Labs
             </h2>
           </div>
           <div className="hidden md:flex gap-4">
@@ -119,7 +119,7 @@ export default function ResearchLabsSection() {
               viewport={{ once: true }}
               transition={{ delay: idx * 0.05 }}
               whileHover={{ y: -8 }}
-              className="snap-center shrink-0 w-[88%] sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] h-[460px] md:h-[500px] relative rounded-3xl overflow-hidden group shadow-xl bg-primary"
+              className="snap-center md:snap-start shrink-0 w-[88%] sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] h-[460px] md:h-[500px] relative rounded-3xl overflow-hidden group shadow-xl bg-primary"
             >
               {lab.heroImage ? (
                 <img
