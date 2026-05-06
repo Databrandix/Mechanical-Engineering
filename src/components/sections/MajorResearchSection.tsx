@@ -62,7 +62,7 @@ export default function MajorResearchSection() {
               alt="Research spotlight"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/45 to-primary/10 group-hover:via-primary/65 group-hover:to-primary/20 transition-all duration-500" />
             <div className="absolute bottom-0 left-0 p-6 md:p-8">
               <span className="inline-block px-3 py-1 bg-accent/90 text-white text-[10px] font-bold rounded-full mb-3 uppercase tracking-wider">
                 Featured Insight

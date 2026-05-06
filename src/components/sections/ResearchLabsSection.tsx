@@ -132,10 +132,10 @@ export default function ResearchLabsSection() {
                   <FlaskConical size={64} className="text-white/30" strokeWidth={1.25} />
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/45 to-primary/10 group-hover:via-primary/65 group-hover:to-primary/20 transition-all duration-500" />
 
               <div className="absolute bottom-0 left-0 p-6 md:p-8 w-full">
-                <h3 className="text-white text-xl md:text-2xl font-display font-bold mb-2 leading-tight">
+                <h3 className="text-white group-hover:text-accent transition-colors duration-300 text-xl md:text-2xl font-display font-bold mb-2 leading-tight">
                   {lab.name}
                 </h3>
                 <p className="text-white/80 text-sm leading-snug">{lab.tagline}</p>
