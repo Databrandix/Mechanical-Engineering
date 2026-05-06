@@ -106,28 +106,31 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Useful Link */}
-          <div>
-            <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Useful Link</h4>
-            <ul className="space-y-3 text-sm text-white/70">
-              {usefulLinks.map((link) => (
-                <li key={link}>
-                  <a href="#" className="hover:text-accent transition-colors">{link}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Mobile pairing — Useful Link + Get in Touch side-by-side; on md+ the wrapper dissolves and each takes its own grid column */}
+          <div className="grid grid-cols-2 gap-6 md:contents">
+            {/* Useful Link */}
+            <div>
+              <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Useful Link</h4>
+              <ul className="space-y-3 text-sm text-white/70">
+                {usefulLinks.map((link) => (
+                  <li key={link}>
+                    <a href="#" className="hover:text-accent transition-colors">{link}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Get in Touch */}
-          <div>
-            <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Get in Touch</h4>
-            <ul className="space-y-3 text-sm text-white/70">
-              {getInTouch.map((link) => (
-                <li key={link}>
-                  <a href="#" className="hover:text-accent transition-colors">{link}</a>
-                </li>
-              ))}
-            </ul>
+            {/* Get in Touch */}
+            <div>
+              <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Get in Touch</h4>
+              <ul className="space-y-3 text-sm text-white/70">
+                {getInTouch.map((link) => (
+                  <li key={link}>
+                    <a href="#" className="hover:text-accent transition-colors">{link}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Quick Link */}
