@@ -8,7 +8,7 @@ export const metadata = {
     'Official notice from Sonargaon University regarding the Summer-2026 Admission Fair Inauguration Ceremony.',
 };
 
-const NOTICE_FILE = '/assets/admission-notice-summer-2026.jpeg';
+const NOTICE_FILE = '/assets/admission-notice-summer-2026.pdf';
 
 export default function AdmissionNoticePage() {
   return (
@@ -119,18 +119,18 @@ export default function AdmissionNoticePage() {
                 Official Notice Document
               </h4>
               <p className="text-sm text-gray-600">
-                Download the original signed notice as an image.
+                Download the original signed notice as a PDF.
               </p>
             </div>
           </div>
 
           <a
             href={NOTICE_FILE}
-            download="SU-Admission-Notice-Summer-2026.jpeg"
+            download="SU-Admission-Notice-Summer-2026.pdf"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-md shadow-md hover:shadow-lg hover:brightness-110 transition-all whitespace-nowrap"
           >
             <Download size={18} />
-            Download Notice
+            Download Notice (PDF)
           </a>
         </div>
       </Container>
