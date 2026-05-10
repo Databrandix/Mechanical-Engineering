@@ -185,7 +185,7 @@ export default function Navbar() {
                     {link.hasDropdown && <ChevronDown size={12} className="hidden xl:block opacity-80" />}
                   </a>
                   {link.children && (
-                    <div className="invisible absolute left-0 top-full z-50 min-w-[280px] translate-y-2 rounded-lg border border-gray-100 bg-white py-3 opacity-0 shadow-premium transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                    <div className="invisible absolute left-0 top-full z-50 min-w-[280px] translate-y-2 rounded-lg border border-gray-100 bg-white py-3 opacity-0 shadow-premium transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                       {link.title && (
                         <div className="px-5 pt-1 pb-3 border-b border-gray-200">
                           <div className="text-[15px] font-bold text-gray-900">{link.title}</div>
@@ -266,7 +266,7 @@ export default function Navbar() {
                 >
                   <LayoutGrid size={20} />
                 </button>
-                <div className="invisible absolute right-0 top-full z-50 mt-2 w-[320px] translate-y-2 rounded-xl border border-gray-100 bg-white p-3 opacity-0 shadow-premium transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                <div className="invisible absolute right-0 top-full z-50 mt-2 w-[320px] translate-y-2 rounded-xl border border-gray-100 bg-white p-3 opacity-0 shadow-premium transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                   <div className="grid grid-cols-3 gap-1">
                     {quickAccess.map(({ name, href, external, Icon }) => (
                       <a
@@ -327,7 +327,7 @@ export default function Navbar() {
                       <span className="absolute bottom-0 left-0 w-0 h-1 bg-accent transition-all group-hover:w-full" />
                     </a>
                     {link.children && (
-                      <div className="invisible absolute left-0 top-full z-50 min-w-[280px] translate-y-2 rounded-lg border border-gray-100 bg-white py-3 opacity-0 shadow-premium transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                      <div className="invisible absolute left-0 top-full z-50 min-w-[280px] translate-y-2 rounded-lg border border-gray-100 bg-white py-3 opacity-0 shadow-premium transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                         {link.title && (
                           <div className="px-5 pt-1 pb-3 border-b border-gray-200">
                             <div className="text-[15px] font-bold text-gray-900">{link.title}</div>

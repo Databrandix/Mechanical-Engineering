@@ -35,17 +35,21 @@ export default function HeroSection() {
     <section className="relative min-h-[480px] md:min-h-[580px] lg:min-h-[660px] w-full overflow-hidden flex flex-col pt-[100px] md:pt-[140px] lg:pt-[200px] pb-20">
       {/* Background Images with subtle Ken Burns */}
       <div className="absolute inset-0 z-0">
-        {heroImages.map((image, index) => (
-          <motion.img
-            key={image.src}
-            src={image.src}
-            alt={image.alt}
-            animate={index === activeImage ? { scale: 1.06 } : { scale: 1 }}
-            transition={{ duration: 6, ease: 'easeOut' }}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${index === activeImage ? 'opacity-100' : 'opacity-0'}`}
-            referrerPolicy={image.src.startsWith('http') ? 'no-referrer' : undefined}
-          />
-        ))}
+        {heroImages.map((image, index) => {
+          const isActive = index === activeImage;
+          return (
+            <motion.img
+              key={image.src}
+              src={image.src}
+              alt={image.alt}
+              initial={{ scale: 1 }}
+              animate={isActive ? { scale: 1.06 } : { scale: 1 }}
+              transition={isActive ? { duration: 6, ease: 'easeOut' } : { duration: 0 }}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${isActive ? 'opacity-100' : 'opacity-0'}`}
+              referrerPolicy={image.src.startsWith('http') ? 'no-referrer' : undefined}
+            />
+          );
+        })}
         {/* Layered overlays for depth and readability */}
         <div className="absolute inset-0 bg-black/45" />
         <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/10 to-black/30" />

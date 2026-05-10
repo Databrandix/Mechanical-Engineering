@@ -178,6 +178,16 @@ export default function Footer() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
+              <noscript>
+                <a
+                  href="https://maps.google.com/maps?q=Sonargaon+University+Panthapath+Dhaka"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block bg-white/10 px-4 py-3 text-sm text-white/80 hover:text-white"
+                >
+                  View Sonargaon University location on Google Maps →
+                </a>
+              </noscript>
             </div>
           </div>
         </div>
@@ -203,7 +213,7 @@ export default function Footer() {
             >
               Terms of Use
             </a>
-            <a href="#" className="hover:underline">Sitemap</a>
+            <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" className="hover:underline">Sitemap</a>
           </div>
           <button
             onClick={scrollToTop}
