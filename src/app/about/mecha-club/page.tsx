@@ -189,7 +189,7 @@ export default function MechaClubPage() {
             <div className="absolute bottom-0 left-0 w-72 h-72 bg-white/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
           </div>
 
-          <div className="relative grid lg:grid-cols-[1fr_auto] gap-10 items-center p-8 md:p-12 lg:p-14">
+          <div className="relative grid lg:grid-cols-[1fr_auto] gap-10 items-center p-5 md:p-12 lg:p-14">
             <div>
               <div className="inline-flex items-center gap-2 mb-3">
                 <Network size={20} className="text-button-yellow" />
@@ -206,7 +206,7 @@ export default function MechaClubPage() {
               </p>
             </div>
 
-            <div className="flex lg:flex-col gap-3 shrink-0">
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
               <a
                 href="https://www.facebook.com/su.mechanical.engineering"
                 target="_blank"

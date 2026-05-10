@@ -149,10 +149,8 @@ export default function PageShell({
         </div>
       </section>
 
-      {/* Content area */}
-      <section className={contentClassName}>
-        <Container>{children}</Container>
-      </section>
+      {/* Content area — pages provide their own Container so they control width and padding */}
+      <section className={contentClassName}>{children}</section>
     </>
   );
 }

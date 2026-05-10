@@ -221,7 +221,7 @@ export default function Navbar() {
           )}
 
           {/* Right side: Secondary buttons + Apply Now + Mobile toggle */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 lg:gap-3 -mr-2 lg:mr-0">
             {/* Secondary buttons — hidden on lg when scrolled (dept nav takes priority) */}
             <div className={`flex items-center gap-3 ${isScrolled ? 'lg:hidden' : ''}`}>
               <a

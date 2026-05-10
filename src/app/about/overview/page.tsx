@@ -1,4 +1,5 @@
 import PageShell from '@/components/layout/PageShell';
+import Container from '@/components/ui/Container';
 
 export const metadata = {
   title: 'Overview — Department of Mechanical Engineering',
@@ -12,6 +13,7 @@ export default function OverviewPage() {
       title="Department Overview"
       subtitle="Shaping future leaders where creativity meets technology."
     >
+      <Container>
       <div className="space-y-6 text-[16px] md:text-[17px] leading-[1.85] text-gray-800 text-justify">
         <p>
           At the heart of innovation and excellence, the Department of Mechanical Engineering is committed to shaping future leaders in the field. Explore the dynamic world of mechanical engineering, where creativity meets technology, and where ideas transform into groundbreaking solutions.
@@ -29,6 +31,7 @@ export default function OverviewPage() {
           The Mechanical Engineers, who are interested in pursuing a career, have the attributes such as: the idea of what Mechanical Engineers work on, the function that Mechanical Engineers fulfill, the type of work environment, and the industries that they serve. Mechanical engineers are involved in a comprehensive variety of products like aircraft, automobile vehicles, industrial equipment and machinery, engines, turbines, pumps, mechanical handling systems, heating and cooling systems, consumer devices, and so on.
         </p>
       </div>
+      </Container>
     </PageShell>
   );
 }

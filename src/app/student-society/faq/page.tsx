@@ -1,4 +1,5 @@
 import PageShell from '@/components/layout/PageShell';
+import Container from '@/components/ui/Container';
 import FAQList from './FAQList';
 
 export const metadata = {
@@ -14,9 +15,11 @@ export default function FAQPage() {
       overline="Student Society"
       contentClassName="bg-gray-50 py-12 md:py-16"
     >
-      <div className="mx-auto max-w-[1400px]">
-        <FAQList />
-      </div>
+      <Container>
+        <div className="mx-auto max-w-[1400px]">
+          <FAQList />
+        </div>
+      </Container>
     </PageShell>
   );
 }

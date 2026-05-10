@@ -20,7 +20,7 @@ export default function MissionVisionPage() {
               <div className="absolute bottom-0 left-0 w-56 h-56 bg-white/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
             </div>
 
-            <div className="relative p-8 md:p-12 lg:p-14">
+            <div className="relative p-5 md:p-12 lg:p-14">
               <div className="grid gap-6 lg:gap-10 lg:grid-cols-[120px_1fr] items-start">
                 <div className="flex lg:block">
                   <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-2xl bg-button-yellow/15 border border-button-yellow/40 flex items-center justify-center shadow-lg">
@@ -52,7 +52,7 @@ export default function MissionVisionPage() {
               <div className="absolute bottom-0 right-0 w-56 h-56 bg-white/5 rounded-full blur-3xl translate-y-1/2 translate-x-1/4" />
             </div>
 
-            <div className="relative p-8 md:p-12 lg:p-14">
+            <div className="relative p-5 md:p-12 lg:p-14">
               <div className="grid gap-6 lg:gap-10 lg:grid-cols-[1fr_120px] items-start">
                 <div className="lg:order-1 lg:text-right">
                   <span className="inline-block text-button-yellow text-[11px] font-bold tracking-[0.3em] uppercase mb-2">

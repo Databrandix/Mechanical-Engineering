@@ -167,7 +167,7 @@ export default function LaboratoryFacilityPage() {
             <div className="absolute bottom-0 left-0 w-56 h-56 bg-white/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
           </div>
 
-          <div className="relative p-8 md:p-12 lg:p-14">
+          <div className="relative p-5 md:p-12 lg:p-14">
             <div className="text-center mb-10">
               <span className="inline-block text-button-yellow text-[11px] font-bold tracking-[0.3em] uppercase mb-2">
                 What Sets Us Apart

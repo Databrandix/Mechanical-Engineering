@@ -19,7 +19,7 @@ export default function MessageFromHeadPage() {
             <div className="absolute bottom-0 left-0 w-56 h-56 bg-white/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
           </div>
 
-          <div className="relative p-8 md:p-12 lg:p-16">
+          <div className="relative p-5 md:p-12 lg:p-16">
             <div className="grid gap-10 lg:gap-16 lg:grid-cols-[260px_1fr] items-start">
               {/* Profile column */}
               <div className="flex flex-col items-center text-center lg:sticky lg:top-32">
