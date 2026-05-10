@@ -99,7 +99,7 @@ export default function HeroSection() {
             onClick={() => setActiveImage(index)}
             aria-label={`Show slide ${index + 1}`}
             className={`relative h-7 w-[3px] rounded-full transition-all overflow-hidden ${
-              index === activeImage ? 'bg-white/30' : 'bg-white/15 hover:bg-white/25'
+              index === activeImage ? 'bg-white/50' : 'bg-white/40 hover:bg-white/60'
             }`}
           >
             {index === activeImage && (
@@ -124,7 +124,7 @@ export default function HeroSection() {
             transition={{ delay: 0.9 }}
             className="flex items-center justify-center gap-2 text-white/90 text-xs md:text-[13px] font-medium tracking-wide"
           >
-            <a href="#" className="hover:text-button-yellow flex items-center gap-1.5 transition-colors">
+            <a href="/" className="hover:text-button-yellow flex items-center gap-1.5 transition-colors">
               <Home size={13} /> Home
             </a>
             <ChevronRight size={13} className="opacity-50" />

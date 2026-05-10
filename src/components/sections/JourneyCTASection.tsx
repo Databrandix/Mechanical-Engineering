@@ -31,12 +31,20 @@ export default function JourneyCTASection() {
               Explore our programs, meet inspiring faculty, and become part of a thriving academic network. Your future begins here.
             </p>
             <div className="flex flex-wrap gap-4">
-              <button className="px-7 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-md shadow-xl transition-all hover:brightness-110 hover:-translate-y-0.5 hover:shadow-2xl">
+              <a
+                href="http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/create_smart_panel"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-7 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-md shadow-xl transition-all hover:brightness-110 hover:-translate-y-0.5 hover:shadow-2xl"
+              >
                 Apply Now
-              </button>
-              <button className="px-7 py-3 border-2 border-white text-white hover:bg-white hover:text-primary font-semibold rounded-md transition-all hover:-translate-y-0.5">
+              </a>
+              <a
+                href="/contact"
+                className="px-7 py-3 border-2 border-white text-white hover:bg-white hover:text-primary font-semibold rounded-md transition-all hover:-translate-y-0.5"
+              >
                 Request for Information
-              </button>
+              </a>
             </div>
           </motion.div>
         </Container>

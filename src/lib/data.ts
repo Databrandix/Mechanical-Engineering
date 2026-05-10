@@ -25,14 +25,14 @@ export const programs: {
   },
 ];
 
-export const quickLinks: { name: string; href: string; external?: boolean }[] = [
+export const quickLinks: { name: string; href: string; external?: boolean; disabled?: boolean }[] = [
   { name: 'Admission Requirements', href: '/admission/requirements' },
   { name: 'Tuition Fees', href: '/admission/tuition-fees' },
   { name: 'Transfer Credits', href: '/admission/transfer-credits' },
   { name: 'Waiver & Scholarship', href: '/admission/waiver-scholarship' },
-  { name: 'Student Portal', href: '#' },
-  { name: 'e-Learn', href: '#' },
-  { name: 'Library', href: '#' },
+  { name: 'Student Portal', href: '#', disabled: true },
+  { name: 'e-Learn', href: '#', disabled: true },
+  { name: 'Library', href: 'http://lib.su.edu.bd', external: true },
 ];
 
 export const notices = [

@@ -5,11 +5,6 @@ import Container from '../ui/Container';
 import {quickLinks} from '../../lib/data';
 import {Link as LinkIcon} from 'lucide-react';
 
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 export default function QuickLinksSection() {
   return (
     <section id="admission" className="py-8 md:py-16 bg-white overflow-hidden border-b border-gray-100">
@@ -18,7 +13,7 @@ export default function QuickLinksSection() {
            <LinkIcon className="text-accent" size={24} />
            <h3 className="text-xl font-display font-bold text-primary uppercase tracking-wider">Quick Links</h3>
         </div>
-        
+
         <div className="flex flex-wrap gap-3 pt-2 pb-1">
           {quickLinks.map((link, idx) => (
             <motion.a

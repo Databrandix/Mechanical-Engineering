@@ -7,11 +7,6 @@ import SectionTitle from '../ui/SectionTitle';
 import { campusServices } from '../../lib/data';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 export default function ServicesSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);

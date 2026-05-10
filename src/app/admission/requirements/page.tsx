@@ -5,7 +5,7 @@ import Container from '@/components/ui/Container';
 export const metadata = {
   title: 'Admission Requirements — Department of Mechanical Engineering',
   description:
-    'Admission requirements at Sonargaon University — Undergraduate, Graduate, and Diploma (Engineering) entry criteria.',
+    'Admission requirements at Sonargaon University — Undergraduate and Diploma (Engineering) entry criteria.',
 };
 
 const undergraduateRequirements = [
@@ -82,23 +82,6 @@ export default function AdmissionRequirementsPage() {
                 <p className="text-[14px] text-gray-700 leading-relaxed">{note}</p>
               </div>
             ))}
-          </div>
-        </section>
-
-        {/* ───── Graduate Programs ───── */}
-        <section className="mb-16 md:mb-20">
-          <SectionHeader Icon={GraduationCap} title="Graduate Programs" />
-
-          <div className="bg-white rounded-2xl border border-dashed border-gray-300 p-12 md:p-14 text-center max-w-3xl mx-auto">
-            <div className="inline-flex w-16 h-16 rounded-2xl bg-accent/10 items-center justify-center mb-5">
-              <GraduationCap size={28} className="text-accent" strokeWidth={1.75} />
-            </div>
-            <h3 className="font-display text-xl font-bold text-primary mb-2">
-              Currently Not Available
-            </h3>
-            <p className="text-gray-600 text-sm md:text-base max-w-md mx-auto">
-              Graduate programs in Mechanical Engineering are not offered at this time. Please check back later for updates.
-            </p>
           </div>
         </section>
 

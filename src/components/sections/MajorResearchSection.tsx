@@ -4,14 +4,9 @@ import {motion} from 'motion/react';
 import Container from '../ui/Container';
 import SectionTitle from '../ui/SectionTitle';
 import {researchAreas} from '../../lib/data';
-import {ChevronRight, Flame, Waves, Bot, Wrench, Layers, Leaf, Car} from 'lucide-react';
+import {ChevronRight, Flame, Waves, Bot, Wrench, Layers, Leaf, Car, type LucideIcon} from 'lucide-react';
 
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-const IconMap: any = {
+const IconMap: Record<string, LucideIcon> = {
   Flame, Waves, Bot, Wrench, Layers, Leaf, Car
 };
 
@@ -59,7 +54,7 @@ export default function MajorResearchSection() {
           >
             <img
               src="/assets/research-featured.jpg"
-              alt="Research spotlight"
+              alt="Robotics and industrial automation research at Sonargaon University ME Department"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/45 to-primary/10 group-hover:via-primary/65 group-hover:to-primary/20 transition-all duration-500" />

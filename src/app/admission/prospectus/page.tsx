@@ -100,7 +100,18 @@ export default function ProspectusPage() {
         {/* Program cards */}
         {filtered.length === 0 ? (
           <div className="bg-white rounded-2xl border border-dashed border-gray-300 p-12 text-center">
-            <p className="text-gray-500">No programs match your search.</p>
+            {active === 'Postgraduate' && !query ? (
+              <>
+                <p className="text-primary font-semibold text-base mb-1">
+                  Postgraduate prospectus coming soon
+                </p>
+                <p className="text-gray-500 text-sm">
+                  Postgraduate programs in Mechanical Engineering are not offered yet. Please check back later for updates.
+                </p>
+              </>
+            ) : (
+              <p className="text-gray-500">No programs match your search.</p>
+            )}
           </div>
         ) : (
           <div

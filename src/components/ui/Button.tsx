@@ -3,11 +3,6 @@
 import {ReactNode} from 'react';
 import {motion} from 'motion/react';
 
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 interface ButtonProps {
   children: ReactNode;
   variant?: 'yellow' | 'blue' | 'magenta' | 'outline' | 'ghost';

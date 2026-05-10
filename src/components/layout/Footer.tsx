@@ -32,16 +32,44 @@ export default function Footer() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const usefulLinks = ['Tuition Fee', 'Faculty Staff', 'Alumni', 'Career', 'Event', 'Our Blogs'];
-  const getInTouch = [
-    'Contact',
-    'Meet With Us',
-    'Privacy Statement',
-    'Newsletters',
-    'Location Map',
-    'FAQ',
+  type FooterLink = { name: string; href?: string; external?: boolean; disabled?: boolean };
+
+  const usefulLinks: FooterLink[] = [
+    { name: 'Tuition Fee', href: '/admission/tuition-fees' },
+    { name: 'Faculty Staff', href: '/faculty-member' },
+    { name: 'Alumni', href: '/student-society/alumni' },
+    { name: 'Career', href: 'https://su.edu.bd/welcome/career', external: true },
+    { name: 'Event', href: '/student-society/events' },
+    { name: 'Our Blogs', disabled: true },
   ];
-  const quickLinks = ['SU News', 'Forum', 'Students', 'Parents', 'Teachers', 'Administration'];
+
+  const getInTouch: FooterLink[] = [
+    { name: 'Contact', href: '/contact' },
+    { name: 'Meet With Us', href: '/contact' },
+    { name: 'Privacy Statement', href: 'https://su.edu.bd/about_us/privacy_policy', external: true },
+    { name: 'Newsletters', disabled: true },
+    { name: 'Location Map', href: '/contact' },
+    { name: 'FAQ', href: '/student-society/faq' },
+  ];
+
+  const quickLinks: FooterLink[] = [
+    { name: 'SU News', href: '/news' },
+    { name: 'Forum', disabled: true },
+    { name: 'Students', disabled: true },
+    { name: 'Parents', disabled: true },
+    { name: 'Teachers', href: 'https://su.edu.bd/faculty_members/all_faculty_details', external: true },
+    { name: 'Administration', href: 'https://su.edu.bd/About_us/new_administration/4', external: true },
+  ];
+
+  const renderFooterLink = (link: FooterLink) => (
+    <a
+      href={link.href || '#'}
+      {...(link.external && { target: '_blank', rel: 'noopener noreferrer' })}
+      className="hover:text-accent transition-colors"
+    >
+      {link.name}
+    </a>
+  );
 
   const socials = [
     { name: 'Facebook', Icon: Facebook, href: 'https://www.facebook.com/SonargaonUniversity' },
@@ -82,7 +110,7 @@ export default function Footer() {
               </li>
               <li className="flex gap-3">
                 <Phone size={18} className="text-accent shrink-0 mt-0.5" />
-                <span>880241010352</span>
+                <span>+880241010352</span>
               </li>
               <li className="flex gap-3">
                 <Mail size={18} className="text-accent shrink-0 mt-0.5" />
@@ -113,9 +141,7 @@ export default function Footer() {
               <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Useful Link</h4>
               <ul className="space-y-3 text-sm text-white/70">
                 {usefulLinks.map((link) => (
-                  <li key={link}>
-                    <a href="#" className="hover:text-accent transition-colors">{link}</a>
-                  </li>
+                  <li key={link.name}>{renderFooterLink(link)}</li>
                 ))}
               </ul>
             </div>
@@ -125,9 +151,7 @@ export default function Footer() {
               <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Get in Touch</h4>
               <ul className="space-y-3 text-sm text-white/70">
                 {getInTouch.map((link) => (
-                  <li key={link}>
-                    <a href="#" className="hover:text-accent transition-colors">{link}</a>
-                  </li>
+                  <li key={link.name}>{renderFooterLink(link)}</li>
                 ))}
               </ul>
             </div>
@@ -138,9 +162,7 @@ export default function Footer() {
             <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Quick Link</h4>
             <ul className="space-y-3 text-sm text-white/70">
               {quickLinks.map((link) => (
-                <li key={link}>
-                  <a href="#" className="hover:text-accent transition-colors">{link}</a>
-                </li>
+                <li key={link.name}>{renderFooterLink(link)}</li>
               ))}
             </ul>
           </div>
@@ -165,8 +187,22 @@ export default function Footer() {
             Copyright © 2026 All Rights Reserved by Sonargaon University
           </p>
           <div className="flex gap-6 text-xs text-white/50">
-            <a href="#" className="hover:underline">Privacy Statement</a>
-            <a href="#" className="hover:underline">Terms of Use</a>
+            <a
+              href="https://su.edu.bd/about_us/privacy_policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              Privacy Statement
+            </a>
+            <a
+              href="https://su.edu.bd/about_us/privacy_policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              Terms of Use
+            </a>
             <a href="#" className="hover:underline">Sitemap</a>
           </div>
           <button

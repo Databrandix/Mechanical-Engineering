@@ -210,7 +210,9 @@ export default function MechaClubPage() {
                 Join the Club
               </a>
               <a
-                href="#"
+                href="http://sue.su.edu.bd:5081/sonargaon_erp/student/convocation_registration/alumni"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-white/40 text-white font-semibold rounded-md hover:bg-white hover:text-primary hover:-translate-y-0.5 transition-all whitespace-nowrap"
               >
                 Alumni Portal

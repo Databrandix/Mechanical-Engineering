@@ -43,7 +43,13 @@ export default function Navbar() {
     };
   }, [mobileMenuOpen]);
 
-  const navLinks = [
+  const navLinks: {
+    name: string;
+    href: string;
+    hasDropdown?: boolean;
+    title?: string;
+    children?: { name: string; href: string; disabled?: boolean }[];
+  }[] = [
     {
       name: 'About',
       href: '#',
@@ -82,7 +88,7 @@ export default function Navbar() {
         { name: 'Notice Board', href: '/student-society/notice-board' },
         { name: 'Events', href: '/student-society/events' },
         { name: 'Alumni', href: '/student-society/alumni' },
-        { name: 'Visitor', href: '#' },
+        { name: 'Visitor', href: '#', disabled: true },
         { name: 'FAQ', href: '/student-society/faq' },
         { name: 'Syllabus', href: '/student-society/syllabus' },
         { name: 'Club list', href: '/student-society/club-list' },
@@ -91,18 +97,24 @@ export default function Navbar() {
     { name: 'Contact', href: '/contact' },
   ];
 
-  const topLinks = ['Virtual Tour', 'Admission', 'IQAC', 'Career', 'Archive', 'Contact'];
+  const topLinks: { name: string; href?: string; external?: boolean }[] = [
+    { name: 'Virtual Tour' },
+    { name: 'IQAC', href: 'https://su.edu.bd/iqac', external: true },
+    { name: 'Career', href: 'https://su.edu.bd/welcome/career', external: true },
+    { name: 'Archive' },
+    { name: 'Contact', href: '/contact' },
+  ];
 
-  const quickAccess = [
-    { name: 'Library', href: '#', Icon: BookOpen },
-    { name: 'Admission', href: '#', Icon: GraduationCap },
-    { name: 'Photo', href: '#', Icon: ImageIcon },
-    { name: 'Notice', href: '#', Icon: Users },
-    { name: 'ERP', href: '#', Icon: Globe },
-    { name: 'IQAC', href: '#', Icon: ClipboardList },
-    { name: 'Skill Jobs', href: '#', Icon: Building2 },
-    { name: 'Convoc. Reg.', href: '#', Icon: Award },
-    { name: 'Verification', href: '#', Icon: CheckCircle },
+  const quickAccess: { name: string; href?: string; external?: boolean; Icon: typeof BookOpen; disabled?: boolean }[] = [
+    { name: 'Library', href: 'http://lib.su.edu.bd', external: true, Icon: BookOpen },
+    { name: 'Admission', href: '/admission/requirements', Icon: GraduationCap },
+    { name: 'Photo', Icon: ImageIcon, disabled: true },
+    { name: 'Notice', href: 'https://su.edu.bd/welcome/notice', external: true, Icon: Users },
+    { name: 'ERP', href: 'http://sue.su.edu.bd:5081/sonargaon_erp/', external: true, Icon: Globe },
+    { name: 'IQAC', href: 'https://su.edu.bd/iqac', external: true, Icon: ClipboardList },
+    { name: 'Skill Jobs', href: 'https://su.edu.bd/welcome/career', external: true, Icon: Building2 },
+    { name: 'Convoc. Reg.', href: 'http://sue.su.edu.bd:5081/sonargaon_erp/student/convocation_registration', external: true, Icon: Award },
+    { name: 'Verification', Icon: CheckCircle, disabled: true },
   ];
 
   return (
@@ -114,9 +126,13 @@ export default function Navbar() {
           <Container className="w-full !max-w-[1600px] flex items-center">
             <div className="flex items-center gap-1 text-[11px] text-white/90 font-medium">
               {topLinks.map((link, idx) => (
-                <div key={link} className="flex items-center">
-                  <a href="#" className="hover:text-white transition-colors px-2 relative group uppercase tracking-wider">
-                    {link}
+                <div key={link.name} className="flex items-center">
+                  <a
+                    href={link.href || '#'}
+                    {...(link.external && { target: '_blank', rel: 'noopener noreferrer' })}
+                    className="hover:text-white transition-colors px-2 relative group uppercase tracking-wider"
+                  >
+                    {link.name}
                   </a>
                   {idx < topLinks.length - 1 && <span className="opacity-30">|</span>}
                 </div>
@@ -204,24 +220,42 @@ export default function Navbar() {
           <div className="flex items-center gap-3">
             {/* Secondary buttons — hidden on lg when scrolled (dept nav takes priority) */}
             <div className={`flex items-center gap-3 ${isScrolled ? 'lg:hidden' : ''}`}>
-              <button className="hidden xl:flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-bold whitespace-nowrap transition-all shadow-sm border border-gray-100">
+              <a
+                href="http://sue.su.edu.bd:5081/sonargaon_erp/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden xl:flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-bold whitespace-nowrap transition-all shadow-sm border border-gray-100"
+              >
                 <User size={16} className="text-accent" />
                 ERP
-              </button>
-              <button className="hidden xl:flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-bold whitespace-nowrap transition-all shadow-sm border border-gray-100">
+              </a>
+              <a
+                href="http://sue.su.edu.bd:5081/sonargaon_erp/student/convocation_registration"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden xl:flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-bold whitespace-nowrap transition-all shadow-sm border border-gray-100"
+              >
                 <GraduationCap size={16} className="text-accent" />
                 Convoc. Reg.
-              </button>
-              <button className="hidden md:flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-bold whitespace-nowrap transition-all shadow-sm border border-gray-100">
+              </a>
+              <button
+                type="button"
+                className="hidden md:flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-bold whitespace-nowrap transition-all shadow-sm border border-gray-100"
+              >
                 <CheckCircle size={16} className="text-accent" />
                 Verification
               </button>
             </div>
 
             {/* Apply Now — desktop only (mobile users use the drawer button) */}
-            <button className="hidden lg:flex items-center gap-2 px-3 lg:px-3 xl:px-5 py-2 xl:py-2.5 bg-gradient-to-r from-primary to-accent text-white rounded-lg text-xs lg:text-xs xl:text-sm font-bold whitespace-nowrap transition-all shadow-md hover:shadow-lg hover:brightness-110 shrink-0">
+            <a
+              href="http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/create_smart_panel"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden lg:flex items-center gap-2 px-3 lg:px-3 xl:px-5 py-2 xl:py-2.5 bg-gradient-to-r from-primary to-accent text-white rounded-lg text-xs lg:text-xs xl:text-sm font-bold whitespace-nowrap transition-all shadow-md hover:shadow-lg hover:brightness-110 shrink-0"
+            >
               Apply Now
-            </button>
+            </a>
 
             {/* Quick Access grid — only shown in scrolled (compact) nav */}
             {isScrolled && (
@@ -234,10 +268,11 @@ export default function Navbar() {
                 </button>
                 <div className="invisible absolute right-0 top-full z-50 mt-2 w-[320px] translate-y-2 rounded-xl border border-gray-100 bg-white p-3 opacity-0 shadow-premium transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
                   <div className="grid grid-cols-3 gap-1">
-                    {quickAccess.map(({ name, href, Icon }) => (
+                    {quickAccess.map(({ name, href, external, Icon }) => (
                       <a
                         key={name}
-                        href={href}
+                        href={href || '#'}
+                        {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
                         className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-lg text-center transition-colors hover:bg-accent/5"
                       >
                         <Icon size={22} className="text-primary" />
@@ -425,10 +460,11 @@ export default function Navbar() {
         <div className="mt-4 px-4 pt-4 pb-4 border-t border-gray-100">
           <h4 className="text-[13px] font-bold text-primary mb-3">Services</h4>
           <div className="grid grid-cols-3 gap-2">
-            {quickAccess.map(({ name, href, Icon }) => (
+            {quickAccess.map(({ name, href, external, Icon }) => (
               <a
                 key={name}
-                href={href}
+                href={href || '#'}
+                {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg bg-gray-50 hover:bg-accent/5 active:bg-accent/10 transition-colors text-center"
               >

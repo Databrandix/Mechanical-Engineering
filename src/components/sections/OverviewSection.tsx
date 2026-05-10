@@ -51,7 +51,7 @@ export default function OverviewSection() {
           >
             <img
               src="/assets/site-school-1024x576.webp"
-              alt="School students in computer lab"
+              alt="Sonargaon University Mechanical Engineering students engaged in laboratory work"
               className="h-auto w-full object-cover lg:h-[294px]"
             />
           </motion.div>
