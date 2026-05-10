@@ -1,6 +1,7 @@
 import { Phone, Mail, Globe, Facebook, MapPin, Building2, Clock } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
+import ContactForm from '@/components/forms/ContactForm';
 
 export const metadata = {
   title: 'Contact Us — Sonargaon University',
@@ -134,6 +135,23 @@ export default function ContactPage() {
                 Sonargaon University
               </a>
             </div>
+          </div>
+        </section>
+
+        {/* Send Us a Message */}
+        <section className="mb-14 md:mb-20">
+          <div className="text-center mb-8">
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-primary">
+              Send Us a Message
+            </h2>
+            <p className="mt-2 text-gray-600 text-[15px] max-w-xl mx-auto">
+              Have a question or suggestion? Fill out the form and we&rsquo;ll get back to you.
+            </p>
+            <div className="mt-3 mx-auto h-1 w-16 bg-accent rounded-full" />
+          </div>
+
+          <div className="mx-auto max-w-3xl">
+            <ContactForm />
           </div>
         </section>
 

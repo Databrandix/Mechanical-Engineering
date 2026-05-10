@@ -208,7 +208,9 @@ export default function MechaClubPage() {
 
             <div className="flex lg:flex-col gap-3 shrink-0">
               <a
-                href="#"
+                href="https://www.facebook.com/su.mechanical.engineering"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-button-yellow text-primary font-bold rounded-md shadow-lg hover:brightness-110 hover:-translate-y-0.5 transition-all whitespace-nowrap"
               >
                 <Users size={18} />
