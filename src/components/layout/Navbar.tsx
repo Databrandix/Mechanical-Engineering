@@ -119,7 +119,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="fixed w-full z-50 flex flex-col transition-all duration-300">
+    <nav className="fixed w-full z-[60] flex flex-col transition-all duration-300">
       {/* 1. TOP BAR */}
       <div className={`hidden md:flex items-center overflow-hidden transition-all duration-500 ${isScrolled ? 'h-0 opacity-0' : 'h-10 opacity-100'}`}>
         {/* Left Side - Magenta Background */}
@@ -221,7 +221,7 @@ export default function Navbar() {
           )}
 
           {/* Right side: Secondary buttons + Apply Now + Mobile toggle */}
-          <div className="flex items-center gap-1 lg:gap-3 -mr-2 lg:mr-0">
+          <div className="flex items-center gap-1 lg:gap-3 -mr-3 lg:mr-0">
             {/* Secondary buttons — hidden on lg when scrolled (dept nav takes priority) */}
             <div className={`flex items-center gap-3 ${isScrolled ? 'lg:hidden' : ''}`}>
               <a
