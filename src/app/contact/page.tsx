@@ -34,7 +34,7 @@ const campuses: Campus[] = [
     tag: 'City Campus-2',
     address: 'GP Ja-146, Wireless Gate, Mohakhali, Dhaka-1212',
     phone: '+880241020135',
-    email: 'mollahmasud.ch@gmail.com',
+    email: 'info@su.edu.bd',
   },
 ];
 
