@@ -51,10 +51,10 @@ export default function OverviewSection() {
             className="order-1 lg:order-2 overflow-hidden"
           >
             <Image
-              src="/assets/site-school-1024x576.webp"
+              src="/assets/overview-students.jpg"
               alt="Sonargaon University Mechanical Engineering students engaged in laboratory work"
-              width={1024}
-              height={576}
+              width={1600}
+              height={900}
               sizes="(min-width: 1024px) 540px, 100vw"
               className="h-auto w-full object-cover lg:h-[294px]"
             />

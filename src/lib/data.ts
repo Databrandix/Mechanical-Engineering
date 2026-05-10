@@ -14,7 +14,7 @@ export const programs: {
     subtitle: 'B.Sc in Mechanical Engineering',
     duration: '4 Years · 8 Semesters',
     description: 'Our flagship undergraduate program builds a strong foundation in core mechanical engineering — combining rigorous theory, modern lab practice, and design projects that prepare graduates for industry, research, and global postgraduate study.',
-    image: '/assets/site-school-1024x576.webp',
+    image: '/assets/program-undergraduate.png',
     specializations: [
       'Thermal Engineering',
       'Design & Manufacturing',
