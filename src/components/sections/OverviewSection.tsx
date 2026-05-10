@@ -22,7 +22,7 @@ export default function OverviewSection() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="space-y-6"
+            className="order-2 lg:order-1 space-y-6"
           >
             <p className="text-justify text-[16px] font-medium leading-[1.75] tracking-[0.035em] text-black">
               At the heart of innovation and excellence, the Department of Mechanical Engineering is committed to shaping future leaders in the field. Explore the dynamic world of mechanical engineering, where creativity meets technology, and where ideas transform into groundbreaking solutions. With a focus on interdisciplinary collaboration and real-world applications, our department prepares students to tackle complex challenges and contribute to the advancement of technology and society.
@@ -48,7 +48,7 @@ export default function OverviewSection() {
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="overflow-hidden"
+            className="order-1 lg:order-2 overflow-hidden"
           >
             <Image
               src="/assets/site-school-1024x576.webp"
