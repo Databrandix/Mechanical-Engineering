@@ -98,10 +98,9 @@ export default function ServicesSection() {
                   key={`${service.name}-${idx}`}
                   data-service-card
                   initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
+                  animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: (idx % campusServices.length) * 0.1 }}
-                  className={`snap-center shrink-0 w-[88%] sm:w-[calc(50%-0.5rem)] md:w-auto md:shrink relative group rounded-[28px] overflow-hidden shadow-xl aspect-[10/14] border border-gray-100 ${
+                  className={`snap-center shrink-0 w-[88%] sm:w-[calc(50%-0.5rem)] md:w-full md:max-w-[320px] aspect-[10/14] relative group rounded-[28px] overflow-hidden shadow-xl border border-gray-100 ${
                     isMobileDuplicate ? 'md:hidden' : ''
                   }`}
                 >

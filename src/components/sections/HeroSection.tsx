@@ -8,16 +8,16 @@ import {ChevronRight, Home} from 'lucide-react';
 
 const heroImages = [
   {
-    src: '/assets/hero-img.webp',
-    alt: 'Sonargaon University campus',
+    src: '/assets/hero-1.png',
+    alt: 'Sonargaon University Mechanical Engineering Department',
   },
   {
-    src: '/assets/hero-campus-2021.webp',
-    alt: 'Sonargaon University academic building',
+    src: '/assets/hero-2.jpg',
+    alt: 'Sonargaon University Mechanical Engineering students and faculty',
   },
   {
-    src: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=2070',
-    alt: 'Modern University Lab',
+    src: '/assets/hero-3.png',
+    alt: 'Sonargaon University Mechanical Engineering campus',
   },
 ];
 

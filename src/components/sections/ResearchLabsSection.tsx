@@ -116,8 +116,7 @@ export default function ResearchLabsSection() {
               href={`${LAB_FACILITY_PATH}#${lab.slug}`}
               data-lab-card
               initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: idx * 0.05 }}
               whileHover={{ y: -8 }}
               className="snap-center md:snap-start shrink-0 w-[88%] sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] h-[460px] md:h-[500px] relative rounded-3xl overflow-hidden group shadow-xl bg-primary"
