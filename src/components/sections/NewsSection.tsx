@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'motion/react';
 import Container from '../ui/Container';
 import SectionTitle from '../ui/SectionTitle';
@@ -26,11 +27,13 @@ export default function NewsSection() {
             viewport={{ once: true }}
             className="group"
           >
-            <div className="rounded-2xl overflow-hidden bg-gray-100 mb-5">
-              <img
+            <div className="relative rounded-2xl overflow-hidden bg-gray-100 mb-5 h-[280px] md:h-[400px]">
+              <Image
                 src={main.cover}
                 alt={main.title}
-                className="w-full h-[280px] md:h-[400px] object-cover transition-transform duration-700 group-hover:scale-105"
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
             </div>
             <div className="flex items-center gap-2 mb-2">
@@ -65,11 +68,13 @@ export default function NewsSection() {
                   </h4>
                   <span className="text-sm text-gray-500">{item.date}</span>
                 </div>
-                <div className="w-32 md:w-44 h-24 md:h-28 rounded-xl overflow-hidden shrink-0 bg-gray-100">
-                  <img
+                <div className="relative w-32 md:w-44 h-24 md:h-28 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+                  <Image
                     src={item.cover}
                     alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    fill
+                    sizes="(min-width: 768px) 176px, 128px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
               </motion.a>

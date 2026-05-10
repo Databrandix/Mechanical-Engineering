@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Users } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
@@ -32,11 +33,13 @@ export default function ClubListPage() {
               className="flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-shadow overflow-hidden"
             >
               {/* Cover image */}
-              <div className="aspect-[16/10] bg-gray-100 overflow-hidden">
-                <img
+              <div className="relative aspect-[16/10] bg-gray-100 overflow-hidden">
+                <Image
                   src={club.image}
                   alt={club.name}
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                  fill
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  className="object-cover transition-transform duration-700 hover:scale-105"
                 />
               </div>
 

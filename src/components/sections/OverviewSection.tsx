@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import {motion} from 'motion/react';
 import Container from '../ui/Container';
 
@@ -49,9 +50,12 @@ export default function OverviewSection() {
             viewport={{ once: true }}
             className="overflow-hidden"
           >
-            <img
+            <Image
               src="/assets/site-school-1024x576.webp"
               alt="Sonargaon University Mechanical Engineering students engaged in laboratory work"
+              width={1024}
+              height={576}
+              sizes="(min-width: 1024px) 540px, 100vw"
               className="h-auto w-full object-cover lg:h-[294px]"
             />
           </motion.div>

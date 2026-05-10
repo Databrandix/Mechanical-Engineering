@@ -1,6 +1,7 @@
 'use client';
 
 import {useState, useEffect} from 'react';
+import Image from 'next/image';
 import {
   Menu, X, Search, Facebook, Linkedin, Youtube,
   GraduationCap, User, CheckCircle, ChevronDown, ChevronRight,
@@ -165,9 +166,12 @@ export default function Navbar() {
         <Container className="flex justify-between items-center !max-w-[1600px]">
           {/* Logo */}
           <a href="/" aria-label="Sonargaon University — Home" className="flex items-center shrink-0">
-            <img
+            <Image
               src="/assets/su-colour-logo.png"
               alt="Sonargaon University"
+              width={400}
+              height={120}
+              priority
               className={`${isScrolled ? 'h-7 md:h-8' : 'h-8 md:h-9 xl:h-10'} w-auto max-w-[42vw] object-contain transition-all duration-500`}
             />
           </a>

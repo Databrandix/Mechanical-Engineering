@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Calendar, Tag, ArrowRight, ChevronRight, Home } from 'lucide-react';
 import Container from '@/components/ui/Container';
@@ -57,9 +58,13 @@ export default async function NewsDetailPage({
 
           {/* Cover image with badges overlay */}
           <div className="relative rounded-2xl overflow-hidden bg-gray-100 mb-8 md:mb-10">
-            <img
+            <Image
               src={article.cover}
               alt={article.shortTitle}
+              width={1200}
+              height={750}
+              sizes="(min-width: 1280px) 1200px, 100vw"
+              priority
               className="w-full h-auto"
             />
             <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 flex flex-wrap gap-2">
@@ -121,10 +126,12 @@ export default async function NewsDetailPage({
                 href={`/news/${item.slug}`}
                 className="relative rounded-2xl overflow-hidden min-h-[200px] group bg-gray-200"
               >
-                <img
+                <Image
                   src={item.cover}
                   alt={item.shortTitle}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  fill
+                  sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/40 to-transparent" />
                 <div className="absolute inset-0 p-5 flex flex-col justify-end">

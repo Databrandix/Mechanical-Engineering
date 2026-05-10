@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import {useEffect, useState} from 'react';
 import {motion} from 'motion/react';
 import Container from '../ui/Container';
@@ -38,16 +39,23 @@ export default function HeroSection() {
         {heroImages.map((image, index) => {
           const isActive = index === activeImage;
           return (
-            <motion.img
+            <motion.div
               key={image.src}
-              src={image.src}
-              alt={image.alt}
               initial={{ scale: 1 }}
               animate={isActive ? { scale: 1.06 } : { scale: 1 }}
               transition={isActive ? { duration: 6, ease: 'easeOut' } : { duration: 0 }}
-              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${isActive ? 'opacity-100' : 'opacity-0'}`}
-              referrerPolicy={image.src.startsWith('http') ? 'no-referrer' : undefined}
-            />
+              className={`absolute inset-0 transition-opacity duration-1000 ${isActive ? 'opacity-100' : 'opacity-0'}`}
+            >
+              <Image
+                src={image.src}
+                alt={image.alt}
+                fill
+                sizes="100vw"
+                priority={index === 0}
+                className="object-cover"
+                referrerPolicy={image.src.startsWith('http') ? 'no-referrer' : undefined}
+              />
+            </motion.div>
           );
         })}
         {/* Layered overlays for depth and readability */}

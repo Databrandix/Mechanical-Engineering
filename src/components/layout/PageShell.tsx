@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { ReactNode } from 'react';
 import { motion } from 'motion/react';
 import { ChevronRight, Home } from 'lucide-react';
@@ -46,15 +47,22 @@ export default function PageShell({
       <section className="relative min-h-[440px] md:min-h-[500px] w-full overflow-hidden flex flex-col pt-[110px] md:pt-[150px] pb-16">
         {/* Background image with Ken Burns drift */}
         <div className="absolute inset-0 z-0">
-          <motion.img
-            src={image}
-            alt=""
+          <motion.div
             initial={{ scale: 1 }}
             animate={{ scale: 1.06 }}
             transition={{ duration: 8, ease: 'easeOut' }}
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ objectPosition: imagePosition }}
-          />
+            className="absolute inset-0"
+          >
+            <Image
+              src={image}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+              style={{ objectPosition: imagePosition }}
+            />
+          </motion.div>
           {/* Layered overlays for depth and readability */}
           <div className="absolute inset-0 bg-black/45" />
           <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/10 to-black/30" />

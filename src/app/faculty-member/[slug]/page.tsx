@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Mail, Phone, IdCard, Building2, MapPin, Plus } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
@@ -106,12 +107,14 @@ export default async function FacultyDetailPage({
           <div className="grid lg:grid-cols-[auto_1fr_280px] gap-8 lg:gap-10 p-6 md:p-8 lg:p-10 items-start">
             {/* Photo */}
             <div className="flex justify-center lg:justify-start">
-              <div className="w-44 h-56 md:w-48 md:h-60 border-2 border-accent overflow-hidden bg-gray-50 flex items-center justify-center">
+              <div className="relative w-44 h-56 md:w-48 md:h-60 border-2 border-accent overflow-hidden bg-gray-50 flex items-center justify-center">
                 {member.photo ? (
-                  <img
+                  <Image
                     src={member.photo}
                     alt={member.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(min-width: 768px) 192px, 176px"
+                    className="object-cover"
                     style={{ objectPosition: '50% 12%' }}
                   />
                 ) : (

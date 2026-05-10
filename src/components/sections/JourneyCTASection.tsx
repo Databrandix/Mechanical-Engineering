@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'motion/react';
 import Container from '../ui/Container';
 
@@ -7,10 +8,14 @@ export default function JourneyCTASection() {
   return (
     <section className="relative">
       {/* Hero image with overlays */}
-      <div
-        className="relative h-[420px] md:h-[480px] bg-cover bg-center"
-        style={{ backgroundImage: "url(/assets/site-school-1024x576.webp)" }}
-      >
+      <div className="relative h-[420px] md:h-[480px] overflow-hidden">
+        <Image
+          src="/assets/site-school-1024x576.webp"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
+        />
         {/* Left dark overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/75 to-transparent" />
         {/* Bottom fade for smooth transition to footer */}

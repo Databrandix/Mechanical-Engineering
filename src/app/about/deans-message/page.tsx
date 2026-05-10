@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 
@@ -23,9 +24,12 @@ export default function DeansMessagePage() {
               {/* Profile column */}
               <div className="flex flex-col items-center text-center lg:sticky lg:top-32">
                 <div className="relative w-52 rounded-2xl overflow-hidden ring-4 ring-white/20 shadow-xl mb-5 bg-white/5">
-                  <img
+                  <Image
                     src="/assets/faculty-dean-kamal.png"
                     alt="Brig. Gen. (Retd) Prof. Habibur Rahman Kamal"
+                    width={400}
+                    height={500}
+                    sizes="208px"
                     className="block w-full h-auto"
                   />
                 </div>

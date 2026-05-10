@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import {
   Tag,
@@ -63,9 +64,13 @@ export default async function EventDetailPage({
           {/* Main column — cover + title + short description */}
           <article className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="overflow-hidden bg-gray-100">
-              <img
+              <Image
                 src={ev.image}
                 alt={ev.shortTitle}
+                width={1200}
+                height={750}
+                sizes="(min-width: 1280px) 800px, 100vw"
+                priority
                 className="block w-full h-auto"
               />
             </div>

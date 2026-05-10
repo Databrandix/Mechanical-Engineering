@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'motion/react';
 import { ArrowUpRight, Calendar } from 'lucide-react';
 import Container from '../ui/Container';
@@ -45,10 +46,12 @@ export default function EventsSection() {
               className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-premium flex flex-col group"
             >
               <div className="h-52 relative overflow-hidden bg-gray-100">
-                <img
+                <Image
                   src={event.image}
                   alt={event.shortTitle}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  fill
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 {event.date && (
                   <div className="absolute top-4 left-4 flex items-center gap-2 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-xl shadow-sm">

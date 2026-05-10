@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import Container from '../ui/Container';
@@ -104,11 +105,13 @@ export default function ServicesSection() {
                     isMobileDuplicate ? 'md:hidden' : ''
                   }`}
                 >
-                  <Wrapper {...wrapperProps} className="block w-full h-full">
-                    <img
+                  <Wrapper {...wrapperProps} className="relative block w-full h-full">
+                    <Image
                       src={service.image}
                       alt={service.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 88vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />

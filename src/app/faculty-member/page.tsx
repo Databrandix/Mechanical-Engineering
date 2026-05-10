@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
@@ -42,12 +43,20 @@ export default function FacultyMemberPage() {
               >
                 <div className="grid md:grid-cols-[220px_1fr] gap-6 md:gap-8 items-center p-6 md:p-8">
                   <div className="flex justify-center md:justify-start">
-                    <div className="w-48 h-48 md:w-52 md:h-52 rounded-lg overflow-hidden bg-gray-50 border-2 border-gray-100">
-                      <img
-                        src={leader.photo}
-                        alt={leader.name}
-                        className="w-full h-full object-contain"
-                      />
+                    <div className="relative w-48 h-48 md:w-52 md:h-52 rounded-lg overflow-hidden bg-gray-50 border-2 border-gray-100 flex items-center justify-center">
+                      {leader.photo ? (
+                        <Image
+                          src={leader.photo}
+                          alt={leader.name}
+                          fill
+                          sizes="(min-width: 768px) 208px, 192px"
+                          className="object-contain"
+                        />
+                      ) : (
+                        <span className="font-display text-4xl font-bold text-accent/40">
+                          {initialsOf(leader.name)}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -140,12 +149,14 @@ function FacultySection({
             className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 p-5 flex flex-col text-center"
           >
             <div className="mx-auto mb-4">
-              <div className="w-32 h-48 border-2 border-accent overflow-hidden bg-gray-50 flex items-center justify-center">
+              <div className="relative w-32 h-48 border-2 border-accent overflow-hidden bg-gray-50 flex items-center justify-center">
                 {member.photo ? (
-                  <img
+                  <Image
                     src={member.photo}
                     alt={member.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="128px"
+                    className="object-cover"
                     style={{ objectPosition: '50% 12%' }}
                   />
                 ) : (

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { Tag, Calendar, Clock, ArrowRight } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
@@ -102,10 +103,12 @@ export default function EventsPage() {
               >
                 {/* Image */}
                 <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
-                  <img
+                  <Image
                     src={ev.image}
                     alt={ev.shortTitle}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <span
                     className={`absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase shadow-sm ${statusStyles[ev.status]} bg-white/95`}

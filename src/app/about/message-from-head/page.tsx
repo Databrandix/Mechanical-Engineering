@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 
@@ -23,10 +24,12 @@ export default function MessageFromHeadPage() {
               {/* Profile column */}
               <div className="flex flex-col items-center text-center lg:sticky lg:top-32">
                 <div className="relative w-52 h-52 rounded-full overflow-hidden ring-4 ring-white/20 shadow-xl mb-5 bg-white/5">
-                  <img
+                  <Image
                     src="/assets/head-mostofa-hossain.png"
                     alt="Prof. Md. Mostofa Hossain"
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="208px"
+                    className="object-cover"
                   />
                 </div>
                 <h3 className="font-display text-xl font-bold mb-1">Prof. Md. Mostofa Hossain</h3>

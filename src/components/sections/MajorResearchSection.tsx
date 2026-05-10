@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import {motion} from 'motion/react';
 import Container from '../ui/Container';
 import SectionTitle from '../ui/SectionTitle';
@@ -52,10 +53,12 @@ export default function MajorResearchSection() {
             viewport={{ once: true }}
             className="lg:w-1/3 relative rounded-2xl md:rounded-[32px] overflow-hidden group shadow-2xl min-h-[360px] md:min-h-[480px] lg:min-h-0"
           >
-            <img
+            <Image
               src="/assets/research-featured.jpg"
               alt="Robotics and industrial automation research at Sonargaon University ME Department"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              fill
+              sizes="(min-width: 1024px) 33vw, 100vw"
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/45 to-primary/10 group-hover:via-primary/65 group-hover:to-primary/20 transition-all duration-500" />
             <div className="absolute bottom-0 left-0 p-6 md:p-8">

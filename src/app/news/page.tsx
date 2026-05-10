@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Calendar } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
@@ -26,11 +27,13 @@ export default function NewsListingPage() {
               href={`/news/${item.slug}`}
               className="group bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-xl transition-all hover:-translate-y-1 overflow-hidden flex flex-col"
             >
-              <div className="aspect-[16/10] overflow-hidden bg-gray-100">
-                <img
+              <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
+                <Image
                   src={item.cover}
                   alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  fill
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div className="p-5 flex-1 flex flex-col">

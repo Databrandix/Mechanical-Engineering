@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Briefcase, GraduationCap } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
@@ -24,11 +25,13 @@ export default function AlumniPage() {
               className="flex flex-col bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-lg transition-shadow overflow-hidden"
             >
               {/* Photo */}
-              <div className="aspect-[3/4] bg-gray-50 overflow-hidden">
-                <img
+              <div className="relative aspect-[3/4] bg-gray-50 overflow-hidden">
+                <Image
                   src={person.photo}
                   alt={person.name}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  className="object-cover"
                 />
               </div>
 

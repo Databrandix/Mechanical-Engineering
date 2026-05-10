@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
@@ -100,9 +101,12 @@ export default function LabFacilityPage() {
 
             {active.heroImage && (
               <div className="rounded-xl overflow-hidden border border-gray-100 mb-8">
-                <img
+                <Image
                   src={active.heroImage}
                   alt={active.name}
+                  width={1200}
+                  height={750}
+                  sizes="(min-width: 1024px) 800px, 100vw"
                   className="block w-full h-auto"
                 />
               </div>
@@ -115,12 +119,14 @@ export default function LabFacilityPage() {
                   {active.gallery.map((src) => (
                     <div
                       key={src}
-                      className="rounded-lg overflow-hidden border border-gray-100 aspect-[4/3] bg-gray-50"
+                      className="relative rounded-lg overflow-hidden border border-gray-100 aspect-[4/3] bg-gray-50"
                     >
-                      <img
+                      <Image
                         src={src}
                         alt={`${active.name} gallery image`}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                        fill
+                        sizes="(min-width: 768px) 33vw, 50vw"
+                        className="object-cover hover:scale-105 transition-transform duration-500"
                       />
                     </div>
                   ))}

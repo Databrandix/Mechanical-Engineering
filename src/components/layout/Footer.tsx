@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import {Facebook, Instagram, Linkedin, Youtube, Mail, MapPin, Phone, ArrowUp} from 'lucide-react';
 import Container from '../ui/Container';
 
@@ -92,9 +93,11 @@ export default function Footer() {
           {/* Brand + Contact */}
           <div className="space-y-5 lg:col-span-2">
             <div className="inline-block">
-              <img
+              <Image
                 src="/assets/footer-logo.png"
                 alt="Sonargaon University"
+                width={400}
+                height={120}
                 className="h-12 w-auto object-contain"
               />
             </div>

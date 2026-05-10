@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { Search, Download } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
@@ -130,7 +131,14 @@ export default function ProspectusPage() {
               >
                 {/* Cover */}
                 <div className="bg-gray-50">
-                  <img src={p.cover} alt={p.title} className="block w-full h-auto" />
+                  <Image
+                    src={p.cover}
+                    alt={p.title}
+                    width={600}
+                    height={800}
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    className="block w-full h-auto"
+                  />
                 </div>
 
                 {/* Body */}

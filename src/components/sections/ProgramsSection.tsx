@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'motion/react';
 import { GraduationCap, Clock, CheckCircle2, ArrowRight } from 'lucide-react';
 import Container from '../ui/Container';
@@ -35,11 +36,13 @@ export default function ProgramsSection() {
               className="grid items-center gap-8 md:gap-12 lg:gap-16 lg:grid-cols-2"
             >
               {/* Image — left */}
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl group">
-                <img
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl group h-[300px] md:h-[400px]">
+                <Image
                   src={program.image}
                   alt={program.title}
-                  className="w-full h-[300px] md:h-[400px] object-cover transition-transform duration-700 group-hover:scale-105"
+                  fill
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent pointer-events-none" />
                 {program.duration && (
