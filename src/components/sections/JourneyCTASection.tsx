@@ -10,7 +10,7 @@ export default function JourneyCTASection() {
       {/* Hero image with overlays */}
       <div className="relative h-[420px] md:h-[480px] overflow-hidden">
         <Image
-          src="/assets/site-school-1024x576.webp"
+          src="/assets/journey-cta.png"
           alt=""
           fill
           sizes="100vw"

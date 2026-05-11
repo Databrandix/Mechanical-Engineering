@@ -28,6 +28,8 @@ export default function FacultyMemberPage() {
     <PageShell
       title="Faculty Members"
       overline="Department"
+      image="/assets/faculty-hero.jpg"
+      imagePosition="top"
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

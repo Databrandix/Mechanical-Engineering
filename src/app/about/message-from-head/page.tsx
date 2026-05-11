@@ -22,7 +22,7 @@ export default function MessageFromHeadPage() {
           <div className="relative p-5 md:p-12 lg:p-16">
             <div className="grid gap-10 lg:gap-16 lg:grid-cols-[260px_1fr] items-start">
               {/* Profile column */}
-              <div className="flex flex-col items-center text-center lg:sticky lg:top-32">
+              <div className="flex flex-col items-center text-center">
                 <div className="relative w-52 h-52 rounded-full overflow-hidden ring-4 ring-white/20 shadow-xl mb-5 bg-white/5">
                   <Image
                     src="/assets/head-mostofa-hossain.png"
