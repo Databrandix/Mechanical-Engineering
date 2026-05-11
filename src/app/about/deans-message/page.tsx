@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function DeansMessagePage() {
   return (
-    <PageShell title="Dean's Message" overline="About" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell title="Dean's Message" overline="About" image="/assets/mission-vision-hero.jpg" imagePosition="center 3%" contentClassName="bg-gray-50 py-12 md:py-20">
       <Container>
         <div className="relative bg-primary text-white rounded-2xl shadow-2xl">
           {/* Decorative accents — clipped in their own wrapper so sticky works on children */}

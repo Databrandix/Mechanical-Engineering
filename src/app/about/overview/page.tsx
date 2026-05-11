@@ -12,6 +12,8 @@ export default function OverviewPage() {
     <PageShell
       title="Department Overview"
       subtitle="Shaping future leaders where creativity meets technology."
+      image="/assets/mission-vision-hero.jpg"
+      imagePosition="center 3%"
     >
       <Container>
       <div className="space-y-6 text-[16px] md:text-[17px] leading-[1.85] text-gray-800 text-justify">
