@@ -8,7 +8,6 @@ import MajorResearchSection from '@/components/sections/MajorResearchSection';
 import EventsSection from '@/components/sections/EventsSection';
 import NewsSection from '@/components/sections/NewsSection';
 import ServicesSection from '@/components/sections/ServicesSection';
-import JourneyCTASection from '@/components/sections/JourneyCTASection';
 
 export default function HomePage() {
   return (
@@ -23,7 +22,6 @@ export default function HomePage() {
       <EventsSection />
       <NewsSection />
       <ServicesSection />
-      <JourneyCTASection />
     </>
   );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Poppins, Montserrat, Hind_Siliguri } from 'next/font/google';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import JourneyCTASection from '@/components/sections/JourneyCTASection';
 import './globals.css';
 
 const poppins = Poppins({
@@ -75,6 +76,7 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col selection:bg-accent/30">
         <Navbar />
         <main className="flex-grow">{children}</main>
+        <JourneyCTASection />
         <Footer />
       </body>
     </html>
