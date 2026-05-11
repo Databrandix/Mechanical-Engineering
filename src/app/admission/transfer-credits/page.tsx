@@ -42,6 +42,8 @@ export default function TransferCreditsPage() {
     <PageShell
       title="Transfer Credits"
       overline="Admission"
+      image="/assets/admission-hero.jpg"
+      imagePosition="top"
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

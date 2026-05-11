@@ -15,6 +15,8 @@ export default function AdmissionNoticePage() {
     <PageShell
       title="Admission Notice"
       overline="Admission"
+      image="/assets/admission-hero.jpg"
+      imagePosition="top"
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

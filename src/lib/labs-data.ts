@@ -60,7 +60,7 @@ export const labs: Lab[] = [
     tagline: 'CAD, calculation, and modern engineering software.',
     description:
       'A high-tech facility with the latest software and hardware, the Computer Lab is where students learn computer-aided design (CAD) and perform complex engineering calculations. Industry-standard software is provided alongside dedicated workstations.',
-    heroImage: '/assets/labs/lab-computer-lab-1.jpg',
+    heroImage: '/assets/labs/lab-computer-lab.jpg',
     gallery: ['/assets/labs/lab-computer-lab-2.jpg'],
   },
   {
@@ -69,7 +69,7 @@ export const labs: Lab[] = [
     tagline: 'Simulate fluid flow and heat transfer with modern numerical tools.',
     description:
       'A specialised lab for advanced students to simulate fluid flow, heat transfer, and related phenomena using modern numerical analysis tools. The CFD lab supports research-level work with cluster-grade workstations and licensed simulation software.',
-    heroImage: '/assets/labs/lab-computer-lab-2.jpg',
+    heroImage: '/assets/labs/lab-cfd.jpg',
   },
   {
     slug: 'heat-thermodynamics-lab',
@@ -85,7 +85,7 @@ export const labs: Lab[] = [
     tagline: 'The visual language of engineering — from sketch to blueprint.',
     description:
       'The foundation of engineering design, the Engineering Drawing Lab is where students learn to visualise and draft technical blueprints both manually and using digital tools. The space is set up for both traditional drafting tables and modern CAD stations.',
-    heroImage: '/assets/labs/lab-computer-lab-2.jpg',
+    heroImage: '/assets/labs/lab-computer-lab.jpg',
   },
   {
     slug: 'material-testing-lab',

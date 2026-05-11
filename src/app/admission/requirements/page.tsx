@@ -40,6 +40,8 @@ export default function AdmissionRequirementsPage() {
     <PageShell
       title="Admission Requirements"
       overline="Admission"
+      image="/assets/admission-hero.jpg"
+      imagePosition="top"
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

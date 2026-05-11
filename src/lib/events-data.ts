@@ -43,7 +43,7 @@ export const events: DepartmentEvent[] = [
     category: 'Sports',
     status: 'Current',
     date: null,
-    image: '/assets/events/cricket-tournament-2026.png',
+    image: '/assets/events/cricket-tournament-2026.jpg',
     summary:
       'The Department of Mechanical Engineering welcomes all participants to this year’s tournament — a celebration of sportsmanship, team building, and departmental pride.',
     description: [
