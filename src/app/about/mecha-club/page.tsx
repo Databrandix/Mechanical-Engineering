@@ -82,8 +82,8 @@ export default function MechaClubPage() {
     <PageShell
       title="SU Mecha Club"
       overline="About"
-      image="/assets/mecha-hero.png"
-      imagePosition="center 30%"
+      image="/assets/mecha-hero.jpg"
+      imagePosition="center 45%"
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

@@ -42,7 +42,7 @@ export default function EventsPage() {
   }, [active]);
 
   return (
-    <PageShell title="Events" overline="Student" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell title="Events" overline="Student" image="/assets/events-hero.jpg" contentClassName="bg-gray-50 py-12 md:py-20">
       <Container>
         {/* Filter pills */}
         <div className="flex flex-wrap items-center gap-3 mb-3">

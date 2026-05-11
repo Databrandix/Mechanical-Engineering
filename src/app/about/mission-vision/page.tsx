@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function MissionVisionPage() {
   return (
-    <PageShell title="Mission & Vision" overline="About" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell title="Mission & Vision" overline="About" image="/assets/mission-vision-hero.jpg" imagePosition="center 3%" contentClassName="bg-gray-50 py-12 md:py-20">
       <Container>
         <div className="space-y-8 lg:space-y-10">
           {/* Mission Card — icon left */}

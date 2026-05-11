@@ -36,6 +36,8 @@ export default function LabFacilityPage() {
     <PageShell
       title="Lab Facilities"
       overline="About"
+      image="/assets/lab-hero.png"
+      imagePosition="center 25%"
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

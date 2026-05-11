@@ -102,7 +102,7 @@ const features = [
 
 export default function LaboratoryFacilityPage() {
   return (
-    <PageShell title="Laboratory Facility" overline="About" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell title="Laboratory Facility" overline="About" image="/assets/lab-hero.png" imagePosition="center 25%" contentClassName="bg-gray-50 py-12 md:py-20">
       <Container>
         {/* Intro */}
         <div className="max-w-3xl mx-auto text-center mb-12 md:mb-16">
