@@ -89,7 +89,7 @@ export default function Navbar() {
         { name: 'Notice Board', href: '/student-society/notice-board' },
         { name: 'Events', href: '/student-society/events' },
         { name: 'Alumni', href: '/student-society/alumni' },
-        { name: 'Visitor', href: '#', disabled: true },
+        { name: 'Visitor', href: '/student-society/visitor' },
         { name: 'FAQ', href: '/student-society/faq' },
         { name: 'Syllabus', href: '/student-society/syllabus' },
         { name: 'Club list', href: '/student-society/club-list' },
