@@ -28,3 +28,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .vercel
+
+# Local-only backup of pre-optimization images (Phase 1 of pagespeed work)
+/assets-original-backup/
