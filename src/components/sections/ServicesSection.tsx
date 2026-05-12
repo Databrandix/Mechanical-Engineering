@@ -59,8 +59,9 @@ export default function ServicesSection() {
     <section className="py-8 md:py-16 bg-white">
       <Container>
         <SectionTitle
+          eyebrow="Student Life & Support"
           title="Essential Campus Services"
-          subtitle="Quick links to hostels, buses, financial aid, and activities—because study is only part of the story."
+          subtitle="Quick links to transportation, financial aid, student support, and campus activities—everything you need beyond the classroom."
           centered
         />
 

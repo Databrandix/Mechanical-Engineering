@@ -6,7 +6,7 @@ import {
   Menu, X, Search, Facebook, Linkedin, Youtube,
   GraduationCap, User, CheckCircle, ChevronDown, ChevronRight,
   LayoutGrid, BookOpen, Image as ImageIcon, Users, Globe,
-  ClipboardList, Building2, Award,
+  ClipboardList, Building2, Award, Compass, Archive,
 } from 'lucide-react';
 import Container from '../ui/Container';
 import { quickLinks } from '../../lib/data';
@@ -110,12 +110,14 @@ export default function Navbar() {
     { name: 'Library', href: 'http://lib.su.edu.bd', external: true, Icon: BookOpen },
     { name: 'Admission', href: '/admission/requirements', Icon: GraduationCap },
     { name: 'Photo', Icon: ImageIcon, disabled: true },
+    { name: 'Virtual Tour', Icon: Compass, disabled: true },
+    { name: 'Archive', Icon: Archive, disabled: true },
     { name: 'Notice', href: 'https://su.edu.bd/welcome/notice', external: true, Icon: Users },
     { name: 'ERP', href: 'http://sue.su.edu.bd:5081/sonargaon_erp/', external: true, Icon: Globe },
     { name: 'IQAC', href: 'https://su.edu.bd/iqac', external: true, Icon: ClipboardList },
     { name: 'Skill Jobs', href: 'https://su.edu.bd/welcome/career', external: true, Icon: Building2 },
     { name: 'Convoc. Reg.', href: 'http://sue.su.edu.bd:5081/sonargaon_erp/student/convocation_registration', external: true, Icon: Award },
-    { name: 'Verification', Icon: CheckCircle, disabled: true },
+    { name: 'Verification', href: 'https://su.edu.bd/welcome/degree_verification', external: true, Icon: CheckCircle },
   ];
 
   return (

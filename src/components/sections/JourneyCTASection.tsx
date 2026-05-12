@@ -30,10 +30,10 @@ export default function JourneyCTASection() {
             className="max-w-xl text-white"
           >
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-5 leading-tight">
-              Start Your Journey<br />with Us
+              Shape Your Future with Excellence
             </h2>
             <p className="text-base md:text-lg text-white/85 mb-8 leading-relaxed">
-              Explore our programs, meet inspiring faculty, and become part of a thriving academic network. Your future begins here.
+              Join a vibrant academic community where innovation, leadership, and lifelong learning shape your path to success.
             </p>
             <div className="flex flex-wrap gap-4">
               <a

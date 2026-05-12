@@ -14,6 +14,7 @@ export default function NewsSection() {
     <section className="py-8 md:py-16 bg-gray-50 border-t border-gray-100">
       <Container>
         <SectionTitle
+          eyebrow="Department Updates"
           title="Latest News"
           subtitle="From hands-on workshops to breakthrough announcements—never miss what's shaping tomorrow's innovations."
         />

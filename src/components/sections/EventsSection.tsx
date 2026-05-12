@@ -19,6 +19,7 @@ export default function EventsSection() {
       <Container>
         <div className="flex justify-between items-end mb-6 md:mb-8">
           <SectionTitle
+            eyebrow="Campus Engagement"
             title="Departmental Events"
             subtitle="From hands-on workshops to breakthrough announcements—never miss what's shaping tomorrow's innovations at ME."
           />

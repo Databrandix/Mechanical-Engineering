@@ -60,9 +60,12 @@ export default function ResearchLabsSection() {
       <Container>
         <div className="flex justify-between items-end mb-6 md:mb-8">
           <div className="max-w-2xl">
-            <p className="text-accent font-semibold tracking-wider uppercase text-xs md:text-sm mb-1.5 md:mb-2">
-              Research That Advances Technology
-            </p>
+            <div className="flex items-center gap-3 mb-2">
+              <span className="w-10 h-[1.5px] bg-accent/40" />
+              <span className="text-accent font-bold tracking-[0.2em] uppercase text-[10px]">
+                Research That Advances Technology
+              </span>
+            </div>
             <h2 className="text-2xl md:text-4xl lg:text-5xl font-display font-bold text-primary leading-tight">
               Research &amp; Labs
             </h2>

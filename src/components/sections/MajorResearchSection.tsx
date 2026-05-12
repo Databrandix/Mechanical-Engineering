@@ -16,6 +16,7 @@ export default function MajorResearchSection() {
     <section className="py-8 md:py-16 bg-gray-50 border-y border-gray-100">
       <Container>
         <SectionTitle 
+          eyebrow="Research Focus Areas"
           title="Major Research Area" 
           centered
         />

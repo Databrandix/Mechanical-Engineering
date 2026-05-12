@@ -16,9 +16,12 @@ export default function ProgramsSection() {
           viewport={{ once: true }}
           className="text-center mb-10 md:mb-14"
         >
-          <span className="inline-block text-accent text-[11px] font-bold tracking-[0.3em] uppercase mb-2">
-            Academic Excellence
-          </span>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <span className="w-10 h-[1.5px] bg-accent/40" />
+            <span className="text-accent font-bold tracking-[0.2em] uppercase text-[10px]">
+              Academic Programs
+            </span>
+          </div>
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary">
             Programmes Offered
           </h2>

@@ -30,8 +30,8 @@ export const quickLinks: { name: string; href: string; external?: boolean; disab
   { name: 'Tuition Fees', href: '/admission/tuition-fees' },
   { name: 'Transfer Credits', href: '/admission/transfer-credits' },
   { name: 'Waiver & Scholarship', href: '/admission/waiver-scholarship' },
-  { name: 'Student Portal', href: '#', disabled: true },
-  { name: 'e-Learn', href: '#', disabled: true },
+  { name: 'ERP', href: 'http://sue.su.edu.bd:5081/sonargaon_erp/', external: true },
+  { name: 'Admission Notice', href: '/admission/notice' },
   { name: 'Library', href: 'http://lib.su.edu.bd', external: true },
 ];
 
