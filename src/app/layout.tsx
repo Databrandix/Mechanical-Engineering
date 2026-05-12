@@ -7,21 +7,21 @@ import './globals.css';
 
 const poppins = Poppins({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700'],
   variable: '--font-poppins',
   display: 'swap',
 });
 
 const montserrat = Montserrat({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['300', '400', '500', '600', '700'],
   variable: '--font-montserrat',
   display: 'swap',
 });
 
 const hindSiliguri = Hind_Siliguri({
   subsets: ['latin', 'bengali'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700'],
   variable: '--font-hind-siliguri',
   display: 'swap',
 });
