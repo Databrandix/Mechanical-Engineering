@@ -52,6 +52,8 @@ export default function HeroSection() {
                 fill
                 sizes="100vw"
                 priority={index === 0}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchPriority={index === 0 ? 'high' : 'low'}
                 className="object-cover"
                 referrerPolicy={image.src.startsWith('http') ? 'no-referrer' : undefined}
               />
