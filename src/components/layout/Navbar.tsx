@@ -169,7 +169,7 @@ export default function Navbar() {
           {/* Logo */}
           <a href="/" aria-label="Sonargaon University — Home" className="flex items-center shrink-0">
             <Image
-              src="/assets/su-colour-logo.png"
+              src="/assets/su-colour-logo.webp"
               alt="Sonargaon University"
               width={400}
               height={120}

@@ -13,7 +13,7 @@ export default function GalleryPage() {
     <PageShell
       title="Photo Gallery"
       overline="Campus Life"
-      image="/assets/mission-vision-hero.jpg"
+      image="/assets/mission-vision-hero.webp"
       imagePosition="center 3%"
       contentClassName="bg-gray-50 py-12 md:py-16"
     >

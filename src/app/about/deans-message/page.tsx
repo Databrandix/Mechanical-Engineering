@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function DeansMessagePage() {
   return (
-    <PageShell title="Dean's Message" overline="About" image="/assets/mission-vision-hero.jpg" imagePosition="center 3%" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell title="Dean's Message" overline="About" image="/assets/mission-vision-hero.webp" imagePosition="center 3%" contentClassName="bg-gray-50 py-12 md:py-20">
       <Container>
         <div className="relative bg-primary text-white rounded-2xl shadow-2xl">
           {/* Decorative accents — clipped in their own wrapper so sticky works on children */}
@@ -25,7 +25,7 @@ export default function DeansMessagePage() {
               <div className="flex flex-col items-center text-center lg:sticky lg:top-32">
                 <div className="relative w-52 rounded-2xl overflow-hidden ring-4 ring-white/20 shadow-xl mb-5 bg-white/5">
                   <Image
-                    src="/assets/faculty-dean-kamal.png"
+                    src="/assets/faculty-dean-kamal.webp"
                     alt="Brig. Gen. (Retd) Prof. Habibur Rahman Kamal"
                     width={400}
                     height={500}

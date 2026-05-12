@@ -15,7 +15,7 @@ export default function AlumniPage() {
     <PageShell
       title="Our Alumni"
       overline="Student Society"
-      image="/assets/alumni-hero.jpg"
+      image="/assets/alumni-hero.webp"
       contentClassName="bg-gray-50 py-12 md:py-16"
     >
       <Container>

@@ -44,7 +44,7 @@ export default function ContactPage() {
     <PageShell
       title="Contact Us"
       overline="Get in Touch"
-      image="/assets/contact-hero.jpg"
+      image="/assets/contact-hero.webp"
       imagePosition="center 30%"
       contentClassName="bg-gray-50 py-12 md:py-16"
     >

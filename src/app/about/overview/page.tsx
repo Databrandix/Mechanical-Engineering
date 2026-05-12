@@ -12,7 +12,7 @@ export default function OverviewPage() {
     <PageShell
       title="Department Overview"
       subtitle="Shaping future leaders where creativity meets technology."
-      image="/assets/mission-vision-hero.jpg"
+      image="/assets/mission-vision-hero.webp"
       imagePosition="center 3%"
     >
       <Container>

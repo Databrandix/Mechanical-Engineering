@@ -15,7 +15,7 @@ export default function VisitorsPage() {
     <PageShell
       title="Visitors"
       overline="Student Society"
-      image="/assets/mission-vision-hero.jpg"
+      image="/assets/mission-vision-hero.webp"
       imagePosition="center 3%"
       contentClassName="bg-gray-50 py-12 md:py-16"
     >

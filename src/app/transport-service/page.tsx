@@ -14,7 +14,7 @@ export default function TransportServicePage() {
     <PageShell
       title="Transport Service"
       overline="Campus Services"
-      image="/assets/transport/dsc01671.jpg"
+      image="/assets/transport/dsc01671.webp"
       contentClassName="bg-gray-50 py-12 md:py-16"
     >
       <Container>

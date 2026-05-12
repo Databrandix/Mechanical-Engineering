@@ -22,7 +22,7 @@ export const metadata = {
 const activities = [
   {
     Icon: Factory,
-    image: '/assets/mecha-field-visit.jpg',
+    image: '/assets/mecha-field-visit.webp',
     category: 'Industrial Exposure',
     title: 'Field Visits to Leading Plants',
     description:
@@ -30,7 +30,7 @@ const activities = [
   },
   {
     Icon: Laptop,
-    image: '/assets/mecha-workshop.jpg',
+    image: '/assets/mecha-workshop.webp',
     category: 'Skill Development',
     title: 'Hands-on Software Workshops',
     description:
@@ -38,7 +38,7 @@ const activities = [
   },
   {
     Icon: Mic,
-    image: '/assets/mecha-seminar.jpg',
+    image: '/assets/mecha-seminar.webp',
     category: 'Career Guidance',
     title: 'Seminars with Industry Experts',
     description:
@@ -46,7 +46,7 @@ const activities = [
   },
   {
     Icon: Lightbulb,
-    image: '/assets/mecha-project.jpg',
+    image: '/assets/mecha-project.webp',
     category: 'Innovation',
     title: 'Project Showcases & Tech Fairs',
     description:
@@ -54,7 +54,7 @@ const activities = [
   },
   {
     Icon: Sparkles,
-    image: '/assets/mecha-cocurricular.png',
+    image: '/assets/mecha-cocurricular.webp',
     category: 'Community',
     title: 'Co-curricular Engagement',
     description:
@@ -62,7 +62,7 @@ const activities = [
   },
   {
     Icon: Award,
-    image: '/assets/mecha-appreciation.jpg',
+    image: '/assets/mecha-appreciation.webp',
     category: 'Recognition',
     title: 'Awards & Industry Recognition',
     description:
@@ -82,7 +82,7 @@ export default function MechaClubPage() {
     <PageShell
       title="SU Mecha Club"
       overline="About"
-      image="/assets/mecha-hero.jpg"
+      image="/assets/mecha-hero.webp"
       imagePosition="center 45%"
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
@@ -122,7 +122,7 @@ export default function MechaClubPage() {
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl h-[360px] md:h-[440px]">
               <Image
-                src="/assets/mecha-club-1.jpg"
+                src="/assets/mecha-club-1.webp"
                 alt="Mecha Club members"
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"

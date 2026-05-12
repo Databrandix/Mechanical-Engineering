@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function MessageFromHeadPage() {
   return (
-    <PageShell title="Message from Head" overline="About" image="/assets/message-from-head-hero.png" imagePosition="center top" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell title="Message from Head" overline="About" image="/assets/message-from-head-hero.webp" imagePosition="center top" contentClassName="bg-gray-50 py-12 md:py-20">
       <Container>
         <div className="relative bg-primary text-white rounded-2xl shadow-2xl">
           {/* Decorative accents — clipped in their own wrapper so sticky works on children */}
@@ -25,7 +25,7 @@ export default function MessageFromHeadPage() {
               <div className="flex flex-col items-center text-center lg:sticky lg:top-32">
                 <div className="relative w-52 h-52 rounded-full overflow-hidden ring-4 ring-white/20 shadow-xl mb-5 bg-white/5">
                   <Image
-                    src="/assets/head-mostofa-hossain.png"
+                    src="/assets/head-mostofa-hossain.webp"
                     alt="Prof. Md. Mostofa Hossain"
                     fill
                     sizes="208px"

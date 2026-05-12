@@ -33,7 +33,7 @@ export const news: NewsArticle[] = [
     category: 'Industrial Visit',
     date: '01 Sep, 2025',
     isoDate: '2025-09-01',
-    cover: '/assets/news/bmtf-visit.jpg',
+    cover: '/assets/news/bmtf-visit.webp',
     meta: [
       { label: 'Participants', value: '35 Students & 4 Faculty Members' },
       { label: 'Location', value: 'BMTF, Gazipur & DUET Campus' },
@@ -55,7 +55,7 @@ export const news: NewsArticle[] = [
     category: 'Seminar',
     date: '17 Feb, 2024',
     isoDate: '2024-02-17',
-    cover: '/assets/news/ifsse-2024.jpg',
+    cover: '/assets/news/ifsse-2024.webp',
     meta: [
       { label: 'Event', value: 'IFSSE-2024' },
       { label: 'Location', value: 'BICC, Dhaka' },
@@ -76,7 +76,7 @@ export const news: NewsArticle[] = [
     category: 'Seminar',
     date: '2024',
     isoDate: '2024-06-15',
-    cover: '/assets/news/solidworks-seminar.jpg',
+    cover: '/assets/news/solidworks-seminar.webp',
     meta: [
       { label: 'Organising Partner', value: 'Sonargaon University Mecha Club (SUMEC)' },
       { label: 'Location', value: 'Sonargaon University Campus' },
@@ -98,7 +98,7 @@ export const news: NewsArticle[] = [
     category: 'Workshop',
     date: '2024',
     isoDate: '2024-04-10',
-    cover: '/assets/news/sumec-1st-anniversary.jpg',
+    cover: '/assets/news/sumec-1st-anniversary.webp',
     meta: [
       { label: 'Organiser', value: 'Sonargaon University Mecha Club (SUMEC)' },
       { label: 'Location', value: 'Mechanical Engineering Dept. Labs, SU' },
@@ -119,7 +119,7 @@ export const news: NewsArticle[] = [
     category: 'Achievement',
     date: '09 Jun, 2022',
     isoDate: '2022-06-09',
-    cover: '/assets/news/tici-training.jpg',
+    cover: '/assets/news/tici-training.webp',
     meta: [
       { label: 'Period', value: '14 May 2022 – 9 June 2022' },
       { label: 'Location', value: 'TICI, Ghorashal, Narshingdi' },

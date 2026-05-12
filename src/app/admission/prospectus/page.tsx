@@ -25,7 +25,7 @@ const programs: Program[] = [
     shortTitle: 'B. Sc. in Mechanical Engineering',
     department: 'Mechanical Engineering',
     level: 'Undergraduate',
-    cover: '/assets/prospectus-me-cover.jpeg',
+    cover: '/assets/prospectus-me-cover.webp',
     pdf: '/assets/prospectus-me.pdf',
   },
 ];
@@ -53,7 +53,7 @@ export default function ProspectusPage() {
     <PageShell
       title="Prospectus"
       overline="Admission"
-      image="/assets/admission-hero.jpg"
+      image="/assets/admission-hero.webp"
       imagePosition="top"
       contentClassName="bg-gray-50 py-12 md:py-20"
     >

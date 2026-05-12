@@ -8,15 +8,15 @@ import {ChevronRight, Home} from 'lucide-react';
 
 const heroImages = [
   {
-    src: '/assets/hero-1.png',
+    src: '/assets/hero-1.webp',
     alt: 'Sonargaon University Mechanical Engineering Department',
   },
   {
-    src: '/assets/hero-2.jpg',
+    src: '/assets/hero-2.webp',
     alt: 'Sonargaon University Mechanical Engineering students and faculty',
   },
   {
-    src: '/assets/hero-3.png',
+    src: '/assets/hero-3.webp',
     alt: 'Sonargaon University Mechanical Engineering campus',
   },
 ];

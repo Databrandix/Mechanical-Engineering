@@ -94,7 +94,7 @@ export default function Footer() {
           <div className="space-y-5 lg:col-span-2">
             <div className="inline-block">
               <Image
-                src="/assets/footer-logo.png"
+                src="/assets/footer-logo.webp"
                 alt="Sonargaon University"
                 width={400}
                 height={120}

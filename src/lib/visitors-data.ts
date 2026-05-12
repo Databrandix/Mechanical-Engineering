@@ -11,7 +11,7 @@ export const visitors: Visitor[] = [
   {
     id: 'dr-s-r-subramanya',
     name: 'Dr. S. R. Subramanya',
-    photo: '/assets/visitors/dr-s-r-subramanya.jpeg',
+    photo: '/assets/visitors/dr-s-r-subramanya.webp',
     role: 'Professor',
     affiliation: 'Visiting Scholar',
     quote: [
@@ -31,7 +31,7 @@ export const visitors: Visitor[] = [
   {
     id: 'md-abdul-latif',
     name: 'Professor Dr. Md. Abdul Latif',
-    photo: '/assets/visitors/md-abdul-latif.jpeg',
+    photo: '/assets/visitors/md-abdul-latif.webp',
     role: 'Vice-Chancellor',
     affiliation: 'Sonargaon University (SU)',
     quote: [
@@ -41,7 +41,7 @@ export const visitors: Visitor[] = [
   {
     id: 'mesbahuddin-ahmed',
     name: 'Professor Dr. Mesbahuddin Ahmed',
-    photo: '/assets/visitors/mesbahuddin-ahmed.jpeg',
+    photo: '/assets/visitors/mesbahuddin-ahmed.webp',
     role: 'Eminent Physicist & Former Vice-Chancellor',
     affiliation: 'Bangladesh Accreditation Council / Jagannath University',
     quote: [

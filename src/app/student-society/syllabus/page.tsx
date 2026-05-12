@@ -26,7 +26,7 @@ const syllabi: SyllabusItem[] = [
     shortTitle: 'B. Sc. in Mechanical Engineering',
     department: 'Mechanical Engineering',
     level: 'Undergraduate',
-    cover: '/assets/syllabus-me-cover.png',
+    cover: '/assets/syllabus-me-cover.webp',
     pdf: '/assets/syllabus-me.pdf',
     summary:
       'Detailed course-by-course syllabus covering the four-year B.Sc. programme — Thermal Engineering, Design & Manufacturing, Automotive Engineering, Robotics & Automation, Materials Science, and Renewable Energy Systems.',
@@ -53,7 +53,7 @@ export default function SyllabusPage() {
   }, [query, active]);
 
   return (
-    <PageShell title="Syllabus" overline="Student" image="/assets/syllabus-hero.jpg" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell title="Syllabus" overline="Student" image="/assets/syllabus-hero.webp" contentClassName="bg-gray-50 py-12 md:py-20">
       <Container>
         <div className="max-w-3xl mx-auto text-center mb-10 md:mb-12">
           <p className="text-base md:text-lg text-gray-700 leading-[1.85]">

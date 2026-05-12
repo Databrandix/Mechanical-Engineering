@@ -14,7 +14,7 @@ export const alumni: Alumni[] = [
     department: 'Mechanical Engineering',
     designation: 'Senior Superintendent Instructor (Retired)',
     company: 'BUET & Sonargaon University',
-    photo: '/assets/alumni/mm-sarwar.png',
+    photo: '/assets/alumni/mm-sarwar.webp',
   },
   {
     id: 'burhan-uddin',
@@ -22,7 +22,7 @@ export const alumni: Alumni[] = [
     department: 'Mechanical Engineering',
     designation: 'Semi Skilled Maintainer',
     company: 'Dhaka Mass Transit Company Limited (DMTCL)',
-    photo: '/assets/alumni/burhan-uddin.jpeg',
+    photo: '/assets/alumni/burhan-uddin.webp',
   },
   {
     id: 'mts-alam-ananto',
@@ -30,7 +30,7 @@ export const alumni: Alumni[] = [
     department: 'Mechanical Engineering',
     designation: 'Assistant Engineer (Mechanical)',
     company: 'BIWTC, Ministry of Shipping',
-    photo: '/assets/alumni/ananto.jpeg',
+    photo: '/assets/alumni/ananto.webp',
   },
   {
     id: 'salah-uddin',
@@ -38,7 +38,7 @@ export const alumni: Alumni[] = [
     department: 'Mechanical Engineering',
     designation: 'Junior Inspector',
     company: 'Dhaka Polytechnic Institute',
-    photo: '/assets/alumni/salah-uddin.png',
+    photo: '/assets/alumni/salah-uddin.webp',
   },
   {
     id: 'sabbir-hosen',
@@ -46,7 +46,7 @@ export const alumni: Alumni[] = [
     department: 'Mechanical Engineering',
     designation: 'Executive (QEHS)',
     company: 'RAK Ceramics (Bangladesh) Limited',
-    photo: '/assets/alumni/sabbir-hosen.png',
+    photo: '/assets/alumni/sabbir-hosen.webp',
   },
   {
     id: 'sadi-emon',
@@ -54,6 +54,6 @@ export const alumni: Alumni[] = [
     department: 'Mechanical Engineering',
     designation: 'Junior Instructor',
     company: 'UCEP Bangladesh',
-    photo: '/assets/alumni/sadi-emon.jpeg',
+    photo: '/assets/alumni/sadi-emon.webp',
   },
 ];

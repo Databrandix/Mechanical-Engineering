@@ -14,7 +14,7 @@ export const programs: {
     subtitle: 'B.Sc in Mechanical Engineering',
     duration: '4 Years · 8 Semesters',
     description: 'Our flagship undergraduate program builds a strong foundation in core mechanical engineering — combining rigorous theory, modern lab practice, and design projects that prepare graduates for industry, research, and global postgraduate study.',
-    image: '/assets/program-undergraduate.png',
+    image: '/assets/program-undergraduate.webp',
     specializations: [
       'Thermal Engineering',
       'Design & Manufacturing',
@@ -46,7 +46,7 @@ export const researchAreas = [
 ];
 
 export const campusServices: { name: string; description: string; image: string; href?: string }[] = [
-  { name: 'Transport Service', description: 'Free buses on 10 routes covering Dhaka & nearby areas.', image: '/assets/transport/dsc01671.jpg', href: '/transport-service' },
-  { name: 'Scholarships & Waivers', description: 'Merit grants up to 100% + need-based aid calculator.', image: '/assets/scholarship-cover.jpg', href: '/admission/waiver-scholarship' },
-  { name: 'Student Life', description: '50+ clubs, festivals, sports & volunteering.', image: '/assets/student-life-cover.jpg', href: '/student-society/club-list' }
+  { name: 'Transport Service', description: 'Free buses on 10 routes covering Dhaka & nearby areas.', image: '/assets/transport/dsc01671.webp', href: '/transport-service' },
+  { name: 'Scholarships & Waivers', description: 'Merit grants up to 100% + need-based aid calculator.', image: '/assets/scholarship-cover.webp', href: '/admission/waiver-scholarship' },
+  { name: 'Student Life', description: '50+ clubs, festivals, sports & volunteering.', image: '/assets/student-life-cover.webp', href: '/student-society/club-list' }
 ];

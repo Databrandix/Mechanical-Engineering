@@ -15,7 +15,7 @@ export default function ClubListPage() {
     <PageShell
       title="Student Clubs"
       overline="Student Society"
-      image="/assets/club-list-hero.jpg"
+      image="/assets/club-list-hero.webp"
       contentClassName="bg-gray-50 py-12 md:py-16"
     >
       <Container>

@@ -55,7 +55,7 @@ export default function MajorResearchSection() {
             className="lg:w-1/3 relative rounded-2xl md:rounded-[32px] overflow-hidden group shadow-2xl min-h-[360px] md:min-h-[480px] lg:min-h-0"
           >
             <Image
-              src="/assets/research-featured.jpg"
+              src="/assets/research-featured.webp"
               alt="Robotics and industrial automation research at Sonargaon University ME Department"
               fill
               sizes="(min-width: 1024px) 33vw, 100vw"

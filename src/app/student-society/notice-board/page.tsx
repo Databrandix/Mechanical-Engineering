@@ -34,7 +34,7 @@ export default function NoticeBoardPage() {
     <PageShell
       title="Notice Board"
       overline="Student"
-      image="/assets/notice-board-hero.jpg"
+      image="/assets/notice-board-hero.webp"
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

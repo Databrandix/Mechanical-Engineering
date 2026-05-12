@@ -40,7 +40,7 @@ export const galleryImages: GalleryImage[] = dimensions.map(([w, h], i) => {
   const n = String(i + 1).padStart(2, '0');
   return {
     id: `gallery-${n}`,
-    src: `/assets/gallery/gallery-${n}.jpg`,
+    src: `/assets/gallery/gallery-${n}.webp`,
     alt: `Campus life at Sonargaon University — moment ${n}`,
     width: w,
     height: h,

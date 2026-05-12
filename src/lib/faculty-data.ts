@@ -47,7 +47,7 @@ export const faculty: Faculty[] = [
     designation: 'Dean, Faculty of Science & Engineering',
     badge: 'Dean',
     type: 'leadership',
-    photo: '/assets/faculty-dean-kamal.png',
+    photo: '/assets/faculty-dean-kamal.webp',
   },
   {
     slug: 'mostofa-hossain',
@@ -56,7 +56,7 @@ export const faculty: Faculty[] = [
     secondaryTitle: 'Professor',
     badge: 'Head of Department',
     type: 'leadership',
-    photo: '/assets/faculty-head-mostofa.png',
+    photo: '/assets/faculty-head-mostofa.webp',
     email: 'mosto1956@gmail.com',
     suId: 'SU1603141114',
     phone: '01955529729',
@@ -140,7 +140,7 @@ export const faculty: Faculty[] = [
   // ───── Full-time faculty (#2–30 from the SU list) ─────
   {
     slug: 'amm-shamsul-alam', name: 'AMM Shamsul Alam', designation: 'Associate Professor',
-    type: 'full-time', photo: '/assets/faculty-shamsul-alam.png',
+    type: 'full-time', photo: '/assets/faculty-shamsul-alam.webp',
     email: 'ammshamsul@gmail.com', suId: 'SU2301064638', phone: '01769005367',
     personalInfo: [
       { label: 'Name', value: 'A M M Shamsul Alam' },
@@ -152,17 +152,17 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'ahatashamul-haque-khan-shuvo', name: 'Md. Ahatashamul Haque Khan Shuvo', designation: 'Assistant Professor',
-    type: 'full-time', photo: '/assets/faculty-ahatashamul-haque-khan-shuvo.png',
+    type: 'full-time', photo: '/assets/faculty-ahatashamul-haque-khan-shuvo.webp',
     email: 'mahskhan.khan@gmail.com', suId: 'SU1808301292', phone: '01955529728',
   },
   {
     slug: 'saikat-biswas', name: 'Saikat Biswas', designation: 'Assistant Professor',
-    type: 'full-time', photo: '/assets/faculty-saikat-biswas.png',
+    type: 'full-time', photo: '/assets/faculty-saikat-biswas.webp',
     email: 'saikatbiswas.kuet@gmail.com', suId: 'SU1808301294', phone: '01955529747',
   },
   {
     slug: 'minhaz-uddin', name: 'Md. Minhaz Uddin', designation: 'Assistant Professor',
-    type: 'full-time', photo: '/assets/faculty-minhaz-uddin.png',
+    type: 'full-time', photo: '/assets/faculty-minhaz-uddin.webp',
     email: 'minhazuddin137@gmail.com', suId: 'SU1901061311', phone: '01955529759',
     personalInfo: [
       { label: 'Name', value: 'Md. Minhaz Uddin' },
@@ -174,7 +174,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'niloy-sarkar', name: 'Niloy Sarkar', designation: 'Assistant Professor',
-    type: 'full-time', photo: '/assets/faculty-niloy-sarkar.png',
+    type: 'full-time', photo: '/assets/faculty-niloy-sarkar.webp',
     email: 'niloy24sumechanical@gmail.com', suId: 'SU1901171326', phone: '01955529829',
     personalInfo: [
       { label: 'Name', value: 'Niloy Sarkar' },
@@ -186,7 +186,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'nuruzzaman-rakib', name: 'Nuruzzaman Rakib', designation: 'Assistant Professor',
-    type: 'full-time', photo: '/assets/faculty-nuruzzaman-rakib.png',
+    type: 'full-time', photo: '/assets/faculty-nuruzzaman-rakib.webp',
     email: 'rakibzaman1463@gmail.com', suId: 'SU1902261336', phone: '01955529752',
     personalInfo: [
       { label: 'Name', value: 'Nuruzzaman Rakib' },
@@ -217,7 +217,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'shahinur-rahman', name: 'Shahinur Rahman', designation: 'Assistant Professor',
-    type: 'full-time', photo: '/assets/faculty-shahinur-rahman.png',
+    type: 'full-time', photo: '/assets/faculty-shahinur-rahman.webp',
     email: 'shahinursu2020@gmail.com', suId: 'SU2002261393', phone: '01958642411',
     personalInfo: [
       { label: 'Name', value: 'Shahinur Rahman' },
@@ -242,7 +242,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'faisal-junaeat-imrul', name: 'M. A. Faisal Junaeat Imrul', designation: 'Lecturer & Assistant Coordinator',
-    type: 'full-time', photo: '/assets/faculty-faisal-junaeat-imrul.png',
+    type: 'full-time', photo: '/assets/faculty-faisal-junaeat-imrul.webp',
     email: 'junaetfaisal@gmail.com', suId: 'SU2109012368', phone: '01700936248',
     personalInfo: [
       { label: 'Name', value: 'M. A. Faisal Junaeat Imrul' },
@@ -272,7 +272,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'navid-inan', name: 'Md. Navid Inan', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-navid-inan.png',
+    type: 'full-time', photo: '/assets/faculty-navid-inan.webp',
     email: 'navidinan.su@gmail.com', suId: 'SU2201011020', phone: '01958642475',
     personalInfo: [
       { label: 'Name', value: 'Md. Navid Inan' },
@@ -284,7 +284,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'misbah-uddin', name: 'Md. Misbah Uddin', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-misbah-uddin.jpg',
+    type: 'full-time', photo: '/assets/faculty-misbah-uddin.webp',
     email: 'mdmisbahuddin99@gmail.com', suId: 'SU2201011024', phone: '01836414499',
     personalInfo: [
       { label: 'Name', value: 'Md. Misbah Uddin' },
@@ -296,12 +296,12 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'ismail-hossain', name: 'G M Ismail Hossain', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-ismail-hossain.png',
+    type: 'full-time', photo: '/assets/faculty-ismail-hossain.webp',
     email: 'gmismail016@gmail.com', suId: 'SU2205101113', phone: '01958642572',
   },
   {
     slug: 'nahiyan-chowdhury', name: 'Nahiyan Chowdhury', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-nahiyan-chowdhury.png',
+    type: 'full-time', photo: '/assets/faculty-nahiyan-chowdhury.webp',
     email: 'nahiyanchowdhury22@gmail.com', suId: 'SU2208024537', phone: '01719987789',
     personalInfo: [
       { label: 'Name', value: 'Nahiyan Chowdhury' },
@@ -313,7 +313,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'washif-rahman', name: 'M. I. Washif Rahman', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-washif-rahman.png',
+    type: 'full-time', photo: '/assets/faculty-washif-rahman.webp',
     email: 'washif.me@gmail.com', suId: 'SU2208024540', phone: '01818060447',
     personalInfo: [
       { label: 'Name', value: 'M. I. Washif Rahman' },
@@ -326,7 +326,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'khandoker-mohammad-faisal-karim', name: 'Khandoker Mohammad Faisal Karim', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-khandoker-mohammad-faisal-karim.jpg',
+    type: 'full-time', photo: '/assets/faculty-khandoker-mohammad-faisal-karim.webp',
     suId: 'SU2209054559', phone: '01832385685',
     personalInfo: [
       { label: 'Name', value: 'Khandoker Mohammad Faisal Karim' },
@@ -352,7 +352,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'hasan-tareq-mahin', name: 'Hasan Tareq Mahin', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-hasan-tareq-mahin.png',
+    type: 'full-time', photo: '/assets/faculty-hasan-tareq-mahin.webp',
     email: 'hasantareq.me.su.22@gmail.com', suId: 'SU2209054566', phone: '01521408094',
     personalInfo: [
       { label: 'Name', value: 'Hasan Tareq Mahin' },
@@ -364,7 +364,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'rokiya-sultana', name: 'Rokiya Sultana', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-rokiya-sultana.png',
+    type: 'full-time', photo: '/assets/faculty-rokiya-sultana.webp',
     email: 'rokaiyasultana016@gmail.com', suId: 'SU2209274599', phone: '01627542002',
     personalInfo: [
       { label: 'Name', value: 'Rokiya Sultana' },
@@ -388,7 +388,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'ibrahim-khalil-apurba', name: 'Ibrahim Khalil Apurba', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-ibrahim-khalil-apurba.png',
+    type: 'full-time', photo: '/assets/faculty-ibrahim-khalil-apurba.webp',
     email: 'iamibrahim83@gmail.com', suId: 'SU2305084698', phone: '01957781158',
     personalInfo: [
       { label: 'Name', value: 'Ibrahim Khalil Apurba' },
@@ -430,7 +430,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'torikul-islam', name: 'Md. Toriqul Islam', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-torikul-islam.png',
+    type: 'full-time', photo: '/assets/faculty-torikul-islam.webp',
     email: 'torikruetme46@gmail.com', suId: 'SU2305084700', phone: '01957113357',
     personalInfo: [
       { label: 'Name', value: 'Md. Toriqul Islam' },
@@ -442,7 +442,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'munkasir-ahnaf-jisba', name: 'Munkasir Ahnaf Jisba', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-munkasir-ahnaf-jisba.png',
+    type: 'full-time', photo: '/assets/faculty-munkasir-ahnaf-jisba.webp',
     email: 'munkasirahnaf@proton.me', suId: 'SU2306074717', phone: '01860971800',
     personalInfo: [
       { label: 'Name', value: 'Munkasir Ahnaf Jisba' },
@@ -454,7 +454,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'faruque-hossain', name: 'Md. Faruque Hossain', designation: 'Lecturer & Assistant Coordinator',
-    type: 'full-time', photo: '/assets/faculty-faruque-hossain.png',
+    type: 'full-time', photo: '/assets/faculty-faruque-hossain.webp',
     email: 'faruque.su@gmail.com', suId: 'SU2307074726', phone: '01955529875',
     personalInfo: [
       { label: 'Name', value: 'Md. Faruque Hossain' },
@@ -507,12 +507,12 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'kazi-maskawath', name: 'Kazi Maskawath', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-kazi-maskawath.png',
+    type: 'full-time', photo: '/assets/faculty-kazi-maskawath.webp',
     email: 'kmayon13@gmail.com', suId: 'SU2309014747', phone: '01732827089',
   },
   {
     slug: 'sadman-hossain', name: 'Md. Sadman Hossain', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-sadman-hossain.png',
+    type: 'full-time', photo: '/assets/faculty-sadman-hossain.webp',
     email: 'sadmanhossainravin98@gmail.com', suId: 'SU2309014748', phone: '01675387100',
     personalInfo: [
       { label: 'Name', value: 'Md. Sadman Hossain' },
@@ -524,7 +524,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'towheedur-rahman-tanvir', name: 'Md. Towheedur Rahman Tanvir', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-towheedur-rahman-tanvir.png',
+    type: 'full-time', photo: '/assets/faculty-towheedur-rahman-tanvir.webp',
     email: 'tanviribnlutfor.su@gmail.com', suId: 'SU2407054882', phone: '01303039919',
     personalInfo: [
       { label: 'Name', value: 'Md. Towheedur Rahman Tanvir' },
@@ -572,17 +572,17 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'farhan-kadir-rafi', name: 'Farhan Kadir Rafi', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-farhan-kadir-rafi.png',
+    type: 'full-time', photo: '/assets/faculty-farhan-kadir-rafi.webp',
     email: 'farhankadir33@gmail.com', suId: 'SU2407054883', phone: '01827204025',
   },
   {
     slug: 'tahmid-hasan-oni', name: 'Tahmid Hasan Oni', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-tahmid-hasan-oni.png',
+    type: 'full-time', photo: '/assets/faculty-tahmid-hasan-oni.webp',
     email: 'tahmidoni70@gmail.com', suId: 'SU2407054884', phone: '01684837712',
   },
   {
     slug: 'nafis-iqbal', name: 'Nafis Iqbal', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-nafis-iqbal.png',
+    type: 'full-time', photo: '/assets/faculty-nafis-iqbal.webp',
     email: 'nafis.iqbal.su@gmail.com', suId: 'SU2407054885', phone: '01771551725',
     personalInfo: [
       { label: 'Name', value: 'Nafis Iqbal' },
@@ -595,12 +595,12 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'mahfuz-kabir', name: 'Md. Mahfuz Kabir', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-mahfuz-kabir.png',
+    type: 'full-time', photo: '/assets/faculty-mahfuz-kabir.webp',
     email: 'mahfuzkabir.su@gmail.com', suId: 'SU2407054886', phone: '01749352466',
   },
   {
     slug: 'shafi-uddin-bhuiyan', name: 'Shafi Uddin Bhuiyan', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-shafi-uddin-bhuiyan.png',
+    type: 'full-time', photo: '/assets/faculty-shafi-uddin-bhuiyan.webp',
     suId: 'SU2408134898', phone: '01707516365',
     personalInfo: [
       { label: 'Name', value: 'Shafi Uddin Bhuiyan' },
@@ -612,7 +612,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'mahfujul-islam', name: 'Md. Mahfujul Islam', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-mahfujul-islam.png',
+    type: 'full-time', photo: '/assets/faculty-mahfujul-islam.webp',
     phone: '01551182174',
     personalInfo: [
       { label: 'Name', value: 'Md. Mahfujul Islam' },
@@ -647,7 +647,7 @@ export const faculty: Faculty[] = [
   // ───── Full-time extras (no contact info supplied yet) ─────
   {
     slug: 'khakan-hasan-mim', name: 'Md. Khakan Hasan Mim', designation: 'Lecturer & Exam Coordinator',
-    type: 'full-time', photo: '/assets/faculty-khakan-hasan-mim.png',
+    type: 'full-time', photo: '/assets/faculty-khakan-hasan-mim.webp',
     phone: '01796176884',
     personalInfo: [
       { label: 'Name', value: 'Md. Khakan Hasan Mim' },
@@ -680,15 +680,15 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'biplob-hossain', name: 'Biplob Hossain', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-biplob-hossain.png',
+    type: 'full-time', photo: '/assets/faculty-biplob-hossain.webp',
   },
   {
     slug: 'feroze-alam', name: 'Md. Feroze Alam', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-feroze-alam.png',
+    type: 'full-time', photo: '/assets/faculty-feroze-alam.webp',
   },
   {
     slug: 'ikramul-hasib', name: 'Md. Ikramul Hasib', designation: 'Lecturer',
-    type: 'full-time', photo: '/assets/faculty-ikramul-hasib.jpg', phone: '01679114650',
+    type: 'full-time', photo: '/assets/faculty-ikramul-hasib.webp', phone: '01679114650',
     personalInfo: [
       { label: 'Name', value: 'Md. Ikramul Hasib' },
       { label: 'Designation', value: 'Lecturer' },
@@ -726,7 +726,7 @@ export const faculty: Faculty[] = [
   },
   {
     slug: 'anash-mia', name: 'Md. Anash Mia', designation: 'Lecturer (Contractual)',
-    type: 'part-time', photo: '/assets/faculty-anash-mia.png',
+    type: 'part-time', photo: '/assets/faculty-anash-mia.webp',
     email: 'anas108.kuet@gmail.com', suId: 'SU2305174709', phone: '01779763212',
     personalInfo: [
       { label: 'Name', value: 'Md. Anash Mia' },

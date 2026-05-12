@@ -13,7 +13,7 @@ export default function FAQPage() {
     <PageShell
       title="Frequently Asked Questions"
       overline="Student Society"
-      image="/assets/faq-hero.png"
+      image="/assets/faq-hero.webp"
       imagePosition="center 35%"
       contentClassName="bg-gray-50 py-12 md:py-16"
     >

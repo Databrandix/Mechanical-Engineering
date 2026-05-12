@@ -43,7 +43,7 @@ export const events: DepartmentEvent[] = [
     category: 'Sports',
     status: 'Current',
     date: null,
-    image: '/assets/events/cricket-tournament-2026.jpg',
+    image: '/assets/events/cricket-tournament-2026.webp',
     summary:
       'The Department of Mechanical Engineering welcomes all participants to this year’s tournament — a celebration of sportsmanship, team building, and departmental pride.',
     description: [
@@ -59,7 +59,7 @@ export const events: DepartmentEvent[] = [
     category: 'Industrial Visit',
     status: 'Past',
     date: '01 Sep, 2025',
-    image: '/assets/events/bmtf-industrial-visit.png',
+    image: '/assets/events/bmtf-industrial-visit.webp',
     summary:
       'Students and faculty of the ME Department visited BMTF for hands-on exposure to vehicle assembly, machining, and galvanizing operations.',
     description: [
@@ -76,7 +76,7 @@ export const events: DepartmentEvent[] = [
     category: 'Achievement',
     status: 'Past',
     date: null,
-    image: '/assets/events/faculty-farewell-phd.png',
+    image: '/assets/events/faculty-farewell-phd.webp',
     summary:
       'Celebrating the academic achievements of two faculty members departing for PhD studies at King Fahd University of Petroleum and Minerals, Saudi Arabia.',
     description: [
@@ -92,7 +92,7 @@ export const events: DepartmentEvent[] = [
     category: 'Partnership',
     status: 'Current',
     date: null,
-    image: '/assets/events/biin-partnership.png',
+    image: '/assets/events/biin-partnership.webp',
     summary:
       'A strategic collaboration with BIIN to enhance student competencies in Robotics, Automobile Technology, AI, and Data Science.',
     description: [
@@ -110,7 +110,7 @@ export const events: DepartmentEvent[] = [
     date: '20 Apr',
     time: '8:00 PM',
     venue: 'Facebook Live',
-    image: '/assets/events/career-webinar-abroad.jpg',
+    image: '/assets/events/career-webinar-abroad.webp',
     summary:
       'A specialised session for engineering students on strategic planning for higher studies and careers abroad — pathways, scholarships, and visa processing.',
     description: [
@@ -133,7 +133,7 @@ export const events: DepartmentEvent[] = [
     status: 'Past',
     date: '24 Sep, 2023',
     venue: 'Sonargaon University Campus',
-    image: '/assets/events/project-exhibition-2023.png',
+    image: '/assets/events/project-exhibition-2023.webp',
     summary:
       "The Department celebrated World Mechanical Engineer's Day with a grand Project Exhibition showcasing innovative student solutions and a keynote on the future of Mechanical Engineering.",
     description: [
