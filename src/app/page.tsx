@@ -1,13 +1,39 @@
+import dynamic from 'next/dynamic';
 import HeroSection from '@/components/sections/HeroSection';
-import OverviewSection from '@/components/sections/OverviewSection';
-import ProgramsSection from '@/components/sections/ProgramsSection';
-import QuickLinksSection from '@/components/sections/QuickLinksSection';
-import NoticesSection from '@/components/sections/NoticesSection';
-import ResearchLabsSection from '@/components/sections/ResearchLabsSection';
-import MajorResearchSection from '@/components/sections/MajorResearchSection';
-import EventsSection from '@/components/sections/EventsSection';
-import NewsSection from '@/components/sections/NewsSection';
-import ServicesSection from '@/components/sections/ServicesSection';
+
+function sectionSkeleton(minHeight: string) {
+  return function Skeleton() {
+    return <div className={`${minHeight} bg-white`} aria-hidden="true" />;
+  };
+}
+
+const OverviewSection = dynamic(() => import('@/components/sections/OverviewSection'), {
+  loading: sectionSkeleton('min-h-[500px]'),
+});
+const ProgramsSection = dynamic(() => import('@/components/sections/ProgramsSection'), {
+  loading: sectionSkeleton('min-h-[500px]'),
+});
+const QuickLinksSection = dynamic(() => import('@/components/sections/QuickLinksSection'), {
+  loading: sectionSkeleton('min-h-[300px]'),
+});
+const NoticesSection = dynamic(() => import('@/components/sections/NoticesSection'), {
+  loading: sectionSkeleton('min-h-[400px]'),
+});
+const ResearchLabsSection = dynamic(() => import('@/components/sections/ResearchLabsSection'), {
+  loading: sectionSkeleton('min-h-[500px]'),
+});
+const MajorResearchSection = dynamic(() => import('@/components/sections/MajorResearchSection'), {
+  loading: sectionSkeleton('min-h-[500px]'),
+});
+const EventsSection = dynamic(() => import('@/components/sections/EventsSection'), {
+  loading: sectionSkeleton('min-h-[500px]'),
+});
+const NewsSection = dynamic(() => import('@/components/sections/NewsSection'), {
+  loading: sectionSkeleton('min-h-[500px]'),
+});
+const ServicesSection = dynamic(() => import('@/components/sections/ServicesSection'), {
+  loading: sectionSkeleton('min-h-[400px]'),
+});
 
 export default function HomePage() {
   return (
