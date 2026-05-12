@@ -51,7 +51,7 @@ export default function OverviewSection() {
             className="order-1 lg:order-2 overflow-hidden"
           >
             <Image
-              src="/assets/overview-students.jpg"
+              src="/assets/homeimg.png"
               alt="Sonargaon University Mechanical Engineering students engaged in laboratory work"
               width={1600}
               height={900}
