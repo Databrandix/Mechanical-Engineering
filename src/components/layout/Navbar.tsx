@@ -109,7 +109,7 @@ export default function Navbar() {
   const quickAccess: { name: string; href?: string; external?: boolean; Icon: typeof BookOpen; disabled?: boolean }[] = [
     { name: 'Library', href: 'http://lib.su.edu.bd', external: true, Icon: BookOpen },
     { name: 'Admission', href: '/admission/requirements', Icon: GraduationCap },
-    { name: 'Photo', Icon: ImageIcon, disabled: true },
+    { name: 'Photo', href: '/gallery', Icon: ImageIcon },
     { name: 'Virtual Tour', Icon: Compass, disabled: true },
     { name: 'Archive', Icon: Archive, disabled: true },
     { name: 'Notice', href: 'https://su.edu.bd/welcome/notice', external: true, Icon: Users },
