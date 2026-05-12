@@ -30,7 +30,7 @@ const SITE_URL = 'https://mechanical-engineering-olive.vercel.app';
 const SITE_NAME = 'Sonargaon University — ME Department';
 const SITE_DESCRIPTION =
   'Department of Mechanical Engineering at Sonargaon University — programs, faculty, research areas, labs, admissions, and campus services.';
-const OG_IMAGE = '/assets/hero-campus-2021.webp';
+const OG_IMAGE = '/assets/og-banner.webp';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
         url: OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: 'Sonargaon University Mechanical Engineering Department campus',
+        alt: 'Sonargaon University — Department of Mechanical Engineering',
       },
     ],
   },
