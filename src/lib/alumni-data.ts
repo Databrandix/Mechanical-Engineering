@@ -1,5 +1,6 @@
 export interface Alumni {
   id: string;
+  studentId: string;
   name: string;
   department: string;
   designation: string;
@@ -10,6 +11,7 @@ export interface Alumni {
 export const alumni: Alumni[] = [
   {
     id: 'mm-sarwar',
+    studentId: 'BME1502006136',
     name: 'M. M. Sarwar',
     department: 'Mechanical Engineering',
     designation: 'Senior Superintendent Instructor (Retired)',
@@ -18,6 +20,7 @@ export const alumni: Alumni[] = [
   },
   {
     id: 'burhan-uddin',
+    studentId: 'BME1402003106',
     name: 'Md. Burhan Uddin',
     department: 'Mechanical Engineering',
     designation: 'Semi Skilled Maintainer',
@@ -26,6 +29,7 @@ export const alumni: Alumni[] = [
   },
   {
     id: 'mts-alam-ananto',
+    studentId: 'RMBA1903018006',
     name: 'M. T. S. Alam Ananto',
     department: 'Mechanical Engineering',
     designation: 'Assistant Engineer (Mechanical)',
@@ -34,6 +38,7 @@ export const alumni: Alumni[] = [
   },
   {
     id: 'salah-uddin',
+    studentId: 'BME1403004038',
     name: 'Md. Salah Uddin',
     department: 'Mechanical Engineering',
     designation: 'Junior Inspector',
@@ -42,6 +47,7 @@ export const alumni: Alumni[] = [
   },
   {
     id: 'sabbir-hosen',
+    studentId: 'BME1501005079',
     name: 'Sabbir Hosen',
     department: 'Mechanical Engineering',
     designation: 'Executive (QEHS)',
@@ -50,6 +56,7 @@ export const alumni: Alumni[] = [
   },
   {
     id: 'sadi-emon',
+    studentId: 'ME2201026170',
     name: 'Sadi Md. Emon',
     department: 'Mechanical Engineering',
     designation: 'Junior Instructor',

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Briefcase, GraduationCap } from 'lucide-react';
+import { Briefcase, GraduationCap, IdCard } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { alumni } from '@/lib/alumni-data';
@@ -41,6 +41,11 @@ export default function AlumniPage() {
                 <h3 className="text-[17px] font-bold text-primary leading-snug">
                   {person.name}
                 </h3>
+
+                <div className="inline-flex items-center gap-1.5 self-start rounded-md bg-primary/5 px-2.5 py-1.5 text-[14px] font-mono font-semibold tracking-tight text-primary ring-1 ring-primary/10">
+                  <IdCard size={16} className="text-accent" />
+                  {person.studentId}
+                </div>
 
                 <div className="flex items-start gap-2 text-[13px] text-gray-600 leading-snug">
                   <Briefcase size={15} className="mt-0.5 shrink-0 text-accent" />
