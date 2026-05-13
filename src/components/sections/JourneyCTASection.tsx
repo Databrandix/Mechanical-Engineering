@@ -14,8 +14,7 @@ export default function JourneyCTASection() {
           alt=""
           fill
           sizes="100vw"
-          className="object-cover"
-          style={{ objectPosition: 'center 32%' }}
+          className="object-cover [object-position:center_32%]"
         />
         {/* Right dark overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-l from-primary via-primary/75 to-transparent" />
