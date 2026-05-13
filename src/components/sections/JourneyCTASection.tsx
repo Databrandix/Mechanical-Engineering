@@ -14,20 +14,21 @@ export default function JourneyCTASection() {
           alt=""
           fill
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-cover"
+          style={{ objectPosition: 'center 32%' }}
         />
-        {/* Left dark overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/75 to-transparent" />
+        {/* Right dark overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-l from-primary via-primary/75 to-transparent" />
         {/* Bottom fade for smooth transition to footer */}
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-primary/90 to-transparent" />
 
-        <Container className="relative z-10 h-full flex items-center">
+        <Container className="relative z-10 h-full flex items-center justify-end">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="max-w-xl text-white"
+            className="max-w-xl text-white text-right"
           >
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-5 leading-tight">
               Shape Your Future with Excellence
@@ -35,7 +36,7 @@ export default function JourneyCTASection() {
             <p className="text-base md:text-lg text-white/85 mb-8 leading-relaxed">
               Join a vibrant academic community where innovation, leadership, and lifelong learning shape your path to success.
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 justify-end">
               <a
                 href="http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/create_smart_panel"
                 target="_blank"
