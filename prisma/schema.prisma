@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ════════════════════════════════════════════════════════════════
+//  AUTH  (Better Auth, no admin plugin, no verification table,
+//         no emailVerified — stripped at Prisma extension layer)
+// ════════════════════════════════════════════════════════════════
+
+enum Role {
+  super_admin
+  admin
+}
+
+model User {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  name        String
+
+  role        Role      @default(admin)
+  isActive    Boolean   @default(true)
+  lastLoginAt DateTime?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  sessions    Session[]
+  accounts    Account[]
+
+  @@index([role])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("session")
+}
+
+model Account {
+  id         String   @id @default(cuid())
+  userId     String
+  providerId String
+  accountId  String
+  password   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+  @@map("account")
+}
+
+// ════════════════════════════════════════════════════════════════
+//  CONTENT — SINGLETONS
+// ════════════════════════════════════════════════════════════════
+
+model DepartmentIdentity {
+  id                 String   @id @default("singleton")
+  name               String
+  shortCode          String
+  facultyName        String
+  primaryColor       String
+  accentColor        String
+  buttonColor        String
+  logoUrl            String
+  logoPublicId       String?
+  breadcrumbLabel    String
+  heroImage1Url      String
+  heroImage1PublicId String?
+  heroImage2Url      String
+  heroImage2PublicId String?
+  heroImage3Url      String
+  heroImage3PublicId String?
+  updatedAt          DateTime @updatedAt
+
+  @@map("department_identity")
+}
+
+model UniversityIdentity {
+  id            String   @id @default("singleton")
+  name          String
+  address       String   @db.Text
+  phones        String[]
+  emails        String[]
+  facebookUrl   String?
+  instagramUrl  String?
+  youtubeUrl    String?
+  linkedinUrl   String?
+  xUrl          String?
+  tiktokUrl     String?
+  whatsappUrl   String?
+  threadsUrl    String?
+  erpUrl        String?
+  applyUrl      String?
+  libraryUrl    String?
+  iqacUrl       String?
+  careerUrl     String?
+  noticeUrl     String?
+  copyrightText String
+  mapEmbedUrl   String?  @db.Text
+  logoUrl       String
+  logoPublicId  String?
+  updatedAt     DateTime @updatedAt
+
+  @@map("university_identity")
+}
+
+// ════════════════════════════════════════════════════════════════
+//  CONTENT — LISTS
+// ════════════════════════════════════════════════════════════════
+
+model Program {
+  id              String   @id @default(cuid())
+  programName     String
+  degreeCode      String   @unique
+  duration        String
+  description     String   @db.Text
+  displayOrder    Int
+
+  imageUrl        String?
+  imagePublicId   String?
+  specializations String[]
+  cta             String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("program")
+}
+
+model ResearchArea {
+  id           String   @id @default(cuid())
+  iconName     String?
+  iconPublicId String?
+  iconUrl      String?
+  areaName     String
+  description  String?  @db.Text
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("research_area")
+}
