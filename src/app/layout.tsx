@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { Poppins, Montserrat, Hind_Siliguri } from 'next/font/google';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -66,18 +67,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Public site chrome (Navbar / JourneyCTA / Footer) is hidden on
+  // /admin/*. The decision is made SERVER-SIDE here from the
+  // x-pathname header set by middleware.ts — keeps the chrome
+  // components out of the React tree entirely on admin routes and
+  // eliminates the SSR/client-hydration-mismatch class of bug that
+  // a client-side usePathname guard could not reliably solve.
+  const isAdmin =
+    (await headers()).get('x-pathname')?.startsWith('/admin') ?? false;
+
   return (
     <html lang="en" className={`${poppins.variable} ${montserrat.variable} ${hindSiliguri.variable}`}>
       <body className="min-h-screen flex flex-col selection:bg-accent/30">
-        <Navbar />
+        {!isAdmin && <Navbar />}
         <main className="flex-grow">{children}</main>
-        <JourneyCTASection />
-        <Footer />
+        {!isAdmin && <JourneyCTASection />}
+        {!isAdmin && <Footer />}
       </body>
     </html>
   );

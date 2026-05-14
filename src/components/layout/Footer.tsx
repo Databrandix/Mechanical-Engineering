@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
 import {Facebook, Instagram, Linkedin, Youtube, Mail, MapPin, Phone, ArrowUp} from 'lucide-react';
 import Container from '../ui/Container';
 
@@ -30,13 +29,6 @@ const PinterestIcon = ({ size = 18 }: { size?: number }) => (
 );
 
 export default function Footer() {
-  const pathname = usePathname();
-
-  // Hide on /admin/* — placed after the hook for consistency with
-  // Navbar's hooks-first ordering; Footer has no other hooks today
-  // but the pattern is future-proof.
-  if (pathname?.startsWith('/admin')) return null;
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
