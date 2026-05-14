@@ -30,8 +30,12 @@ const PinterestIcon = ({ size = 18 }: { size?: number }) => (
 );
 
 export default function Footer() {
-  // Hide on /admin/* — admin UI has its own sidebar chrome.
-  if (usePathname()?.startsWith('/admin')) return null;
+  const pathname = usePathname();
+
+  // Hide on /admin/* — placed after the hook for consistency with
+  // Navbar's hooks-first ordering; Footer has no other hooks today
+  // but the pattern is future-proof.
+  if (pathname?.startsWith('/admin')) return null;
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

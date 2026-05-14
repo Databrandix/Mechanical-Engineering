@@ -14,9 +14,7 @@ import { quickLinks } from '../../lib/data';
 import SearchOverlay from './SearchOverlay';
 
 export default function Navbar() {
-  // Hide on /admin/* — admin UI has its own sidebar chrome.
-  if (usePathname()?.startsWith('/admin')) return null;
-
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -47,6 +45,13 @@ export default function Navbar() {
       document.body.style.overflow = prev;
     };
   }, [mobileMenuOpen]);
+
+  // Hide on /admin/* — admin UI has its own sidebar chrome.
+  // Placed AFTER every hook so the hook count stays stable across
+  // route changes (Navbar lives in the persistent root layout; an
+  // early return before useState/useEffect violated Rules of Hooks
+  // and triggered chrome leakage on soft client-side navigation).
+  if (pathname?.startsWith('/admin')) return null;
 
   const navLinks: {
     name: string;

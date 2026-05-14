@@ -6,8 +6,10 @@ import { motion } from 'motion/react';
 import Container from '../ui/Container';
 
 export default function JourneyCTASection() {
-  // Hide on /admin/* — admin UI doesn't need the public-site CTA.
-  if (usePathname()?.startsWith('/admin')) return null;
+  const pathname = usePathname();
+
+  // Hide on /admin/* — same hooks-first pattern as Navbar/Footer.
+  if (pathname?.startsWith('/admin')) return null;
 
   return (
     <section className="relative">
