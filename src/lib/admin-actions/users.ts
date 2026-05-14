@@ -9,7 +9,6 @@ import { auth } from '@/lib/auth';
 import {
   ApiError,
   assertSuperAdminFloorAfterRemovingTarget,
-  getSession,
   requireSuperAdmin,
   requireUser,
 } from '@/lib/auth-server';
@@ -323,15 +322,10 @@ export async function changeOwnPasswordAction(
       },
       headers: await headers(),
     });
+    return { ok: true };
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Failed to change password';
     // Better Auth surfaces "Invalid password" for wrong current password.
     return { ok: false, error: msg };
   }
-
-  // Touch the session-tracking signal so /admin/me re-reads on next nav.
-  const session = await getSession();
-  if (session?.user) revalidatePath('/admin/change-password');
-
-  return { ok: true };
 }
