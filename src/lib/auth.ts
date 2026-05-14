@@ -37,6 +37,18 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24,
   },
 
+  // Teach Better Auth's typed user about our domain columns.
+  // These already exist in Prisma; `input: false` keeps them out
+  // of public auth-API payloads (sign-in body, etc.) so they can
+  // only be set via our /api/admin/users routes.
+  user: {
+    additionalFields: {
+      role:        { type: 'string',  required: false, input: false },
+      isActive:    { type: 'boolean', required: false, input: false },
+      lastLoginAt: { type: 'date',    required: false, input: false },
+    },
+  },
+
   // Block sign-in for inactive users; update lastLoginAt after success.
   databaseHooks: {
     session: {
