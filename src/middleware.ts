@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { getSessionCookie } from 'better-auth/cookies';
 
 // Two jobs:
 //   1. Set an `x-pathname` request header on every page request so
@@ -22,7 +23,7 @@ export function middleware(request: NextRequest) {
     pathname === '/admin/login' || pathname === '/admin/logout';
 
   if (isAdminRoute && !isAdminPublic) {
-    const sessionCookie = request.cookies.get('better-auth.session_token');
+    const sessionCookie = getSessionCookie(request);
     if (!sessionCookie) {
       const url = new URL('/admin/login', request.url);
       if (pathname !== '/admin') {
