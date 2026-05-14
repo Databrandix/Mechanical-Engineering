@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import {Facebook, Instagram, Linkedin, Youtube, Mail, MapPin, Phone, ArrowUp} from 'lucide-react';
 import Container from '../ui/Container';
 
@@ -29,6 +30,9 @@ const PinterestIcon = ({ size = 18 }: { size?: number }) => (
 );
 
 export default function Footer() {
+  // Hide on /admin/* — admin UI has its own sidebar chrome.
+  if (usePathname()?.startsWith('/admin')) return null;
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

@@ -2,6 +2,7 @@
 
 import {useState, useEffect} from 'react';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import {
   Menu, X, Search, Facebook, Linkedin, Youtube,
   GraduationCap, User, CheckCircle, ChevronDown, ChevronRight,
@@ -13,6 +14,9 @@ import { quickLinks } from '../../lib/data';
 import SearchOverlay from './SearchOverlay';
 
 export default function Navbar() {
+  // Hide on /admin/* — admin UI has its own sidebar chrome.
+  if (usePathname()?.startsWith('/admin')) return null;
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);

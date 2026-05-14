@@ -1,10 +1,14 @@
 'use client';
 
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
 import Container from '../ui/Container';
 
 export default function JourneyCTASection() {
+  // Hide on /admin/* — admin UI doesn't need the public-site CTA.
+  if (usePathname()?.startsWith('/admin')) return null;
+
   return (
     <section className="relative">
       {/* Hero image with overlays */}
