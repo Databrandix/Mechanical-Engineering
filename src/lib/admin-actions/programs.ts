@@ -90,6 +90,10 @@ export async function createProgramAction(
 
   revalidatePath('/admin/programs');
   revalidatePath('/admin');
+  // Public surface: homepage Programs section. Note this must run
+  // BEFORE redirect() — redirect() throws and anything after is
+  // unreachable.
+  revalidatePath('/');
   redirect('/admin/programs');
 }
 
@@ -137,6 +141,7 @@ export async function updateProgramAction(
   revalidatePath('/admin/programs');
   revalidatePath(`/admin/programs/${id}`);
   revalidatePath('/admin');
+  revalidatePath('/');
   return { ok: true };
 }
 
@@ -154,6 +159,7 @@ export async function deleteProgramAction(id: string): Promise<ActionResult> {
   }
   revalidatePath('/admin/programs');
   revalidatePath('/admin');
+  revalidatePath('/');
   return { ok: true };
 }
 
@@ -177,5 +183,6 @@ export async function reorderProgramsAction(ids: string[]): Promise<ActionResult
     return { ok: false, error: e instanceof Error ? e.message : 'Database error' };
   }
   revalidatePath('/admin/programs');
+  revalidatePath('/');
   return { ok: true };
 }

@@ -6,22 +6,27 @@ import {motion} from 'motion/react';
 import Container from '../ui/Container';
 import {ChevronRight, Home} from 'lucide-react';
 
-const heroImages = [
-  {
-    src: '/assets/hero-1.webp',
-    alt: 'Sonargaon University Mechanical Engineering Department',
-  },
-  {
-    src: '/assets/hero-2.webp',
-    alt: 'Sonargaon University Mechanical Engineering students and faculty',
-  },
-  {
-    src: '/assets/hero-3.webp',
-    alt: 'Sonargaon University Mechanical Engineering campus',
-  },
+// Per-image alt text. DB schema does NOT store per-image alt
+// (heroImage{N}Url only); these stay code constants. If an admin
+// replaces a hero image, the alt describes the slot, not the new
+// specific image — known limitation until schema gains an alt
+// column in a future phase.
+const HERO_ALTS = [
+  'Sonargaon University Mechanical Engineering Department',
+  'Sonargaon University Mechanical Engineering students and faculty',
+  'Sonargaon University Mechanical Engineering campus',
 ];
 
-export default function HeroSection() {
+type HeroSectionProps = {
+  imageUrls: readonly string[];
+  breadcrumbLabel: string;
+};
+
+export default function HeroSection({ imageUrls, breadcrumbLabel }: HeroSectionProps) {
+  const heroImages = imageUrls.map((src, i) => ({
+    src,
+    alt: HERO_ALTS[i] ?? `Sonargaon University Mechanical Engineering — slide ${i + 1}`,
+  }));
   const [activeImage, setActiveImage] = useState(0);
 
   useEffect(() => {
@@ -144,7 +149,7 @@ export default function HeroSection() {
             <ChevronRight size={13} className="opacity-50" />
             <a href="#" className="hover:text-button-yellow transition-colors">Dept</a>
             <ChevronRight size={13} className="opacity-50" />
-            <span className="text-button-yellow font-semibold">ME</span>
+            <span className="text-button-yellow font-semibold">{breadcrumbLabel}</span>
           </motion.div>
         </Container>
       </div>

@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'picsum.photos' },
+      // Cloudinary CDN — admin CMS uploads land here (folder isolation
+      // via CLOUDINARY_UPLOAD_FOLDER); covers any cloud name so clones
+      // for sibling departments don't need a config tweak.
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
     ],
   },
   eslint: {

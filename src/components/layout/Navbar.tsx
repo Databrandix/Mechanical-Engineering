@@ -12,7 +12,13 @@ import Container from '../ui/Container';
 import { quickLinks } from '../../lib/data';
 import SearchOverlay from './SearchOverlay';
 
-export default function Navbar() {
+type NavbarProps = {
+  logoUrl: string;
+  erpUrl: string;
+  applyUrl: string;
+};
+
+export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -77,7 +83,7 @@ export default function Navbar() {
         { name: 'Waiver & Scholarship', href: '/admission/waiver-scholarship' },
         { name: 'Admission Notice', href: '/admission/notice' },
         { name: 'Prospectus', href: '/admission/prospectus' },
-        { name: 'Apply Online', href: 'http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/create_smart_panel' },
+        { name: 'Apply Online', href: applyUrl },
       ],
     },
     {
@@ -113,7 +119,7 @@ export default function Navbar() {
     { name: 'Virtual Tour', Icon: Compass, disabled: true },
     { name: 'Archive', Icon: Archive, disabled: true },
     { name: 'Notice', href: 'https://su.edu.bd/welcome/notice', external: true, Icon: Users },
-    { name: 'ERP', href: 'http://sue.su.edu.bd:5081/sonargaon_erp/', external: true, Icon: Globe },
+    { name: 'ERP', href: erpUrl, external: true, Icon: Globe },
     { name: 'IQAC', href: 'https://su.edu.bd/iqac', external: true, Icon: ClipboardList },
     { name: 'Skill Jobs', href: 'https://su.edu.bd/welcome/career', external: true, Icon: Building2 },
     { name: 'Convoc. Reg.', href: 'http://sue.su.edu.bd:5081/sonargaon_erp/student/convocation_registration', external: true, Icon: Award },
@@ -145,7 +151,7 @@ export default function Navbar() {
         </div>
 
         {/* Right Side - Socials with Dark Blue Background */}
-        <div className="bg-[#2B3175] h-full flex items-center px-10">
+        <div className="bg-primary h-full flex items-center px-10">
           <div className="flex items-center gap-6 text-white text-[11px] font-medium">
             <a href="https://www.facebook.com/SonargaonUniversity" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
               <Facebook size={12} fill="currentColor" />
@@ -169,7 +175,7 @@ export default function Navbar() {
           {/* Logo */}
           <a href="/" aria-label="Sonargaon University — Home" className="flex items-center shrink-0">
             <Image
-              src="/assets/su-colour-logo.webp"
+              src={logoUrl}
               alt="Sonargaon University"
               width={400}
               height={120}
@@ -227,7 +233,7 @@ export default function Navbar() {
             {/* Secondary buttons — hidden on lg when scrolled (dept nav takes priority) */}
             <div className={`flex items-center gap-3 ${isScrolled ? 'lg:hidden' : ''}`}>
               <a
-                href="http://sue.su.edu.bd:5081/sonargaon_erp/"
+                href={erpUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden xl:flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-bold whitespace-nowrap transition-all shadow-sm border border-gray-100"
@@ -255,7 +261,7 @@ export default function Navbar() {
 
             {/* Apply Now — desktop only (mobile users use the drawer button) */}
             <a
-              href="http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/create_smart_panel"
+              href={applyUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden lg:flex items-center gap-2 px-3 lg:px-3 xl:px-5 py-2 xl:py-2.5 bg-gradient-to-r from-primary to-accent text-white rounded-lg text-xs lg:text-xs xl:text-sm font-bold whitespace-nowrap transition-all shadow-md hover:shadow-lg hover:brightness-110 shrink-0"
@@ -436,7 +442,7 @@ export default function Navbar() {
         {/* Apply Now */}
         <div className="px-4 pt-3">
           <a
-            href="http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/create_smart_panel"
+            href={applyUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="block w-full py-3 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-bold text-center shadow-md transition-all"
