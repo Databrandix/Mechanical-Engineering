@@ -65,5 +65,9 @@ export async function updateDepartmentAction(
 
   revalidatePath('/admin/department-identity');
   revalidatePath('/admin');
+  // Public surfaces: brand colors (via CSS vars on <html>) + hero
+  // images on the homepage are read from this row. 'layout' scope
+  // invalidates every route that uses the root layout.
+  revalidatePath('/', 'layout');
   return { ok: true };
 }

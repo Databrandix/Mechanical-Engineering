@@ -79,5 +79,9 @@ export async function updateUniversityAction(
 
   revalidatePath('/admin/university-identity');
   revalidatePath('/admin');
+  // Public surfaces: Navbar (logo + ERP/apply URLs) and Footer
+  // (everything) read from this row. 'layout' scope invalidates
+  // every route that uses the root layout.
+  revalidatePath('/', 'layout');
   return { ok: true };
 }

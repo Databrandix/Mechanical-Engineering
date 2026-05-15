@@ -88,6 +88,10 @@ export async function createResearchAreaAction(
 
   revalidatePath('/admin/research-areas');
   revalidatePath('/admin');
+  // Public surface: homepage MajorResearchSection. Must run BEFORE
+  // redirect() — redirect() throws and anything after is
+  // unreachable.
+  revalidatePath('/');
   redirect('/admin/research-areas');
 }
 
@@ -137,6 +141,7 @@ export async function updateResearchAreaAction(
   revalidatePath('/admin/research-areas');
   revalidatePath(`/admin/research-areas/${id}`);
   revalidatePath('/admin');
+  revalidatePath('/');
   return { ok: true };
 }
 
@@ -154,6 +159,7 @@ export async function deleteResearchAreaAction(id: string): Promise<ActionResult
   }
   revalidatePath('/admin/research-areas');
   revalidatePath('/admin');
+  revalidatePath('/');
   return { ok: true };
 }
 
@@ -177,5 +183,6 @@ export async function reorderResearchAreasAction(ids: string[]): Promise<ActionR
     return { ok: false, error: e instanceof Error ? e.message : 'Database error' };
   }
   revalidatePath('/admin/research-areas');
+  revalidatePath('/');
   return { ok: true };
 }
