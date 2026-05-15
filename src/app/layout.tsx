@@ -4,6 +4,7 @@ import { Poppins, Montserrat, Hind_Siliguri } from 'next/font/google';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import JourneyCTASection from '@/components/sections/JourneyCTASection';
+import { getDepartmentIdentity, getUniversityIdentity } from '@/lib/identity';
 import './globals.css';
 
 const poppins = Poppins({
@@ -78,13 +79,38 @@ export default async function RootLayout({
   // components out of the React tree entirely on admin routes and
   // eliminates the SSR/client-hydration-mismatch class of bug that
   // a client-side usePathname guard could not reliably solve.
+  const [headersList, dept, uni] = await Promise.all([
+    headers(),
+    getDepartmentIdentity(),
+    getUniversityIdentity(),
+  ]);
   const isAdmin =
-    (await headers()).get('x-pathname')?.startsWith('/admin') ?? false;
+    headersList.get('x-pathname')?.startsWith('/admin') ?? false;
+
+  // Inject DB-driven brand colors as CSS custom properties on <html>.
+  // Cascade overrides the @theme defaults in globals.css so every
+  // utility class (text-primary, bg-accent, bg-button-yellow) and the
+  // gradient classes below pick up the live values without rebuild.
+  const brandVars = {
+    '--color-primary': dept.primaryColor,
+    '--color-accent': dept.accentColor,
+    '--color-button-yellow': dept.buttonColor,
+  } as React.CSSProperties;
 
   return (
-    <html lang="en" className={`${poppins.variable} ${montserrat.variable} ${hindSiliguri.variable}`}>
+    <html
+      lang="en"
+      className={`${poppins.variable} ${montserrat.variable} ${hindSiliguri.variable}`}
+      style={brandVars}
+    >
       <body className="min-h-screen flex flex-col selection:bg-accent/30">
-        {!isAdmin && <Navbar />}
+        {!isAdmin && (
+          <Navbar
+            logoUrl={dept.logoUrl}
+            erpUrl={uni.erpUrl ?? ''}
+            applyUrl={uni.applyUrl ?? ''}
+          />
+        )}
         <main className="flex-grow">{children}</main>
         {!isAdmin && <JourneyCTASection />}
         {!isAdmin && <Footer />}

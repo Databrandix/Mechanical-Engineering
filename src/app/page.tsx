@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic';
 import HeroSection from '@/components/sections/HeroSection';
+import { getDepartmentIdentity } from '@/lib/identity';
 
 function sectionSkeleton(minHeight: string) {
   return function Skeleton() {
@@ -35,10 +36,14 @@ const ServicesSection = dynamic(() => import('@/components/sections/ServicesSect
   loading: sectionSkeleton('min-h-[400px]'),
 });
 
-export default function HomePage() {
+export default async function HomePage() {
+  const dept = await getDepartmentIdentity();
   return (
     <>
-      <HeroSection />
+      <HeroSection
+        imageUrls={[dept.heroImage1Url, dept.heroImage2Url, dept.heroImage3Url]}
+        breadcrumbLabel={dept.breadcrumbLabel}
+      />
       <OverviewSection />
       <ProgramsSection />
       <QuickLinksSection />
