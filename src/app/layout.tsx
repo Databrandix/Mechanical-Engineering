@@ -113,7 +113,26 @@ export default async function RootLayout({
         )}
         <main className="flex-grow">{children}</main>
         {!isAdmin && <JourneyCTASection />}
-        {!isAdmin && <Footer />}
+        {!isAdmin && (
+          <Footer
+            logoUrl={uni.logoUrl}
+            address={uni.address}
+            phones={uni.phones}
+            emails={uni.emails}
+            copyrightText={uni.copyrightText}
+            mapEmbedUrl={uni.mapEmbedUrl}
+            socials={{
+              facebookUrl:  uni.facebookUrl,
+              instagramUrl: uni.instagramUrl,
+              linkedinUrl:  uni.linkedinUrl,
+              youtubeUrl:   uni.youtubeUrl,
+              xUrl:         uni.xUrl,
+              threadsUrl:   uni.threadsUrl,
+              tiktokUrl:    uni.tiktokUrl,
+              whatsappUrl:  uni.whatsappUrl,
+            }}
+          />
+        )}
       </body>
     </html>
   );
