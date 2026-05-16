@@ -1,27 +1,37 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Mail, Phone, IdCard, Building2, MapPin, Plus } from 'lucide-react';
+import type { Faculty } from '@prisma/client';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import {
-  faculty,
   getFacultyBySlug,
-  departmentName,
-  type Faculty,
-  type SectionContent,
-} from '@/lib/faculty-data';
+  getFacultySlugs,
+  getDepartmentIdentity,
+  getUniversityIdentity,
+} from '@/lib/identity';
+import { type SectionContent } from '@/lib/faculty-data';
 
-export function generateStaticParams() {
-  return faculty.map((f) => ({ slug: f.slug }));
+// Pre-render every current slug at build time; Next.js defaults to
+// dynamicParams=true so admin-added slugs after deploy render
+// on-demand. Combined with revalidatePath('/faculty-member/[slug]',
+// 'page') from CP2.2, edits propagate to the pre-rendered pages
+// too.
+export async function generateStaticParams() {
+  const slugs = await getFacultySlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const member = getFacultyBySlug(slug);
+  const [member, dept] = await Promise.all([
+    getFacultyBySlug(slug),
+    getDepartmentIdentity(),
+  ]);
   if (!member) return { title: 'Faculty member not found' };
   return {
-    title: `${member.name} — ${departmentName}`,
-    description: `${member.name}, ${member.designation}, ${departmentName}, Sonargaon University.`,
+    title: `${member.name} — ${dept.name}`,
+    description: `${member.name}, ${member.designation}, ${dept.name}, Sonargaon University.`,
   };
 }
 
@@ -37,30 +47,28 @@ type SectionKey =
 
 const SECTIONS: { key: SectionKey; label: string }[] = [
   { key: 'academicQualification', label: 'Academic Qualification' },
-  { key: 'trainingExperience', label: 'Training Experience' },
-  { key: 'teachingArea', label: 'Teaching Area' },
-  { key: 'publications', label: 'Publication' },
-  { key: 'research', label: 'Research' },
-  { key: 'awards', label: 'Award & Scholarship' },
-  { key: 'membership', label: 'Membership' },
-  { key: 'previousEmployment', label: 'Previous Employment' },
+  { key: 'trainingExperience',    label: 'Training Experience' },
+  { key: 'teachingArea',          label: 'Teaching Area' },
+  { key: 'publications',          label: 'Publication' },
+  { key: 'research',              label: 'Research' },
+  { key: 'awards',                label: 'Award & Scholarship' },
+  { key: 'membership',            label: 'Membership' },
+  { key: 'previousEmployment',    label: 'Previous Employment' },
 ];
 
 const PLACEHOLDER = (
   <p className="text-gray-400 italic text-sm">Information will be updated soon.</p>
 );
 
-function renderSection(value: SectionContent | undefined) {
-  if (value === undefined) return PLACEHOLDER;
+function renderSection(value: SectionContent | null | undefined) {
+  if (value == null) return PLACEHOLDER;
 
-  // Plain paragraph
   if (typeof value === 'string') {
     return value.trim().length > 0 ? <p>{value}</p> : PLACEHOLDER;
   }
 
   if (!Array.isArray(value) || value.length === 0) return PLACEHOLDER;
 
-  // Simple bullet list
   if (typeof value[0] === 'string') {
     return (
       <ul className="list-disc list-outside pl-5 space-y-2">
@@ -71,7 +79,6 @@ function renderSection(value: SectionContent | undefined) {
     );
   }
 
-  // Grouped subsections
   return (
     <div className="space-y-6">
       {(value as { heading: string; items: string[] }[]).map((group, gi) => (
@@ -94,10 +101,19 @@ export default async function FacultyDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const member = getFacultyBySlug(slug);
+  // J3 — office address wired from UniversityIdentity and department
+  // name from DepartmentIdentity, both via the existing identity
+  // helpers (React.cache dedups across the page).
+  const [member, dept, uni] = await Promise.all([
+    getFacultyBySlug(slug),
+    getDepartmentIdentity(),
+    getUniversityIdentity(),
+  ]);
   if (!member) notFound();
 
-  const officeAddress = '147/I, Green Road, Panthapath, Tejgaon, Dhaka';
+  const personalInfo = member.personalInfo as
+    | Array<{ label: string; value: string }>
+    | null;
 
   return (
     <PageShell title={member.name} overline="Faculty" contentClassName="bg-gray-50 py-12 md:py-20">
@@ -108,9 +124,9 @@ export default async function FacultyDetailPage({
             {/* Photo */}
             <div className="flex justify-center lg:justify-start">
               <div className="relative w-44 h-56 md:w-48 md:h-60 border-2 border-accent overflow-hidden bg-gray-50 flex items-center justify-center">
-                {member.photo ? (
+                {member.photoUrl ? (
                   <Image
-                    src={member.photo}
+                    src={member.photoUrl}
                     alt={member.name}
                     fill
                     sizes="(min-width: 768px) 192px, 176px"
@@ -147,7 +163,7 @@ export default async function FacultyDetailPage({
                 )}
                 <p className="text-sm text-gray-600 flex items-center justify-center lg:justify-start gap-2 pt-1">
                   <Building2 size={14} className="text-accent shrink-0" />
-                  {departmentName}
+                  {dept.name}
                 </p>
               </div>
             </div>
@@ -155,7 +171,7 @@ export default async function FacultyDetailPage({
             {/* Contact panel */}
             <div className="lg:border-l lg:border-gray-200 lg:pl-8 space-y-4 text-sm min-w-[240px]">
               <ContactRow label="Address" Icon={MapPin}>
-                <span className="text-gray-700">{officeAddress}</span>
+                <span className="text-gray-700">{uni.address}</span>
               </ContactRow>
 
               {member.email && (
@@ -193,9 +209,9 @@ export default async function FacultyDetailPage({
         <div className="space-y-3 max-w-5xl mx-auto">
           {/* Personal Information — structured label/value list */}
           <AccordionPanel label="Personal Information">
-            {member.personalInfo && member.personalInfo.length > 0 ? (
+            {personalInfo && personalInfo.length > 0 ? (
               <dl className="grid sm:grid-cols-[180px_1fr] gap-x-6 gap-y-3 text-[14px]">
-                {member.personalInfo.map(({ label, value }) => (
+                {personalInfo.map(({ label, value }) => (
                   <div key={label} className="contents">
                     <dt className="font-semibold text-primary">{label}</dt>
                     <dd className="text-gray-700">{value}</dd>
@@ -209,7 +225,7 @@ export default async function FacultyDetailPage({
 
           {SECTIONS.map(({ key, label }) => (
             <AccordionPanel key={key} label={label}>
-              {renderSection((member as Faculty)[key] as SectionContent | undefined)}
+              {renderSection((member as Faculty)[key] as SectionContent | null)}
             </AccordionPanel>
           ))}
         </div>

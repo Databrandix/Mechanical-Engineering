@@ -1,6 +1,9 @@
 import Image from 'next/image';
+import { notFound } from 'next/navigation';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
+import MessageParagraphs from '@/components/sections/MessageParagraphs';
+import { getDean, getUniversityIdentity } from '@/lib/identity';
 
 export const metadata = {
   title: "Dean's Message — Faculty of Science and Engineering",
@@ -8,9 +11,24 @@ export const metadata = {
     "Message from the Dean of the Faculty of Science and Engineering, Sonargaon University.",
 };
 
-export default function DeansMessagePage() {
+const FALLBACK_HERO = '/assets/mission-vision-hero.webp';
+
+export default async function DeansMessagePage() {
+  const [dean, uni] = await Promise.all([getDean(), getUniversityIdentity()]);
+  if (!dean) notFound();
+
+  // messagePhotoUrl is the override; fall back to the main photoUrl
+  // when the admin hasn't set a separate message photo.
+  const profilePhoto = dean.messagePhotoUrl ?? dean.photoUrl ?? null;
+
   return (
-    <PageShell title="Dean's Message" overline="About" image="/assets/mission-vision-hero.webp" imagePosition="center 3%" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell
+      title="Dean's Message"
+      overline="About"
+      image={dean.messageHeroImageUrl ?? FALLBACK_HERO}
+      imagePosition={dean.messageHeroImagePosition ?? 'center 3%'}
+      contentClassName="bg-gray-50 py-12 md:py-20"
+    >
       <Container>
         <div className="relative bg-primary text-white rounded-2xl shadow-2xl">
           {/* Decorative accents — clipped in their own wrapper so sticky works on children */}
@@ -23,54 +41,55 @@ export default function DeansMessagePage() {
             <div className="grid gap-10 lg:gap-16 lg:grid-cols-[260px_1fr] items-start">
               {/* Profile column */}
               <div className="flex flex-col items-center text-center lg:sticky lg:top-32">
-                <div className="relative w-52 rounded-2xl overflow-hidden ring-4 ring-white/20 shadow-xl mb-5 bg-white/5">
-                  <Image
-                    src="/assets/faculty-dean-kamal.webp"
-                    alt="Brig. Gen. (Retd) Prof. Habibur Rahman Kamal"
-                    width={400}
-                    height={500}
-                    sizes="208px"
-                    className="block w-full h-auto"
-                  />
-                </div>
-                <h3 className="font-display text-xl font-bold mb-1">Brig. Gen. (Retd) Prof. Habibur Rahman Kamal, ndc, psc</h3>
-                <p className="text-white/75 text-sm mb-1">Dean</p>
-                <p className="text-white/60 text-sm">Faculty of Science &amp; Engineering</p>
+                {profilePhoto && (
+                  <div className="relative w-52 rounded-2xl overflow-hidden ring-4 ring-white/20 shadow-xl mb-5 bg-white/5">
+                    <Image
+                      src={profilePhoto}
+                      alt={dean.name}
+                      width={400}
+                      height={500}
+                      sizes="208px"
+                      className="block w-full h-auto"
+                    />
+                  </div>
+                )}
+                <h3 className="font-display text-xl font-bold mb-1">{dean.name}</h3>
+                {dean.messageTitleLine1 && (
+                  <p className="text-white/75 text-sm mb-1">{dean.messageTitleLine1}</p>
+                )}
+                {dean.messageTitleLine2 && (
+                  <p className="text-white/60 text-sm">{dean.messageTitleLine2}</p>
+                )}
               </div>
 
               {/* Message column */}
               <div>
                 <div className="mb-8">
-                  <span className="inline-block text-button-yellow text-[11px] font-bold tracking-[0.3em] uppercase mb-2">
-                    A Note from the Dean
-                  </span>
-                  <h2 className="font-display text-3xl md:text-4xl font-bold leading-tight">
-                    Welcome Message
-                  </h2>
+                  {dean.messageOverline && (
+                    <span className="inline-block text-button-yellow text-[11px] font-bold tracking-[0.3em] uppercase mb-2">
+                      {dean.messageOverline}
+                    </span>
+                  )}
+                  {dean.messageHeading && (
+                    <h2 className="font-display text-3xl md:text-4xl font-bold leading-tight">
+                      {dean.messageHeading}
+                    </h2>
+                  )}
                   <div className="mt-3 h-1 w-16 bg-button-yellow rounded-full" />
                 </div>
 
-                <div className="space-y-5 text-[15px] md:text-[16px] leading-[1.85] text-white/90 text-justify">
-                  <p>
-                    <span className="float-left mr-2 text-5xl md:text-6xl font-display font-bold leading-none text-button-yellow">W</span>
-                    elcome to the Department of Mechanical Engineering, the largest and most established department within the Faculty of Science and Engineering. Over the last decade, we have built a strong reputation for academic excellence, supported by a dedicated team of nearly 50 full-time faculty members from top-tier institutions like <strong className="text-button-yellow">BUET, KUET, and RUET</strong>.
-                  </p>
-
-                  <p>
-                    Our mission is to bridge the gap between creativity and technology by providing a modern learning environment equipped with high-tech laboratories and air-conditioned, multimedia classrooms. We pride ourselves on the global success of our graduates, many of whom are currently excelling in postgraduate programs across the USA, Canada, and the EU with prestigious scholarships.
-                  </p>
-
-                  <p>
-                    Beyond the classroom, our students consistently demonstrate their practical expertise, as evidenced by the recent recognition of the <strong className="text-button-yellow">Sonargaon University Mecha Club</strong> at the BUET Auto Fest. We are committed to fostering your growth as a skilled engineer and a responsible citizen, prepared to solve the complex technological challenges of the future.
-                  </p>
-                </div>
+                <MessageParagraphs paragraphs={dean.messageParagraphs} />
 
                 {/* Signature */}
                 <div className="mt-10 pt-6 border-t border-white/15">
-                  <p className="font-display font-bold text-lg text-button-yellow">Brig. Gen. (Retd) Prof. Habibur Rahman Kamal, ndc, psc</p>
-                  <p className="text-white/80 text-sm mt-1">Dean</p>
-                  <p className="text-white/70 text-sm">Faculty of Science &amp; Engineering</p>
-                  <p className="text-white/70 text-sm">Sonargaon University</p>
+                  <p className="font-display font-bold text-lg text-button-yellow">{dean.name}</p>
+                  {dean.messageTitleLine1 && (
+                    <p className="text-white/80 text-sm mt-1">{dean.messageTitleLine1}</p>
+                  )}
+                  {dean.messageTitleLine2 && (
+                    <p className="text-white/70 text-sm">{dean.messageTitleLine2}</p>
+                  )}
+                  <p className="text-white/70 text-sm">{uni.name}</p>
                 </div>
               </div>
             </div>

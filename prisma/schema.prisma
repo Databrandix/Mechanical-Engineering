@@ -19,6 +19,15 @@ enum Role {
   admin
 }
 
+// TS source uses 'full-time' / 'part-time' (hyphenated). Prisma
+// enum identifiers disallow hyphens, so we use underscores here;
+// seed + admin layer maps `'full-time'` ↔ `full_time`.
+enum FacultyType {
+  leadership
+  full_time
+  part_time
+}
+
 model User {
   id          String    @id @default(cuid())
   email       String    @unique
@@ -161,4 +170,65 @@ model ResearchArea {
 
   @@index([displayOrder])
   @@map("research_area")
+}
+
+// Faculty — Phase 2. Drives /faculty-member (list + [slug] detail)
+// and the Dean's-message / Head's-message about pages via
+// nullable message-extras columns on the same row.
+model Faculty {
+  id              String      @id @default(cuid())
+  slug            String      @unique
+  name            String
+  designation     String
+  secondaryTitle  String?
+  badge           String?
+  type            FacultyType
+  displayOrder    Int
+
+  // Photo (Cloudinary-paired, same convention as Program.imageUrl)
+  photoUrl        String?
+  photoPublicId   String?
+
+  // Contact (all optional)
+  email           String?
+  phone           String?
+  suId            String?
+
+  // Variable-shape label/value list — `{label, value}[]`
+  personalInfo    Json?
+
+  // 8 detail sections — each can be:
+  //   string | string[] | { heading: string; items: string[] }[]
+  // Json is the only realistic storage for that union.
+  academicQualification  Json?
+  trainingExperience     Json?
+  teachingArea           Json?
+  publications           Json?
+  research               Json?
+  awards                 Json?
+  membership             Json?
+  previousEmployment     Json?
+
+  // Dean / Head extras — flat nullable columns; only the 0–1 row(s)
+  // flagged isDean / isHead populate these.
+  isDean                    Boolean   @default(false)
+  isHead                    Boolean   @default(false)
+  messageOverline           String?
+  messageHeading            String?
+  messageParagraphs         String[]
+  messagePhotoUrl           String?
+  messagePhotoPublicId      String?
+  messageTitleLine1         String?
+  messageTitleLine2         String?
+  messageHeroImageUrl       String?
+  messageHeroImagePublicId  String?
+  messageHeroImagePosition  String?
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([type, displayOrder])
+  @@index([isDean])
+  @@index([isHead])
+  @@map("faculty")
 }

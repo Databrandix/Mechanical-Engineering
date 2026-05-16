@@ -11,6 +11,7 @@ import {
   GraduationCap,
   Microscope,
   Users,
+  UsersRound,
   Key,
 } from 'lucide-react';
 
@@ -33,6 +34,7 @@ const PRIMARY_NAV: NavItem[] = [
   { href: '/admin/university-identity', label: 'University Identity', icon: University },
   { href: '/admin/programs',            label: 'Programs',            icon: GraduationCap },
   { href: '/admin/research-areas',      label: 'Research Areas',      icon: Microscope },
+  { href: '/admin/faculty',             label: 'Faculty',             icon: UsersRound },
 ];
 
 export default function Sidebar({ user }: { user: SidebarUser }) {

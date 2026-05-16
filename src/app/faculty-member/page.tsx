@@ -1,18 +1,15 @@
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import type { Faculty } from '@prisma/client';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { facultyByType, type Faculty } from '@/lib/faculty-data';
+import { getFacultyList } from '@/lib/identity';
 
 export const metadata = {
   title: 'Faculty Members — Department of Mechanical Engineering',
   description:
     'Faculty members of the Department of Mechanical Engineering, Sonargaon University — Dean, Head of Department, full-time and part-time faculty.',
 };
-
-const leaders = facultyByType('leadership');
-const fullTime = facultyByType('full-time');
-const partTime = facultyByType('part-time');
 
 const initialsOf = (name: string) =>
   name
@@ -23,7 +20,12 @@ const initialsOf = (name: string) =>
     .map((w) => w.charAt(0).toUpperCase())
     .join('');
 
-export default function FacultyMemberPage() {
+export default async function FacultyMemberPage() {
+  const all = await getFacultyList();
+  const leaders  = all.filter((f) => f.type === 'leadership');
+  const fullTime = all.filter((f) => f.type === 'full_time');
+  const partTime = all.filter((f) => f.type === 'part_time');
+
   return (
     <PageShell
       title="Faculty Members"
@@ -40,15 +42,15 @@ export default function FacultyMemberPage() {
           <div className="space-y-6 md:space-y-8 max-w-5xl mx-auto">
             {leaders.map((leader) => (
               <article
-                key={leader.slug}
+                key={leader.id}
                 className="bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow"
               >
                 <div className="grid md:grid-cols-[220px_1fr] gap-6 md:gap-8 items-center p-6 md:p-8">
                   <div className="flex justify-center md:justify-start">
                     <div className="relative w-48 h-48 md:w-52 md:h-52 rounded-lg overflow-hidden bg-gray-50 border-2 border-gray-100 flex items-center justify-center">
-                      {leader.photo ? (
+                      {leader.photoUrl ? (
                         <Image
-                          src={leader.photo}
+                          src={leader.photoUrl}
                           alt={leader.name}
                           fill
                           sizes="(min-width: 768px) 208px, 192px"
@@ -147,14 +149,14 @@ function FacultySection({
       <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {members.map((member) => (
           <article
-            key={member.slug}
+            key={member.id}
             className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 p-5 flex flex-col text-center"
           >
             <div className="mx-auto mb-4">
               <div className="relative w-32 h-48 border-2 border-accent overflow-hidden bg-gray-50 flex items-center justify-center">
-                {member.photo ? (
+                {member.photoUrl ? (
                   <Image
-                    src={member.photo}
+                    src={member.photoUrl}
                     alt={member.name}
                     fill
                     sizes="128px"

@@ -63,3 +63,32 @@ export const getResearchAreas = cache(async () => {
     },
   });
 });
+
+// Faculty (Phase 2). Full rows are returned — including Json
+// section content + Dean/Head message extras — so the public
+// pages can render every section without per-page Prisma calls.
+// React.cache wraps each helper so multiple Server Components
+// in the same request share a single DB hit.
+
+export const getFacultyList = cache(async () => {
+  return prisma.faculty.findMany({
+    orderBy: { displayOrder: 'asc' },
+  });
+});
+
+export const getFacultyBySlug = cache(async (slug: string) => {
+  return prisma.faculty.findUnique({ where: { slug } });
+});
+
+export const getFacultySlugs = cache(async () => {
+  const rows = await prisma.faculty.findMany({ select: { slug: true } });
+  return rows.map((r) => r.slug);
+});
+
+export const getDean = cache(async () => {
+  return prisma.faculty.findFirst({ where: { isDean: true } });
+});
+
+export const getHead = cache(async () => {
+  return prisma.faculty.findFirst({ where: { isHead: true } });
+});
