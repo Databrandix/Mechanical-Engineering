@@ -10,6 +10,7 @@
  */
 import bcrypt from 'bcryptjs';
 import { prisma } from '../src/lib/db';
+import { faculty as facultyData } from '../src/lib/faculty-data';
 
 const BCRYPT_ROUNDS = 12;
 
@@ -164,12 +165,117 @@ async function bootstrapSuperAdmin() {
   console.log(`✓ Super-admin bootstrapped: ${email}`);
 }
 
+// ─────────────────────────────────────────────────────────────────
+//  Faculty seed — 41 rows from src/lib/faculty-data.ts, plus Dean
+//  and Head message extras extracted from the about pages.
+// ─────────────────────────────────────────────────────────────────
+
+const DEAN_SLUG = 'habibur-rahman-kamal';
+const HEAD_SLUG = 'mostofa-hossain';
+
+// Inline <strong class="text-button-yellow">…</strong> preserved per
+// J1 (raw HTML, super_admin-trusted, rendered via
+// dangerouslySetInnerHTML in the message component). No drop-cap
+// span here — that's render-side per J2.
+const DEAN_MESSAGE_PARAGRAPHS = [
+  'Welcome to the Department of Mechanical Engineering, the largest and most established department within the Faculty of Science and Engineering. Over the last decade, we have built a strong reputation for academic excellence, supported by a dedicated team of nearly 50 full-time faculty members from top-tier institutions like <strong class="text-button-yellow">BUET, KUET, and RUET</strong>.',
+  'Our mission is to bridge the gap between creativity and technology by providing a modern learning environment equipped with high-tech laboratories and air-conditioned, multimedia classrooms. We pride ourselves on the global success of our graduates, many of whom are currently excelling in postgraduate programs across the USA, Canada, and the EU with prestigious scholarships.',
+  'Beyond the classroom, our students consistently demonstrate their practical expertise, as evidenced by the recent recognition of the <strong class="text-button-yellow">Sonargaon University Mecha Club</strong> at the BUET Auto Fest. We are committed to fostering your growth as a skilled engineer and a responsible citizen, prepared to solve the complex technological challenges of the future.',
+];
+
+const HEAD_MESSAGE_PARAGRAPHS = [
+  'Mechanical Engineering is the largest department of the university. The Department started its journey in the year of 2013 and has already passed a decade. In the last decade, we have developed our expertise and competency in curriculum and research. Our main goal is to provide quality education in both theory and practical to the undergraduate students, so that they can build their foundation strongly. There are about 50 (Fifty) highly educated, qualified and experienced permanent full-time faculty members from BUET, KUET, RUET, CUET, DUET, IUT, DU, CU, RU, JU and other public universities engaged in the Department. A large number of our graduates are regularly getting enrolments in Post-graduate programs in reputed universities around the world, particularly in the USA, Canada, Australia and the EU with prestigious scholarships, as well as a good number of faculty members are also on study leave in different countries pursuing their higher education.',
+  'The university is located in the heart of the city, with easy access to Metro-Rail Station, City and Inter-district bus services. It provides free bus services around the city and downtown — Mograpara, Gauchhia, Kadamtali in the east, Abdullahpur in the north and Savar in the west.',
+  '50% to 100% Waiver on tuition fees and scholarship is also available on the basis of semester results. Air-conditioned classrooms with multimedia projectors, lab facilities equipped with all types of equipments and machineries as per courses of the department, as well as Computer Lab with the latest and updated computers and software are also available in the Department.',
+  'It is noteworthy that efficient and experienced professors of BUET have been appointed as advisors to the department. Students have participated in different competitive events and have kept the signatures of many accomplishments.',
+  'ACI Motors Ltd. presents Auto Fest 2024 was held from February 01, 2024 to February 08, 2024, organized by Mechanical Engineering Association, BUET. Sonargaon University Mecha Club (SUMEC) of the Department of Mechanical Engineering participated in this Fest and achieved a token of appreciation as <strong class="text-button-yellow">Valuable Club Partner</strong>. Participation, collaboration and contribution of SUMEC significantly enriched the initiatives of the Fest.',
+  'Therefore, Welcome to the Department of Mechanical Engineering — pursue your undergraduate degree and make yourself an Engineer as well as a good citizen to serve the country.',
+];
+
+// TS source uses hyphenated literal types; Prisma enum uses underscores.
+function mapFacultyType(t: 'leadership' | 'full-time' | 'part-time') {
+  if (t === 'leadership') return 'leadership' as const;
+  if (t === 'full-time') return 'full_time' as const;
+  return 'part_time' as const;
+}
+
+async function seedFaculty() {
+  const before = await prisma.faculty.count();
+
+  for (let i = 0; i < facultyData.length; i++) {
+    const f = facultyData[i];
+    const isDean = f.slug === DEAN_SLUG;
+    const isHead = f.slug === HEAD_SLUG;
+
+    const messageFields = isDean
+      ? {
+          isDean: true,
+          messageOverline: 'A Note from the Dean',
+          messageHeading: 'Welcome Message',
+          messageParagraphs: DEAN_MESSAGE_PARAGRAPHS,
+          messagePhotoUrl: '/assets/faculty-dean-kamal.webp',
+          messageTitleLine1: 'Dean',
+          messageTitleLine2: 'Faculty of Science & Engineering',
+          messageHeroImageUrl: '/assets/mission-vision-hero.webp',
+          messageHeroImagePosition: 'center 3%',
+        }
+      : isHead
+        ? {
+            isHead: true,
+            messageOverline: 'A Note from the Head',
+            messageHeading: 'Welcome Message',
+            messageParagraphs: HEAD_MESSAGE_PARAGRAPHS,
+            // Head's-message page uses a different photo than Head's
+            // [slug] page — see J-finding in CP2.1 surface.
+            messagePhotoUrl: '/assets/head-mostofa-hossain.webp',
+            messageTitleLine1: 'Head of the Department',
+            messageTitleLine2: 'Department of Mechanical Engineering',
+            messageHeroImageUrl: '/assets/message-from-head-hero.webp',
+            messageHeroImagePosition: 'center top',
+          }
+        : {};
+
+    await prisma.faculty.upsert({
+      where: { slug: f.slug },
+      // Idempotent: re-running won't override admin edits to existing rows
+      update: {},
+      create: {
+        slug:           f.slug,
+        name:           f.name,
+        designation:    f.designation,
+        secondaryTitle: f.secondaryTitle ?? null,
+        badge:          f.badge ?? null,
+        type:           mapFacultyType(f.type),
+        displayOrder:   i,
+        photoUrl:       f.photo ?? null,
+        email:          f.email ?? null,
+        phone:          f.phone ?? null,
+        suId:           f.suId ?? null,
+        personalInfo:          f.personalInfo ?? undefined,
+        academicQualification: (f.academicQualification ?? undefined) as object | undefined,
+        trainingExperience:    (f.trainingExperience    ?? undefined) as object | undefined,
+        teachingArea:          (f.teachingArea          ?? undefined) as object | undefined,
+        publications:          (f.publications          ?? undefined) as object | undefined,
+        research:              (f.research              ?? undefined) as object | undefined,
+        awards:                (f.awards                ?? undefined) as object | undefined,
+        membership:            (f.membership            ?? undefined) as object | undefined,
+        previousEmployment:    (f.previousEmployment    ?? undefined) as object | undefined,
+        ...messageFields,
+      },
+    });
+  }
+
+  const after = await prisma.faculty.count();
+  console.log(`✓ Faculty seeded (before: ${before}, after: ${after}, created: ${after - before})`);
+}
+
 async function main() {
   console.log('Seeding database…\n');
   await seedDepartmentIdentity();
   await seedUniversityIdentity();
   await seedPrograms();
   await seedResearchAreas();
+  await seedFaculty();
   await bootstrapSuperAdmin();
   console.log('\nDone.');
 }
