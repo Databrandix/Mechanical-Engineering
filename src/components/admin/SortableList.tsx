@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
   DndContext,
   KeyboardSensor,
@@ -36,6 +36,11 @@ export default function SortableList<T>({
   onReorder,
 }: Props<T>) {
   const [items, setItems] = useState(initial);
+  // Stable per-instance id — without this, dnd-kit's internal counter
+  // produces non-deterministic accessibility ids (DndDescribedBy-N)
+  // across SSR ↔ hydration when multiple SortableLists live on the
+  // same page (e.g. /admin/nav, /admin/footer-links).
+  const dndId = useId();
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -63,7 +68,7 @@ export default function SortableList<T>({
   }
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    <DndContext id={dndId} sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={items.map(getId)} strategy={verticalListSortingStrategy}>
         <ul className="space-y-2">
           {items.map((item) => (
