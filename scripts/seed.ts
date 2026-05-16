@@ -9,6 +9,7 @@
  *   INITIAL_SUPER_ADMIN_PASSWORD
  */
 import bcrypt from 'bcryptjs';
+import type { Prisma } from '@prisma/client';
 import { prisma } from '../src/lib/db';
 import { faculty as facultyData } from '../src/lib/faculty-data';
 
@@ -251,15 +252,21 @@ async function seedFaculty() {
         email:          f.email ?? null,
         phone:          f.phone ?? null,
         suId:           f.suId ?? null,
-        personalInfo:          f.personalInfo ?? undefined,
-        academicQualification: (f.academicQualification ?? undefined) as object | undefined,
-        trainingExperience:    (f.trainingExperience    ?? undefined) as object | undefined,
-        teachingArea:          (f.teachingArea          ?? undefined) as object | undefined,
-        publications:          (f.publications          ?? undefined) as object | undefined,
-        research:              (f.research              ?? undefined) as object | undefined,
-        awards:                (f.awards                ?? undefined) as object | undefined,
-        membership:            (f.membership            ?? undefined) as object | undefined,
-        previousEmployment:    (f.previousEmployment    ?? undefined) as object | undefined,
+        // Json columns — source values are typed as the loose union
+        // (string | string[] | { heading; items }[]) which TS can't
+        // narrow to Prisma's InputJsonValue without a cast. The cast
+        // is honest about the runtime contract (we know these are
+        // JSON-serializable) and replaces the prior misleading
+        // `as object | undefined` (string isn't an object).
+        personalInfo:          (f.personalInfo          ?? undefined) as Prisma.InputJsonValue | undefined,
+        academicQualification: (f.academicQualification ?? undefined) as Prisma.InputJsonValue | undefined,
+        trainingExperience:    (f.trainingExperience    ?? undefined) as Prisma.InputJsonValue | undefined,
+        teachingArea:          (f.teachingArea          ?? undefined) as Prisma.InputJsonValue | undefined,
+        publications:          (f.publications          ?? undefined) as Prisma.InputJsonValue | undefined,
+        research:              (f.research              ?? undefined) as Prisma.InputJsonValue | undefined,
+        awards:                (f.awards                ?? undefined) as Prisma.InputJsonValue | undefined,
+        membership:            (f.membership            ?? undefined) as Prisma.InputJsonValue | undefined,
+        previousEmployment:    (f.previousEmployment    ?? undefined) as Prisma.InputJsonValue | undefined,
         ...messageFields,
       },
     });
