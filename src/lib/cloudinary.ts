@@ -29,11 +29,13 @@ function ensureConfigured() {
 // CLOUDINARY_UPLOAD_FOLDER, so cloning this repo for another department
 // only requires changing that env var.
 const KIND_TO_SUBFOLDER: Record<string, string> = {
-  'department-logo':  'department/logo',
-  'department-hero':  'department/hero',
-  'university-logo':  'university/logo',
-  'program-image':    'programs',
-  'research-icon':    'research-areas',
+  'department-logo':       'department/logo',
+  'department-hero':       'department/hero',
+  'university-logo':       'university/logo',
+  'program-image':         'programs',
+  'research-icon':         'research-areas',
+  'faculty-photo':         'faculty/photos',
+  'faculty-message-hero':  'faculty/message-hero',
 };
 
 function folderFor(kind: string): string {

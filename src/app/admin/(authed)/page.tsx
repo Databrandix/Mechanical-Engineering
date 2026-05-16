@@ -7,6 +7,7 @@ import {
   Microscope,
   University,
   Users,
+  UsersRound,
 } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
@@ -21,10 +22,11 @@ export default async function DashboardHome() {
   const role = (session.user.role ?? 'admin') as 'super_admin' | 'admin';
   const isSuperAdmin = role === 'super_admin';
 
-  const [programsCount, researchAreasCount, adminUsersCount, previousSession] =
+  const [programsCount, researchAreasCount, facultyCount, adminUsersCount, previousSession] =
     await Promise.all([
       prisma.program.count(),
       prisma.researchArea.count(),
+      prisma.faculty.count(),
       isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
       prisma.session.findFirst({
         where: {
@@ -57,6 +59,7 @@ export default async function DashboardHome() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard label="Total Programs" value={programsCount} />
           <StatCard label="Total Research Areas" value={researchAreasCount} />
+          <StatCard label="Total Faculty" value={facultyCount} />
           {isSuperAdmin && (
             <StatCard label="Total Admin Users" value={adminUsersCount!} />
           )}
@@ -100,6 +103,12 @@ export default async function DashboardHome() {
             icon={Microscope}
             title="Manage Research Areas"
             desc="Add, edit, reorder, delete research areas"
+          />
+          <ActionCard
+            href="/admin/faculty"
+            icon={UsersRound}
+            title="Manage Faculty"
+            desc="Faculty members, Dean & Head profiles, photos"
           />
           {isSuperAdmin && (
             <ActionCard

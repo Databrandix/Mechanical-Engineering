@@ -23,10 +23,11 @@ export const GET = withErrorHandling(async () => {
   }
   const isSuperAdmin = session.user.role === 'super_admin';
 
-  const [programsCount, researchAreasCount, adminUsersCount, previousSession] =
+  const [programsCount, researchAreasCount, facultyCount, adminUsersCount, previousSession] =
     await Promise.all([
       prisma.program.count(),
       prisma.researchArea.count(),
+      prisma.faculty.count(),
       isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
       prisma.session.findFirst({
         where: {
@@ -41,6 +42,7 @@ export const GET = withErrorHandling(async () => {
   return NextResponse.json({
     programsCount,
     researchAreasCount,
+    facultyCount,
     adminUsersCount,                          // null when caller isn't super_admin
     previousLoginAt: previousSession?.createdAt ?? null,
     currentUser: {

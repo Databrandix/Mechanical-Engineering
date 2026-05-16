@@ -159,6 +159,71 @@ export const changeOwnPasswordSchema = z.object({
 });
 
 // ─────────────────────────────────────────────────────────────────
+//  Faculty (Phase 2 — list, CRUD, reorder)
+// ─────────────────────────────────────────────────────────────────
+
+// Prisma enum identifiers — underscored (no hyphens allowed).
+export const FacultyType = z.enum(['leadership', 'full_time', 'part_time']);
+
+// SectionContent — string | string[] | { heading, items }[]
+const sectionContentSchema = z.union([
+  z.string(),
+  z.array(z.string()),
+  z.array(
+    z.object({ heading: z.string(), items: z.array(z.string()).default([]) }),
+  ),
+]);
+
+// PersonalInfo — array of label/value rows
+const personalInfoSchema = z.array(
+  z.object({ label: z.string().min(1), value: z.string().min(1) }),
+);
+
+const slugRegex = /^[a-z0-9-]+$/;
+
+export const facultyCreateSchema = z.object({
+  slug:           z.string().min(1).max(120).regex(slugRegex, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  name:           z.string().min(1).max(300),
+  designation:    z.string().min(1).max(300),
+  secondaryTitle: z.string().max(300).nullable().optional(),
+  badge:          z.string().max(100).nullable().optional(),
+  type:           FacultyType,
+  displayOrder:   z.number().int().min(0).optional(),
+
+  photoUrl:       optionalNullableString,
+  photoPublicId:  optionalNullableString,
+
+  email:          z.string().email().nullable().optional().or(z.literal('')),
+  phone:          z.string().nullable().optional(),
+  suId:           z.string().nullable().optional(),
+
+  personalInfo:          personalInfoSchema.nullable().optional(),
+  academicQualification: sectionContentSchema.nullable().optional(),
+  trainingExperience:    sectionContentSchema.nullable().optional(),
+  teachingArea:          sectionContentSchema.nullable().optional(),
+  publications:          sectionContentSchema.nullable().optional(),
+  research:              sectionContentSchema.nullable().optional(),
+  awards:                sectionContentSchema.nullable().optional(),
+  membership:            sectionContentSchema.nullable().optional(),
+  previousEmployment:    sectionContentSchema.nullable().optional(),
+
+  isDean:                   z.boolean().optional().default(false),
+  isHead:                   z.boolean().optional().default(false),
+  messageOverline:          z.string().nullable().optional(),
+  messageHeading:           z.string().nullable().optional(),
+  messageParagraphs:        z.array(z.string()).optional().default([]),
+  messagePhotoUrl:          optionalNullableString,
+  messagePhotoPublicId:     optionalNullableString,
+  messageTitleLine1:        z.string().nullable().optional(),
+  messageTitleLine2:        z.string().nullable().optional(),
+  messageHeroImageUrl:      optionalNullableString,
+  messageHeroImagePublicId: optionalNullableString,
+  messageHeroImagePosition: z.string().nullable().optional(),
+});
+
+export const facultyUpdateSchema = facultyCreateSchema.partial();
+
+// ─────────────────────────────────────────────────────────────────
 //  Cloudinary upload helpers
 // ─────────────────────────────────────────────────────────────────
 
@@ -174,6 +239,8 @@ export const uploadKindSchema = z.enum([
   'university-logo',
   'program-image',
   'research-icon',
+  'faculty-photo',
+  'faculty-message-hero',
 ]);
 
 export const uploadSignSchema = z.object({

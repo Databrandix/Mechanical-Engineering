@@ -9,7 +9,9 @@ type Kind =
   | 'department-hero'
   | 'university-logo'
   | 'program-image'
-  | 'research-icon';
+  | 'research-icon'
+  | 'faculty-photo'
+  | 'faculty-message-hero';
 
 type Props = {
   /** Which folder + transformation hint the upload goes to. */
