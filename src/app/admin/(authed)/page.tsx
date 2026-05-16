@@ -5,6 +5,8 @@ import {
   GraduationCap,
   Key,
   Microscope,
+  Navigation,
+  PanelBottom,
   University,
   Users,
   UsersRound,
@@ -109,6 +111,18 @@ export default async function DashboardHome() {
             icon={UsersRound}
             title="Manage Faculty"
             desc="Faculty members, Dean & Head profiles, photos"
+          />
+          <ActionCard
+            href="/admin/nav"
+            icon={Navigation}
+            title="Manage Navigation"
+            desc="Top bar, quick access, main nav groups & items"
+          />
+          <ActionCard
+            href="/admin/footer-links"
+            icon={PanelBottom}
+            title="Manage Footer Links"
+            desc="Useful, Get in Touch, Quick & Legal columns"
           />
           {isSuperAdmin && (
             <ActionCard
