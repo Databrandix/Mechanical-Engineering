@@ -12,7 +12,6 @@ const undergraduateRequirements = [
   'Minimum GPA of 2.5 (or second division) in SSC and HSC examinations (or their equivalent), or GCE/IGCSE "O" Level in four subjects.',
   '"A" Level in two subjects with minimum GPA of 2.50 in each exam (using scale of A=5, B=4, C=3, D=2, E=1), or average 450 marks in GED with five subjects.',
   'Minimum GPA of 2.0 in SSC and HSC examinations individually for Fashion Design and Technology.',
-  'Sons/daughters of freedom fighters are eligible for admission with a minimum combined GPA of 5.00 in SSC and HSC. Applicants must submit an authenticated certificate as proof of their parent’s identity as a freedom fighter.',
   'Equivalent performance under other educational systems (e.g. American High School Diploma, IB, etc.) is also accepted.',
   'A combined SAT score of 1100 is also accepted in lieu of the Admission Test for High School Graduates in any system.',
   'For admission to engineering programs, students must have studied Physics, Chemistry, and Mathematics in HSC / A-Level.',
