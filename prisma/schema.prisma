@@ -95,10 +95,13 @@ model DepartmentIdentity {
   breadcrumbLabel    String
   heroImage1Url      String
   heroImage1PublicId String?
+  heroImage1Alt      String?
   heroImage2Url      String
   heroImage2PublicId String?
+  heroImage2Alt      String?
   heroImage3Url      String
   heroImage3PublicId String?
+  heroImage3Alt      String?
   updatedAt          DateTime @updatedAt
 
   @@map("department_identity")
@@ -149,6 +152,7 @@ model Program {
   imagePublicId   String?
   specializations String[]
   cta             String?
+  ctaHref         String?
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -165,10 +169,24 @@ model ResearchArea {
   areaName     String
   description  String?  @db.Text
   displayOrder Int
+
+  // Featured slot — exactly one row should have isFeatured=true.
+  // Renders into the right-hand card on MajorResearchSection.
+  // featuredHeading is optional override for the card's <h3>; null →
+  // renderer falls back to areaName (keeps grid + featured visually
+  // in sync unless an editor intentionally wants a richer title).
+  isFeatured              Boolean @default(false)
+  featuredHeading         String?
+  featuredImageUrl        String?
+  featuredImagePublicId   String?
+  featuredDescription     String? @db.Text
+  featuredCtaHref         String?
+
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   @@index([displayOrder])
+  @@index([isFeatured])
   @@map("research_area")
 }
 
@@ -231,4 +249,141 @@ model Faculty {
   @@index([isDean])
   @@index([isHead])
   @@map("faculty")
+}
+
+// ════════════════════════════════════════════════════════════════
+//  CHROME — NAVBAR + FOOTER STRUCTURE
+//  Phase 3. Drives navbar (top bar, quick-access grid, main nav
+//  groups + items) and footer (4 link columns). Everything that
+//  was a hardcoded array in Navbar.tsx / Footer.tsx now lives here.
+// ════════════════════════════════════════════════════════════════
+
+model TopLink {
+  // The thin top-bar row above the main navbar (Virtual Tour, IQAC,
+  // Career, Archive, Contact). Hidden on mobile; collapses on scroll.
+  id           String   @id @default(cuid())
+  name         String
+  href         String?  // null when isDisabled (e.g. "Virtual Tour", "Archive" have no destination yet)
+  isExternal   Boolean  @default(false)
+  isDisabled   Boolean  @default(false)
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("top_link")
+}
+
+model QuickAccessItem {
+  // The 3-col grid in scrolled-navbar's right dropdown + mobile
+  // drawer "Services" section. Single source of truth — both
+  // surfaces render from this list.
+  id           String   @id @default(cuid())
+  name         String
+  href         String?
+  iconName     String   // Lucide icon name (BookOpen, GraduationCap, …)
+  isExternal   Boolean  @default(false)
+  isDisabled   Boolean  @default(false)
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("quick_access_item")
+}
+
+model MainNavGroup {
+  // Each entry on the main nav bar (About, Faculty Member, Admission,
+  // Student Society, Contact). `hasDropdown=false` → plain link
+  // (href required, items empty). `hasDropdown=true` → dropdown
+  // panel (href ignored, title + items drive the panel).
+  id           String        @id @default(cuid())
+  name         String
+  href         String?
+  hasDropdown  Boolean       @default(false)
+  title        String?       // dropdown header text (usually same as name)
+  displayOrder Int
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  items        MainNavItem[]
+
+  @@index([displayOrder])
+  @@map("main_nav_group")
+}
+
+model MainNavItem {
+  id           String       @id @default(cuid())
+  groupId      String
+  name         String
+  href         String
+  isExternal   Boolean      @default(false)
+  isDisabled   Boolean      @default(false)
+  displayOrder Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  group        MainNavGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId, displayOrder])
+  @@map("main_nav_item")
+}
+
+model FooterUsefulLink {
+  id           String   @id @default(cuid())
+  name         String
+  href         String?
+  isExternal   Boolean  @default(false)
+  isDisabled   Boolean  @default(false)
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("footer_useful_link")
+}
+
+model FooterGetInTouchLink {
+  id           String   @id @default(cuid())
+  name         String
+  href         String?
+  isExternal   Boolean  @default(false)
+  isDisabled   Boolean  @default(false)
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("footer_get_in_touch_link")
+}
+
+model FooterQuickLink {
+  id           String   @id @default(cuid())
+  name         String
+  href         String?
+  isExternal   Boolean  @default(false)
+  isDisabled   Boolean  @default(false)
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("footer_quick_link")
+}
+
+model FooterLegalLink {
+  // Bottom-bar row (Privacy Statement, Terms of Use, Sitemap).
+  // Flagged Phase 2/3 candidate in CP1.2 trade-offs; folded into
+  // the Phase 3 full chrome sweep.
+  id           String   @id @default(cuid())
+  name         String
+  href         String?
+  isExternal   Boolean  @default(false)
+  isDisabled   Boolean  @default(false)
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("footer_legal_link")
 }
