@@ -6,12 +6,10 @@ import {motion} from 'motion/react';
 import Container from '../ui/Container';
 import {ChevronRight, Home} from 'lucide-react';
 
-// Per-image alt text. DB schema does NOT store per-image alt
-// (heroImage{N}Url only); these stay code constants. If an admin
-// replaces a hero image, the alt describes the slot, not the new
-// specific image — known limitation until schema gains an alt
-// column in a future phase.
-const HERO_ALTS = [
+// Per-image alt text now comes from DepartmentIdentity.heroImage{N}Alt
+// (Phase 3). When an admin replaces a hero image, they edit the
+// matching alt in the same form. Null alt → generic slot label.
+const FALLBACK_ALTS = [
   'Sonargaon University Mechanical Engineering Department',
   'Sonargaon University Mechanical Engineering students and faculty',
   'Sonargaon University Mechanical Engineering campus',
@@ -19,13 +17,14 @@ const HERO_ALTS = [
 
 type HeroSectionProps = {
   imageUrls: readonly string[];
+  imageAlts: readonly (string | null)[];
   breadcrumbLabel: string;
 };
 
-export default function HeroSection({ imageUrls, breadcrumbLabel }: HeroSectionProps) {
+export default function HeroSection({ imageUrls, imageAlts, breadcrumbLabel }: HeroSectionProps) {
   const heroImages = imageUrls.map((src, i) => ({
     src,
-    alt: HERO_ALTS[i] ?? `Sonargaon University Mechanical Engineering — slide ${i + 1}`,
+    alt: imageAlts[i] ?? FALLBACK_ALTS[i] ?? `Sonargaon University Mechanical Engineering — slide ${i + 1}`,
   }));
   const [activeImage, setActiveImage] = useState(0);
 

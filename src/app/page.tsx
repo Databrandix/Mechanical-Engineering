@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 import HeroSection from '@/components/sections/HeroSection';
-import { getDepartmentIdentity, getPrograms, getResearchAreas } from '@/lib/identity';
+import { getDepartmentIdentity, getProgramsWithCta, getResearchAreas } from '@/lib/identity';
 
 function sectionSkeleton(minHeight: string) {
   return function Skeleton() {
@@ -39,13 +39,14 @@ const ServicesSection = dynamic(() => import('@/components/sections/ServicesSect
 export default async function HomePage() {
   const [dept, programs, researchAreas] = await Promise.all([
     getDepartmentIdentity(),
-    getPrograms(),
+    getProgramsWithCta(),
     getResearchAreas(),
   ]);
   return (
     <>
       <HeroSection
         imageUrls={[dept.heroImage1Url, dept.heroImage2Url, dept.heroImage3Url]}
+        imageAlts={[dept.heroImage1Alt, dept.heroImage2Alt, dept.heroImage3Alt]}
         breadcrumbLabel={dept.breadcrumbLabel}
       />
       <OverviewSection />

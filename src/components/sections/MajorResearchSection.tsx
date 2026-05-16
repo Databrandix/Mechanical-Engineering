@@ -35,11 +35,19 @@ type ResearchAreaRow = {
   iconUrl: string | null;
   areaName: string;
   description: string | null;
+  isFeatured: boolean;
+  featuredHeading: string | null;
+  featuredImageUrl: string | null;
+  featuredDescription: string | null;
+  featuredCtaHref: string | null;
 };
 
 type MajorResearchSectionProps = {
   areas: readonly ResearchAreaRow[];
 };
+
+const DEFAULT_FEATURED_IMAGE = '/assets/research-featured.webp';
+const DEFAULT_FEATURED_CTA   = '/research';
 
 function ResearchAreaIcon({ area }: { area: ResearchAreaRow }) {
   if (area.iconUrl) {
@@ -61,6 +69,8 @@ function ResearchAreaIcon({ area }: { area: ResearchAreaRow }) {
 }
 
 export default function MajorResearchSection({ areas }: MajorResearchSectionProps) {
+  const featured = areas.find((a) => a.isFeatured) ?? null;
+
   return (
     <section className="py-8 md:py-16 bg-gray-50 border-y border-gray-100">
       <Container>
@@ -72,7 +82,7 @@ export default function MajorResearchSection({ areas }: MajorResearchSectionProp
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-stretch">
           {/* Left Grid Area */}
-          <div className="lg:w-2/3 grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+          <div className={`${featured ? 'lg:w-2/3' : 'lg:w-full'} grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6`}>
             {areas.map((area, idx) => (
               <motion.div
                 key={area.id}
@@ -93,42 +103,47 @@ export default function MajorResearchSection({ areas }: MajorResearchSectionProp
             ))}
           </div>
 
-          {/* Right Featured Card — stays hardcoded in CP1.3. Phase 2
-              candidate: add a `featured` flag (and copy fields) to the
-              ResearchArea schema, then promote one row into this slot. */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="lg:w-1/3 relative rounded-2xl md:rounded-[32px] overflow-hidden group shadow-2xl min-h-[360px] md:min-h-[480px] lg:min-h-0"
-          >
-            <Image
-              src="/assets/research-featured.webp"
-              alt="Robotics and industrial automation research at Sonargaon University ME Department"
-              fill
-              sizes="(min-width: 1024px) 33vw, 100vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/45 to-primary/10 group-hover:via-primary/65 group-hover:to-primary/20 transition-all duration-500" />
-            <div className="absolute bottom-0 left-0 p-6 md:p-8">
-              <span className="inline-block px-3 py-1 bg-accent/90 text-white text-[10px] font-bold rounded-full mb-3 uppercase tracking-wider">
-                Featured Insight
-              </span>
-              <h3 className="text-white text-xl md:text-2xl font-display font-bold mb-3 md:mb-4">
-                Robotics & Industrial Automation
-              </h3>
-              <p className="text-white/70 text-sm mb-4 md:mb-6 leading-relaxed">
-                This research cell operates at the intersection of mechanical design and intelligent control, building autonomous systems for next-generation manufacturing...
-              </p>
-              <a
-                href="/research"
-                className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-accent/90 hover:scale-[1.02]"
-              >
-                Read More
-                <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
-              </a>
-            </div>
-          </motion.div>
+          {/* Right Featured Card — Phase 3: rendered from the
+              ResearchArea row flagged isFeatured=true. If no row
+              is flagged, the slot collapses and the grid takes
+              full width (graceful fallback). */}
+          {featured && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="lg:w-1/3 relative rounded-2xl md:rounded-[32px] overflow-hidden group shadow-2xl min-h-[360px] md:min-h-[480px] lg:min-h-0"
+            >
+              <Image
+                src={featured.featuredImageUrl ?? DEFAULT_FEATURED_IMAGE}
+                alt={`Featured: ${featured.featuredHeading ?? featured.areaName}`}
+                fill
+                sizes="(min-width: 1024px) 33vw, 100vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/45 to-primary/10 group-hover:via-primary/65 group-hover:to-primary/20 transition-all duration-500" />
+              <div className="absolute bottom-0 left-0 p-6 md:p-8">
+                <span className="inline-block px-3 py-1 bg-accent/90 text-white text-[10px] font-bold rounded-full mb-3 uppercase tracking-wider">
+                  Featured Insight
+                </span>
+                <h3 className="text-white text-xl md:text-2xl font-display font-bold mb-3 md:mb-4">
+                  {featured.featuredHeading ?? featured.areaName}
+                </h3>
+                {featured.featuredDescription && (
+                  <p className="text-white/70 text-sm mb-4 md:mb-6 leading-relaxed">
+                    {featured.featuredDescription}
+                  </p>
+                )}
+                <a
+                  href={featured.featuredCtaHref ?? DEFAULT_FEATURED_CTA}
+                  className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-accent/90 hover:scale-[1.02]"
+                >
+                  Read More
+                  <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
+                </a>
+              </div>
+            </motion.div>
+          )}
         </div>
       </Container>
     </section>

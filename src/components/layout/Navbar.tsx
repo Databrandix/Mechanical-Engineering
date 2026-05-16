@@ -1,24 +1,82 @@
 'use client';
 
-import {useState, useEffect} from 'react';
+import {useState, useEffect, type ComponentType} from 'react';
 import Image from 'next/image';
 import {
   Menu, X, Search, Facebook, Linkedin, Youtube,
   GraduationCap, User, CheckCircle, ChevronDown, ChevronRight,
   LayoutGrid, BookOpen, Image as ImageIcon, Users, Globe,
   ClipboardList, Building2, Award, Compass, Archive,
+  type LucideProps,
 } from 'lucide-react';
 import Container from '../ui/Container';
-import { quickLinks } from '../../lib/data';
 import SearchOverlay from './SearchOverlay';
+
+// Icon resolution for QuickAccessItem.iconName (admin types a Lucide
+// name; we look it up here). Unknown name falls back to a generic
+// Globe icon so the row still renders.
+const IconMap: Record<string, ComponentType<LucideProps>> = {
+  BookOpen, GraduationCap, Image: ImageIcon, Compass, Archive,
+  Users, Globe, ClipboardList, Building2, Award, CheckCircle,
+};
+
+function resolveIcon(name: string): ComponentType<LucideProps> {
+  return IconMap[name] ?? Globe;
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  DB-driven shapes — match the cache() selects in lib/identity.ts
+// ─────────────────────────────────────────────────────────────────
+
+type TopLinkRow = {
+  id: string;
+  name: string;
+  href: string | null;
+  isExternal: boolean;
+  isDisabled: boolean;
+};
+
+type QuickAccessRow = {
+  id: string;
+  name: string;
+  href: string | null;
+  iconName: string;
+  isExternal: boolean;
+  isDisabled: boolean;
+};
+
+type MainNavItemRow = {
+  id: string;
+  name: string;
+  href: string;
+  isExternal: boolean;
+  isDisabled: boolean;
+};
+
+type MainNavGroupRow = {
+  id: string;
+  name: string;
+  href: string | null;
+  hasDropdown: boolean;
+  title: string | null;
+  items: MainNavItemRow[];
+};
 
 type NavbarProps = {
   logoUrl: string;
-  erpUrl: string;
   applyUrl: string;
+  topLinks: readonly TopLinkRow[];
+  quickAccessItems: readonly QuickAccessRow[];
+  mainNav: readonly MainNavGroupRow[];
 };
 
-export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
+export default function Navbar({
+  logoUrl,
+  applyUrl,
+  topLinks,
+  quickAccessItems,
+  mainNav,
+}: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -33,9 +91,7 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
   };
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -45,86 +101,14 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
     if (!mobileMenuOpen) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
+    return () => { document.body.style.overflow = prev; };
   }, [mobileMenuOpen]);
 
-  const navLinks: {
-    name: string;
-    href: string;
-    hasDropdown?: boolean;
-    title?: string;
-    children?: { name: string; href: string; disabled?: boolean }[];
-  }[] = [
-    {
-      name: 'About',
-      href: '#',
-      hasDropdown: true,
-      title: 'About',
-      children: [
-        { name: 'Message from Head', href: '/about/message-from-head' },
-        { name: 'Mission & Vision', href: '/about/mission-vision' },
-        { name: 'Laboratory Facility', href: '/about/laboratory-facility' },
-        { name: 'Mecha Club', href: '/about/mecha-club' },
-        { name: 'Lab Facility', href: '/about/lab-facility' },
-      ],
-    },
-    { name: 'Faculty Member', href: '/faculty-member' },
-    {
-      name: 'Admission',
-      href: '#admission',
-      hasDropdown: true,
-      title: 'Admission',
-      children: [
-        { name: 'Admission Requirements', href: '/admission/requirements' },
-        { name: 'Tuition Fees', href: '/admission/tuition-fees' },
-        { name: 'Transfer Credits', href: '/admission/transfer-credits' },
-        { name: 'Waiver & Scholarship', href: '/admission/waiver-scholarship' },
-        { name: 'Admission Notice', href: '/admission/notice' },
-        { name: 'Prospectus', href: '/admission/prospectus' },
-        { name: 'Apply Online', href: applyUrl },
-      ],
-    },
-    {
-      name: 'Student Society',
-      href: '#',
-      hasDropdown: true,
-      title: 'Student Society',
-      children: [
-        { name: 'Notice Board', href: '/student-society/notice-board' },
-        { name: 'Events', href: '/student-society/events' },
-        { name: 'Alumni', href: '/student-society/alumni' },
-        { name: 'Visitor', href: '/student-society/visitor' },
-        { name: 'FAQ', href: '/student-society/faq' },
-        { name: 'Syllabus', href: '/student-society/syllabus' },
-        { name: 'Club list', href: '/student-society/club-list' },
-      ],
-    },
-    { name: 'Contact', href: '/contact' },
-  ];
-
-  const topLinks: { name: string; href?: string; external?: boolean }[] = [
-    { name: 'Virtual Tour' },
-    { name: 'IQAC', href: 'https://su.edu.bd/iqac', external: true },
-    { name: 'Career', href: 'https://su.edu.bd/welcome/career', external: true },
-    { name: 'Archive' },
-    { name: 'Contact', href: '/contact' },
-  ];
-
-  const quickAccess: { name: string; href?: string; external?: boolean; Icon: typeof BookOpen; disabled?: boolean }[] = [
-    { name: 'Library', href: 'http://lib.su.edu.bd', external: true, Icon: BookOpen },
-    { name: 'Admission', href: '/admission/requirements', Icon: GraduationCap },
-    { name: 'Photo', href: '/gallery', Icon: ImageIcon },
-    { name: 'Virtual Tour', Icon: Compass, disabled: true },
-    { name: 'Archive', Icon: Archive, disabled: true },
-    { name: 'Notice', href: 'https://su.edu.bd/welcome/notice', external: true, Icon: Users },
-    { name: 'ERP', href: erpUrl, external: true, Icon: Globe },
-    { name: 'IQAC', href: 'https://su.edu.bd/iqac', external: true, Icon: ClipboardList },
-    { name: 'Skill Jobs', href: 'https://su.edu.bd/welcome/career', external: true, Icon: Building2 },
-    { name: 'Convoc. Reg.', href: 'http://sue.su.edu.bd:5081/sonargaon_erp/student/convocation_registration', external: true, Icon: Award },
-    { name: 'Verification', href: 'https://su.edu.bd/welcome/degree_verification', external: true, Icon: CheckCircle },
-  ];
+  // Mobile drawer "Quick Links" derives from the main_nav Admission
+  // group children (Phase 3 Decision 3 — no separate table). If
+  // Admission group is absent for any reason, fall back to empty.
+  const mobileQuickLinks: MainNavItemRow[] =
+    mainNav.find((g) => g.name === 'Admission')?.items ?? [];
 
   return (
     <nav className="fixed w-full z-[60] flex flex-col transition-all duration-300">
@@ -135,11 +119,14 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
           <Container className="w-full !max-w-[1600px] flex items-center">
             <div className="flex items-center gap-1 text-[11px] text-white/90 font-medium">
               {topLinks.map((link, idx) => (
-                <div key={link.name} className="flex items-center">
+                <div key={link.id} className="flex items-center">
                   <a
-                    href={link.href || '#'}
-                    {...(link.external && { target: '_blank', rel: 'noopener noreferrer' })}
-                    className="hover:text-white transition-colors px-2 relative group uppercase tracking-wider"
+                    href={link.isDisabled || !link.href ? '#' : link.href}
+                    {...(link.isExternal && link.href && { target: '_blank', rel: 'noopener noreferrer' })}
+                    className={`px-2 relative group uppercase tracking-wider transition-colors ${
+                      link.isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:text-white'
+                    }`}
+                    aria-disabled={link.isDisabled || undefined}
                   >
                     {link.name}
                   </a>
@@ -184,56 +171,20 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
             />
           </a>
 
-          {/* Compact Scroll Navigation — only render when scrolled (saves layout space when not scrolled) */}
+          {/* Compact Scroll Navigation — only render when scrolled */}
           {isScrolled && (
             <div className="hidden lg:flex items-center justify-center gap-0.5 xl:gap-1">
-              {navLinks.map((link) => (
-                <div key={link.name} className="group relative">
-                  <a
-                    href={link.href}
-                    className="h-11 px-1 xl:px-3 flex items-center gap-0.5 xl:gap-1 text-[11px] xl:text-[14px] font-bold whitespace-nowrap text-gray-800 hover:text-accent transition-colors"
-                  >
-                    {link.name}
-                    {link.hasDropdown && <ChevronDown size={12} className="hidden xl:block opacity-80" />}
-                  </a>
-                  {link.children && (
-                    <div className="invisible absolute left-0 top-full z-50 min-w-[280px] translate-y-2 rounded-lg border border-gray-100 bg-white py-3 opacity-0 shadow-premium transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                      {link.title && (
-                        <div className="px-5 pt-1 pb-3 border-b border-gray-200">
-                          <div className="text-[15px] font-bold text-gray-900">{link.title}</div>
-                        </div>
-                      )}
-                      <div className="py-2">
-                        {link.children.map((child) => (
-                          <a
-                            key={child.name}
-                            href={child.href}
-                            {...(child.href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
-                            className="group/item block px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-accent/5 hover:text-accent"
-                          >
-                            <span className="inline-flex items-center gap-2">
-                              {child.name}
-                              <ChevronRight
-                                size={14}
-                                className="opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200"
-                              />
-                            </span>
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+              {mainNav.map((group) => (
+                <NavGroup key={group.id} group={group} compact />
               ))}
             </div>
           )}
 
           {/* Right side: Secondary buttons + Apply Now + Mobile toggle */}
           <div className="flex items-center gap-1 lg:gap-3 -mr-3 lg:mr-0">
-            {/* Secondary buttons — hidden on lg when scrolled (dept nav takes priority) */}
             <div className={`flex items-center gap-3 ${isScrolled ? 'lg:hidden' : ''}`}>
               <a
-                href={erpUrl}
+                href={resolveQuickAccessHref(quickAccessItems, 'ERP')}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden xl:flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-bold whitespace-nowrap transition-all shadow-sm border border-gray-100"
@@ -242,7 +193,7 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
                 ERP
               </a>
               <a
-                href="http://sue.su.edu.bd:5081/sonargaon_erp/student/convocation_registration"
+                href={resolveQuickAccessHref(quickAccessItems, 'Convoc. Reg.')}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden xl:flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-bold whitespace-nowrap transition-all shadow-sm border border-gray-100"
@@ -259,7 +210,7 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
               </button>
             </div>
 
-            {/* Apply Now — desktop only (mobile users use the drawer button) */}
+            {/* Apply Now */}
             <a
               href={applyUrl}
               target="_blank"
@@ -269,7 +220,7 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
               Apply Now
             </a>
 
-            {/* Quick Access grid — only shown in scrolled (compact) nav */}
+            {/* Quick Access grid — only shown when scrolled */}
             {isScrolled && (
               <div className="hidden lg:block group relative">
                 <button
@@ -280,23 +231,30 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
                 </button>
                 <div className="invisible absolute right-0 top-full z-50 mt-2 w-[320px] translate-y-2 rounded-xl border border-gray-100 bg-white p-3 opacity-0 shadow-premium transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                   <div className="grid grid-cols-3 gap-1">
-                    {quickAccess.map(({ name, href, external, Icon }) => (
-                      <a
-                        key={name}
-                        href={href || '#'}
-                        {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
-                        className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-lg text-center transition-colors hover:bg-accent/5"
-                      >
-                        <Icon size={22} className="text-primary" />
-                        <span className="text-[12px] font-medium text-gray-700 leading-tight">{name}</span>
-                      </a>
-                    ))}
+                    {quickAccessItems.map((item) => {
+                      const Icon = resolveIcon(item.iconName);
+                      const isLive = !!item.href && !item.isDisabled;
+                      return (
+                        <a
+                          key={item.id}
+                          href={isLive ? item.href! : '#'}
+                          {...(item.isExternal && isLive && { target: '_blank', rel: 'noopener noreferrer' })}
+                          className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-lg text-center transition-colors hover:bg-accent/5 ${
+                            !isLive ? 'opacity-50 cursor-not-allowed' : ''
+                          }`}
+                          aria-disabled={!isLive || undefined}
+                        >
+                          <Icon size={22} className="text-primary" />
+                          <span className="text-[12px] font-medium text-gray-700 leading-tight">{item.name}</span>
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Search Toggle — hidden while the mobile menu is open */}
+            {/* Search Toggle */}
             {!mobileMenuOpen && (
               <button
                 type="button"
@@ -308,7 +266,7 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
               </button>
             )}
 
-            {/* Mobile Menu Toggle — sits above drawer when open */}
+            {/* Mobile Menu Toggle */}
             <button
               type="button"
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
@@ -327,45 +285,9 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
         <div className="bg-white/95 backdrop-blur-md hidden lg:block border-b border-gray-50 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
           <Container className="!max-w-[1600px]">
             <div className="flex items-center h-14">
-            <div className="mx-auto flex items-center justify-center gap-0.5 xl:gap-1">
-                {navLinks.map((link) => (
-                  <div key={link.name} className="group relative">
-                    <a
-                      href={link.href}
-                      className="px-1.5 xl:px-5 h-14 flex items-center gap-0.5 xl:gap-1.5 text-[12px] xl:text-[15px] font-medium whitespace-nowrap text-gray-800 hover:text-accent transition-all relative"
-                    >
-                      {link.name}
-                      {link.hasDropdown && <ChevronDown size={13} className="hidden xl:block opacity-50" />}
-                      <span className="absolute bottom-0 left-0 w-0 h-1 bg-accent transition-all group-hover:w-full" />
-                    </a>
-                    {link.children && (
-                      <div className="invisible absolute left-0 top-full z-50 min-w-[280px] translate-y-2 rounded-lg border border-gray-100 bg-white py-3 opacity-0 shadow-premium transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                        {link.title && (
-                          <div className="px-5 pt-1 pb-3 border-b border-gray-200">
-                            <div className="text-[15px] font-bold text-gray-900">{link.title}</div>
-                          </div>
-                        )}
-                        <div className="py-2">
-                          {link.children.map((child) => (
-                            <a
-                              key={child.name}
-                              href={child.href}
-                              {...(child.href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
-                              className="group/item block px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-accent/5 hover:text-accent"
-                            >
-                              <span className="inline-flex items-center gap-2">
-                                {child.name}
-                                <ChevronRight
-                                  size={14}
-                                  className="opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200"
-                                />
-                              </span>
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+              <div className="mx-auto flex items-center justify-center gap-0.5 xl:gap-1">
+                {mainNav.map((group) => (
+                  <NavGroup key={group.id} group={group} />
                 ))}
               </div>
             </div>
@@ -373,7 +295,7 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
         </div>
       )}
 
-      {/* Mobile Menu — slide-in drawer from right (covers navbar; only hamburger X stays visible) */}
+      {/* Mobile Menu */}
       {/* Backdrop */}
       <div
         onClick={() => setMobileMenuOpen(false)}
@@ -382,31 +304,29 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
           mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       />
-      {/* Full-height drawer — slides in from right edge */}
+      {/* Drawer */}
       <div
         className={`lg:hidden fixed inset-y-0 right-0 w-[min(85vw,340px)] overflow-y-auto overscroll-contain bg-white z-[55] shadow-2xl transform transition-transform duration-300 pb-6 ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
         }`}
       >
-        {/* Menu header — aligned with navbar logo position */}
         <div className="px-4 pt-8 pb-3">
           <h3 className="text-base font-bold text-primary">Menu</h3>
         </div>
 
-        {/* Nav list */}
         <div className="px-4">
-          {navLinks.map((link) => {
-            const isOpen = openMobileSection === link.name;
+          {mainNav.map((group) => {
+            const isOpen = openMobileSection === group.name;
             return (
-              <div key={link.name} className="border-b border-gray-100 last:border-b-0">
-                {link.hasDropdown ? (
+              <div key={group.id} className="border-b border-gray-100 last:border-b-0">
+                {group.hasDropdown ? (
                   <button
                     type="button"
-                    onClick={() => toggleMobileSection(link.name)}
+                    onClick={() => toggleMobileSection(group.name)}
                     aria-expanded={isOpen}
                     className="w-full py-3 text-[14px] font-semibold text-primary flex justify-between items-center"
                   >
-                    {link.name}
+                    {group.name}
                     <ChevronDown
                       size={16}
                       className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
@@ -414,20 +334,23 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
                   </button>
                 ) : (
                   <a
-                    href={link.href}
+                    href={group.href ?? '#'}
                     className="block py-3 text-[14px] font-semibold text-primary"
                   >
-                    {link.name}
+                    {group.name}
                   </a>
                 )}
-                {link.children && isOpen && (
+                {group.items.length > 0 && isOpen && (
                   <div className="pb-2 pl-3 flex flex-col gap-1">
-                    {link.children.map((child) => (
+                    {group.items.map((child) => (
                       <a
-                        key={child.name}
-                        href={child.href}
-                        {...(child.href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
-                        className="py-1.5 text-[13px] font-medium text-gray-700 hover:text-accent transition-colors"
+                        key={child.id}
+                        href={child.isDisabled ? '#' : child.href}
+                        {...(child.isExternal && !child.isDisabled && { target: '_blank', rel: 'noopener noreferrer' })}
+                        className={`py-1.5 text-[13px] font-medium transition-colors ${
+                          child.isDisabled ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:text-accent'
+                        }`}
+                        aria-disabled={child.isDisabled || undefined}
                       >
                         {child.name}
                       </a>
@@ -451,41 +374,53 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
           </a>
         </div>
 
-        {/* Quick Links section */}
-        <div className="mt-4 px-4 pt-4 border-t border-gray-100">
-          <h4 className="text-[13px] font-bold text-primary mb-2.5">Quick Links</h4>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-            {quickLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                {...(link.external && { target: '_blank', rel: 'noopener noreferrer' })}
-                className="text-[12.5px] text-gray-700 hover:text-accent transition-colors py-1"
-              >
-                {link.name}
-              </a>
-            ))}
+        {/* Quick Links — derived from main_nav Admission group */}
+        {mobileQuickLinks.length > 0 && (
+          <div className="mt-4 px-4 pt-4 border-t border-gray-100">
+            <h4 className="text-[13px] font-bold text-primary mb-2.5">Quick Links</h4>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+              {mobileQuickLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.isDisabled ? '#' : link.href}
+                  {...(link.isExternal && !link.isDisabled && { target: '_blank', rel: 'noopener noreferrer' })}
+                  className={`text-[12.5px] transition-colors py-1 ${
+                    link.isDisabled ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:text-accent'
+                  }`}
+                  aria-disabled={link.isDisabled || undefined}
+                >
+                  {link.name}
+                </a>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Services section */}
+        {/* Services — from quick_access_item */}
         <div className="mt-4 px-4 pt-4 pb-4 border-t border-gray-100">
           <h4 className="text-[13px] font-bold text-primary mb-3">Services</h4>
           <div className="grid grid-cols-3 gap-2">
-            {quickAccess.map(({ name, href, external, Icon }) => (
-              <a
-                key={name}
-                href={href || '#'}
-                {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg bg-gray-50 hover:bg-accent/5 active:bg-accent/10 transition-colors text-center"
-              >
-                <Icon size={20} className="text-primary" />
-                <span className="text-[10.5px] font-semibold text-gray-700 leading-tight">
-                  {name}
-                </span>
-              </a>
-            ))}
+            {quickAccessItems.map((item) => {
+              const Icon = resolveIcon(item.iconName);
+              const isLive = !!item.href && !item.isDisabled;
+              return (
+                <a
+                  key={item.id}
+                  href={isLive ? item.href! : '#'}
+                  {...(item.isExternal && isLive && { target: '_blank', rel: 'noopener noreferrer' })}
+                  onClick={() => isLive && setMobileMenuOpen(false)}
+                  className={`flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg bg-gray-50 hover:bg-accent/5 active:bg-accent/10 transition-colors text-center ${
+                    !isLive ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  aria-disabled={!isLive || undefined}
+                >
+                  <Icon size={20} className="text-primary" />
+                  <span className="text-[10.5px] font-semibold text-gray-700 leading-tight">
+                    {item.name}
+                  </span>
+                </a>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -493,5 +428,71 @@ export default function Navbar({ logoUrl, erpUrl, applyUrl }: NavbarProps) {
       {/* Search Overlay */}
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </nav>
+  );
+}
+
+// Helper for the two named middle-bar quick-action buttons (ERP +
+// Convoc. Reg.). Falls back to '#' if the named entry is absent.
+function resolveQuickAccessHref(items: readonly QuickAccessRow[], name: string): string {
+  const hit = items.find((q) => q.name === name);
+  return hit?.href ?? '#';
+}
+
+function NavGroup({
+  group,
+  compact = false,
+}: {
+  group: MainNavGroupRow;
+  compact?: boolean;
+}) {
+  const linkClass = compact
+    ? 'h-11 px-1 xl:px-3 flex items-center gap-0.5 xl:gap-1 text-[11px] xl:text-[14px] font-bold whitespace-nowrap text-gray-800 hover:text-accent transition-colors'
+    : 'px-1.5 xl:px-5 h-14 flex items-center gap-0.5 xl:gap-1.5 text-[12px] xl:text-[15px] font-medium whitespace-nowrap text-gray-800 hover:text-accent transition-all relative';
+
+  return (
+    <div className="group relative">
+      <a
+        href={group.href ?? '#'}
+        className={linkClass}
+      >
+        {group.name}
+        {group.hasDropdown && <ChevronDown size={compact ? 12 : 13} className="hidden xl:block opacity-80" />}
+        {!compact && (
+          <span className="absolute bottom-0 left-0 w-0 h-1 bg-accent transition-all group-hover:w-full" />
+        )}
+      </a>
+      {group.items.length > 0 && (
+        <div className="invisible absolute left-0 top-full z-50 min-w-[280px] translate-y-2 rounded-lg border border-gray-100 bg-white py-3 opacity-0 shadow-premium transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+          {(group.title || group.name) && (
+            <div className="px-5 pt-1 pb-3 border-b border-gray-200">
+              <div className="text-[15px] font-bold text-gray-900">{group.title ?? group.name}</div>
+            </div>
+          )}
+          <div className="py-2">
+            {group.items.map((child) => (
+              <a
+                key={child.id}
+                href={child.isDisabled ? '#' : child.href}
+                {...(child.isExternal && !child.isDisabled && { target: '_blank', rel: 'noopener noreferrer' })}
+                className={`group/item block px-5 py-2.5 text-sm font-medium transition-colors ${
+                  child.isDisabled ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-accent/5 hover:text-accent'
+                }`}
+                aria-disabled={child.isDisabled || undefined}
+              >
+                <span className="inline-flex items-center gap-2">
+                  {child.name}
+                  {!child.isDisabled && (
+                    <ChevronRight
+                      size={14}
+                      className="opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200"
+                    />
+                  )}
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

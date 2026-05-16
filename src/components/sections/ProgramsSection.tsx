@@ -22,7 +22,10 @@ type ProgramRow = {
   imageUrl: string | null;
   specializations: string[];
   cta: string | null;
+  ctaHref: string | null;
 };
+
+const DEFAULT_CTA_HREF = '/admission/requirements';
 
 type ProgramsSectionProps = {
   programs: readonly ProgramRow[];
@@ -127,7 +130,7 @@ export default function ProgramsSection({ programs }: ProgramsSectionProps) {
                   )}
 
                   <a
-                    href="/admission/requirements"
+                    href={program.ctaHref ?? DEFAULT_CTA_HREF}
                     className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-8 py-3 text-base font-bold text-white shadow-md transition-all hover:shadow-premium"
                   >
                     {ctaText}
