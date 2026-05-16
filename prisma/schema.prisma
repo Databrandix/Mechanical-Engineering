@@ -387,3 +387,89 @@ model FooterLegalLink {
   @@index([displayOrder])
   @@map("footer_legal_link")
 }
+
+// ════════════════════════════════════════════════════════════════
+//  ABOUT PAGES  (Phase 4)
+//    Three singleton models — one per editable About page.
+//    Lab pages (/about/lab-facility, /about/laboratory-facility)
+//    are multi-row and deferred to Phase 5 in their entirety
+//    (landing singletons + Lab list tables together).
+// ════════════════════════════════════════════════════════════════
+
+model AboutOverview {
+  id                String   @id @default("singleton")
+  // Hero (PageShell)
+  heroTitle         String
+  heroSubtitle      String?
+  heroOverline      String?
+  heroImageUrl      String
+  heroImagePublicId String?
+  heroImagePosition String?
+  // Body — variable-length list of paragraph bodies (HTML allowed)
+  paragraphs        String[]
+  updatedAt         DateTime @updatedAt
+
+  @@map("about_overview")
+}
+
+model AboutMissionVision {
+  id                String   @id @default("singleton")
+  // Hero
+  heroTitle         String
+  heroOverline      String?
+  heroImageUrl      String
+  heroImagePublicId String?
+  heroImagePosition String?
+  // Mission card
+  missionOverline   String?
+  missionHeading    String
+  missionBody       String   @db.Text
+  // Vision card
+  visionOverline    String?
+  visionHeading     String
+  visionBody        String   @db.Text
+  updatedAt         DateTime @updatedAt
+
+  @@map("about_mission_vision")
+}
+
+model AboutMechaClub {
+  id                       String   @id @default("singleton")
+  // Hero
+  heroTitle                String
+  heroOverline             String?
+  heroImageUrl             String
+  heroImagePublicId        String?
+  heroImagePosition        String?
+  // Intro section
+  introOverline            String?
+  // introHeading allows inline HTML (e.g. <span class="text-gradient">)
+  // — rendered via dangerouslySetInnerHTML on the public side (J1
+  // pattern from Phase 2 messageParagraphs). Author trust is the
+  // operational control while audience is the chair.
+  introHeading             String
+  introBody1               String   @db.Text
+  introBody2               String   @db.Text
+  introImageUrl            String
+  introImagePublicId       String?
+  // Stats — variable-length [{ value, label }]
+  stats                    Json
+  // Activities section
+  activitiesOverline       String?
+  activitiesHeading        String
+  // Activities — variable-length [{ iconName, imageUrl, imagePublicId?, category, title, description }]
+  // iconName resolved against a curated Lucide IconMap at render
+  // time (same pattern as Phase 3 QuickAccessItem.iconName).
+  activities               Json
+  // Network section + 2 CTAs
+  networkOverline          String?
+  networkHeading           String
+  networkBody              String   @db.Text
+  networkPrimaryCtaLabel   String
+  networkPrimaryCtaHref    String
+  networkSecondaryCtaLabel String?
+  networkSecondaryCtaHref  String?
+  updatedAt                DateTime @updatedAt
+
+  @@map("about_mecha_club")
+}

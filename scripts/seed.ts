@@ -520,6 +520,165 @@ async function seedFooterLegalLinks() {
   console.log(`✓ Footer legal links seeded (${rows.length} rows)`);
 }
 
+// ════════════════════════════════════════════════════════════════
+//  PHASE 4 — About pages (3 singleton models)
+//  Pattern: upsert with update={} so re-running never overwrites
+//  admin edits to existing rows; create path populates from the
+//  pre-Phase-4 hardcoded page content.
+// ════════════════════════════════════════════════════════════════
+
+async function seedAboutOverview() {
+  await prisma.aboutOverview.upsert({
+    where: { id: 'singleton' },
+    update: {},
+    create: {
+      id: 'singleton',
+      heroTitle:         'Department Overview',
+      heroSubtitle:      'Shaping future leaders where creativity meets technology.',
+      heroOverline:      null,
+      heroImageUrl:      '/assets/mission-vision-hero.webp',
+      heroImagePublicId: null,
+      heroImagePosition: 'center 3%',
+      paragraphs: [
+        'At the heart of innovation and excellence, the Department of Mechanical Engineering is committed to shaping future leaders in the field. Explore the dynamic world of mechanical engineering, where creativity meets technology, and where ideas transform into groundbreaking solutions.',
+        'At the Department of Mechanical Engineering, we strive to shape the future of engineering by providing cutting-edge education and research opportunities. With a focus on interdisciplinary collaboration and real-world applications, our department prepares students to tackle complex challenges and contribute to the advancement of technology and society.',
+        'The main responsibility of the Department of Mechanical Engineering is to design, analyze, test, and manufacture machines and equipment. Mechanical Engineering is a vast and heterogeneous field in respect of the different types of products that the engineers work on, the industry in which they work, and the knowledge they need to become successful.',
+        'The Mechanical Engineers, who are interested in pursuing a career, have the attributes such as: the idea of what Mechanical Engineers work on, the function that Mechanical Engineers fulfill, the type of work environment, and the industries that they serve. Mechanical engineers are involved in a comprehensive variety of products like aircraft, automobile vehicles, industrial equipment and machinery, engines, turbines, pumps, mechanical handling systems, heating and cooling systems, consumer devices, and so on.',
+      ],
+    },
+  });
+  console.log('✓ AboutOverview seeded');
+}
+
+async function seedAboutMissionVision() {
+  await prisma.aboutMissionVision.upsert({
+    where: { id: 'singleton' },
+    update: {},
+    create: {
+      id: 'singleton',
+      heroTitle:         'Mission & Vision',
+      heroOverline:      'About',
+      heroImageUrl:      '/assets/mission-vision-hero.webp',
+      heroImagePublicId: null,
+      heroImagePosition: 'center 3%',
+
+      missionOverline: 'Our Purpose',
+      missionHeading:  'Mission',
+      missionBody:
+        'The mission of the Department is to provide knowledge to students in science and technology through world-class education and innovative research, empower innovators, shape the future, and provide a transformative learning experience that nurtures creativity, instills a strong foundation of knowledge, and equips students with the skills to address global challenges through cutting-edge mechanical engineering solutions — so that they are able to contribute impactfully to society, the nation and the world, and to develop the professional potential and skill of faculty, staff and students by maintaining training and education by which they can achieve lifelong ability to construct their professional careers.',
+
+      visionOverline: 'Our Future',
+      visionHeading:  'Vision',
+      visionBody:
+        'Through the active participation of its people, the Department of Mechanical Engineering will be acknowledged as a leader of its discipline, illustrating quality education, research and innovation. With quality education and research, the department will be enabled to create skilled and well-qualified engineers to meet the continually changing technological, regional and national needs.',
+    },
+  });
+  console.log('✓ AboutMissionVision seeded');
+}
+
+async function seedAboutMechaClub() {
+  await prisma.aboutMechaClub.upsert({
+    where: { id: 'singleton' },
+    update: {},
+    create: {
+      id: 'singleton',
+      heroTitle:         'SU Mecha Club',
+      heroOverline:      'About',
+      heroImageUrl:      '/assets/mecha-hero.webp',
+      heroImagePublicId: null,
+      heroImagePosition: 'center 45%',
+
+      introOverline: 'Where Engineering Meets Community',
+      // Inline HTML preserved — gradient on "Mechanical Engineers"
+      introHeading:
+        'Building Industry-Ready <span class="text-gradient">Mechanical Engineers</span>',
+      introBody1:
+        'The Mechanical Engineering department at Sonargaon University fosters a vibrant student community through its dedicated club and organisational activities. We focus on transforming students into industry-ready professionals through continuous engagement and practical exposure.',
+      introBody2:
+        'From plant visits to international software training, the SU Mecha Club bridges classroom learning with the real world — equipping every member with the skills, network, and confidence to lead.',
+      introImageUrl:      '/assets/mecha-club-1.webp',
+      introImagePublicId: null,
+
+      stats: [
+        { value: '100+', label: 'Active Members' },
+        { value: '50+',  label: 'Field Visits' },
+        { value: '25+',  label: 'Workshops Hosted' },
+        { value: '10+',  label: 'Industry Partners' },
+      ],
+
+      activitiesOverline: 'What We Do',
+      activitiesHeading:  'Core Activities & Initiatives',
+      activities: [
+        {
+          iconName: 'Factory',
+          imageUrl: '/assets/mecha-field-visit.webp',
+          imagePublicId: null,
+          category: 'Industrial Exposure',
+          title: 'Field Visits to Leading Plants',
+          description:
+            'Regularly organised industrial tours to power plants, textile machinery units and large-scale manufacturing facilities — giving students a firsthand look at real mechanical operations and management.',
+        },
+        {
+          iconName: 'Laptop',
+          imageUrl: '/assets/mecha-workshop.webp',
+          imagePublicId: null,
+          category: 'Skill Development',
+          title: 'Hands-on Software Workshops',
+          description:
+            'Specialized training sessions on industry-standard engineering software including AutoCAD and SolidWorks, ensuring students are proficient in digital design before they graduate.',
+        },
+        {
+          iconName: 'Mic',
+          imageUrl: '/assets/mecha-seminar.webp',
+          imagePublicId: null,
+          category: 'Career Guidance',
+          title: 'Seminars with Industry Experts',
+          description:
+            'Frequent seminars featuring industry leaders and corporate experts that provide insights into local and international job markets — manufacturing, energy, and the public sector.',
+        },
+        {
+          iconName: 'Lightbulb',
+          imageUrl: '/assets/mecha-project.webp',
+          imagePublicId: null,
+          category: 'Innovation',
+          title: 'Project Showcases & Tech Fairs',
+          description:
+            'Students display engineering prototypes and innovative solutions during university-wide tech fairs and departmental exhibitions, sharpening their presentation and engineering skills.',
+        },
+        {
+          iconName: 'Sparkles',
+          imageUrl: '/assets/mecha-cocurricular.webp',
+          imagePublicId: null,
+          category: 'Community',
+          title: 'Co-curricular Engagement',
+          description:
+            'Beyond technical skills — indoor games, cultural programs and study tours that foster a well-rounded university experience and strong bonding between batches.',
+        },
+        {
+          iconName: 'Award',
+          imageUrl: '/assets/mecha-appreciation.webp',
+          imagePublicId: null,
+          category: 'Recognition',
+          title: 'Awards & Industry Recognition',
+          description:
+            'SUMEC was honoured as a Valuable Club Partner at ACI Motors-presented Auto Fest 2024 (organised by ME Association, BUET) — one of many recognitions earned through active participation, collaboration, and engineering excellence.',
+        },
+      ],
+
+      networkOverline:          'Beyond Graduation',
+      networkHeading:           'Building a Professional Network',
+      networkBody:
+        'The Mecha Club community serves as a bridge between current students and the SU Alumni — creating an active professional network that opens doors to internships, job placements, and lifelong mentorship across the engineering industry.',
+      networkPrimaryCtaLabel:   'Join the Club',
+      networkPrimaryCtaHref:    'https://www.facebook.com/su.mechanical.engineering',
+      networkSecondaryCtaLabel: 'Alumni Portal',
+      networkSecondaryCtaHref:
+        'http://sue.su.edu.bd:5081/sonargaon_erp/student/convocation_registration/alumni',
+    },
+  });
+  console.log('✓ AboutMechaClub seeded');
+}
+
 async function main() {
   console.log('Seeding database…\n');
   await seedDepartmentIdentity();
@@ -539,6 +698,11 @@ async function main() {
   await seedFooterGetInTouchLinks();
   await seedFooterQuickLinks();
   await seedFooterLegalLinks();
+
+  console.log('\nPhase 4 about pages…');
+  await seedAboutOverview();
+  await seedAboutMissionVision();
+  await seedAboutMechaClub();
 
   console.log('\nDone.');
 }
