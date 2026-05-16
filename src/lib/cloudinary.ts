@@ -36,6 +36,7 @@ const KIND_TO_SUBFOLDER: Record<string, string> = {
   'research-icon':         'research-areas',
   'faculty-photo':         'faculty/photos',
   'faculty-message-hero':  'faculty/message-hero',
+  'about-image':           'about',
 };
 
 function folderFor(kind: string): string {

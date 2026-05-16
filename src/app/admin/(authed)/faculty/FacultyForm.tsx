@@ -7,7 +7,7 @@ import type { Faculty } from '@prisma/client';
 import ImageUploader from '@/components/admin/ImageUploader';
 import PersonalInfoEditor from './PersonalInfoEditor';
 import SectionContentEditor from './SectionContentEditor';
-import ParagraphsEditor from './ParagraphsEditor';
+import ParagraphsEditor from '@/components/admin/ParagraphsEditor';
 import {
   createFacultyAction,
   updateFacultyAction,

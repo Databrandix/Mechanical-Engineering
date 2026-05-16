@@ -1,6 +1,7 @@
 import { Eye, Target } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
+import { getAboutMissionVision } from '@/lib/identity';
 
 export const metadata = {
   title: 'Mission & Vision — Department of Mechanical Engineering',
@@ -8,9 +9,22 @@ export const metadata = {
     'The mission and vision of the Department of Mechanical Engineering, Sonargaon University.',
 };
 
-export default function MissionVisionPage() {
+export default async function MissionVisionPage() {
+  const row = await getAboutMissionVision();
+  if (!row) {
+    throw new Error(
+      'AboutMissionVision row missing (id="singleton"). Run `npm run db:seed`.',
+    );
+  }
+
   return (
-    <PageShell title="Mission & Vision" overline="About" image="/assets/mission-vision-hero.webp" imagePosition="center 3%" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell
+      title={row.heroTitle}
+      overline={row.heroOverline ?? undefined}
+      image={row.heroImageUrl}
+      imagePosition={row.heroImagePosition ?? 'center'}
+      contentClassName="bg-gray-50 py-12 md:py-20"
+    >
       <Container>
         <div className="space-y-8 lg:space-y-10">
           {/* Mission Card — icon left */}
@@ -29,16 +43,18 @@ export default function MissionVisionPage() {
                 </div>
 
                 <div>
-                  <span className="inline-block text-button-yellow text-[11px] font-bold tracking-[0.3em] uppercase mb-2">
-                    Our Purpose
-                  </span>
+                  {row.missionOverline && (
+                    <span className="inline-block text-button-yellow text-[11px] font-bold tracking-[0.3em] uppercase mb-2">
+                      {row.missionOverline}
+                    </span>
+                  )}
                   <h2 className="font-display text-3xl md:text-4xl font-bold leading-tight">
-                    Mission
+                    {row.missionHeading}
                   </h2>
                   <div className="mt-3 mb-6 h-1 w-16 bg-button-yellow rounded-full" />
 
                   <p className="text-[15px] md:text-[16px] leading-[1.85] text-white/90 text-justify">
-                    The mission of the Department is to provide knowledge to students in science and technology through world-class education and innovative research, empower innovators, shape the future, and provide a transformative learning experience that nurtures creativity, instills a strong foundation of knowledge, and equips students with the skills to address global challenges through cutting-edge mechanical engineering solutions — so that they are able to contribute impactfully to society, the nation and the world, and to develop the professional potential and skill of faculty, staff and students by maintaining training and education by which they can achieve lifelong ability to construct their professional careers.
+                    {row.missionBody}
                   </p>
                 </div>
               </div>
@@ -55,16 +71,18 @@ export default function MissionVisionPage() {
             <div className="relative p-5 md:p-12 lg:p-14">
               <div className="grid gap-6 lg:gap-10 lg:grid-cols-[1fr_120px] items-start">
                 <div className="lg:order-1 lg:text-right">
-                  <span className="inline-block text-button-yellow text-[11px] font-bold tracking-[0.3em] uppercase mb-2">
-                    Our Future
-                  </span>
+                  {row.visionOverline && (
+                    <span className="inline-block text-button-yellow text-[11px] font-bold tracking-[0.3em] uppercase mb-2">
+                      {row.visionOverline}
+                    </span>
+                  )}
                   <h2 className="font-display text-3xl md:text-4xl font-bold leading-tight">
-                    Vision
+                    {row.visionHeading}
                   </h2>
                   <div className="mt-3 mb-6 h-1 w-16 bg-button-yellow rounded-full lg:ml-auto" />
 
                   <p className="text-[15px] md:text-[16px] leading-[1.85] text-white/90 text-justify">
-                    Through the active participation of its people, the Department of Mechanical Engineering will be acknowledged as a leader of its discipline, illustrating quality education, research and innovation. With quality education and research, the department will be enabled to create skilled and well-qualified engineers to meet the continually changing technological, regional and national needs.
+                    {row.visionBody}
                   </p>
                 </div>
 

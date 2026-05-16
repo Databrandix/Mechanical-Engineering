@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
@@ -15,6 +16,8 @@ import {
   Key,
   Navigation,
   PanelBottom,
+  Info,
+  ChevronDown,
 } from 'lucide-react';
 
 type SidebarUser = {
@@ -41,9 +44,18 @@ const PRIMARY_NAV: NavItem[] = [
   { href: '/admin/footer-links',        label: 'Footer Links',        icon: PanelBottom },
 ];
 
+const ABOUT_PAGES_NAV: NavItem[] = [
+  { href: '/admin/about-overview',        label: 'Overview',         icon: Info },
+  { href: '/admin/about-mission-vision',  label: 'Mission & Vision', icon: Info },
+  { href: '/admin/about-mecha-club',      label: 'Mecha Club',       icon: Info },
+];
+
 export default function Sidebar({ user }: { user: SidebarUser }) {
   const pathname = usePathname();
   const isSuperAdmin = user.role === 'super_admin';
+  // Auto-open the About Pages group when the active route is inside it.
+  const aboutActive = ABOUT_PAGES_NAV.some((n) => pathname?.startsWith(n.href));
+  const [aboutOpen, setAboutOpen] = useState<boolean>(aboutActive);
 
   async function handleLogout() {
     try {
@@ -81,13 +93,42 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
         </div>
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {PRIMARY_NAV.map(({ href, label, icon: Icon }) => (
           <Link key={href} href={href} className={linkClass(!!isActive(href))}>
             <Icon size={16} />
             {label}
           </Link>
         ))}
+
+        {/* About Pages — collapsible group */}
+        <button
+          type="button"
+          onClick={() => setAboutOpen((v) => !v)}
+          aria-expanded={aboutOpen}
+          className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            aboutActive ? 'text-accent' : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <span className="flex items-center gap-3">
+            <Info size={16} />
+            About Pages
+          </span>
+          <ChevronDown
+            size={14}
+            className={`transition-transform ${aboutOpen ? 'rotate-180' : ''}`}
+          />
+        </button>
+        {aboutOpen && (
+          <div className="pl-6 space-y-1">
+            {ABOUT_PAGES_NAV.map(({ href, label }) => (
+              <Link key={href} href={href} className={linkClass(!!isActive(href))}>
+                <span className="text-[10px] leading-none">●</span>
+                {label}
+              </Link>
+            ))}
+          </div>
+        )}
 
         {isSuperAdmin && (
           <Link

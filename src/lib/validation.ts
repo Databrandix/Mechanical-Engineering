@@ -251,6 +251,7 @@ export const uploadKindSchema = z.enum([
   'research-icon',
   'faculty-photo',
   'faculty-message-hero',
+  'about-image',
 ]);
 
 export const uploadSignSchema = z.object({
@@ -300,3 +301,72 @@ export const mainNavItemCreateSchema = z.object({
   displayOrder: z.number().int().min(0).optional(),
 });
 export const mainNavItemUpdateSchema = mainNavItemCreateSchema.partial();
+
+// ─────────────────────────────────────────────────────────────────
+//  About pages — Phase 4 (3 singletons, PUT-only schemas)
+// ─────────────────────────────────────────────────────────────────
+
+export const aboutOverviewUpdateSchema = z.object({
+  heroTitle:         z.string().min(1).max(300),
+  heroSubtitle:      optionalNullableString,
+  heroOverline:      optionalNullableString,
+  heroImageUrl:      z.string().min(1),
+  heroImagePublicId: optionalNullableString,
+  heroImagePosition: optionalNullableString,
+  paragraphs:        z.array(z.string()).default([]),
+});
+
+export const aboutMissionVisionUpdateSchema = z.object({
+  heroTitle:         z.string().min(1).max(300),
+  heroOverline:      optionalNullableString,
+  heroImageUrl:      z.string().min(1),
+  heroImagePublicId: optionalNullableString,
+  heroImagePosition: optionalNullableString,
+  missionOverline:   optionalNullableString,
+  missionHeading:    z.string().min(1).max(300),
+  missionBody:       z.string().min(1),
+  visionOverline:    optionalNullableString,
+  visionHeading:     z.string().min(1).max(300),
+  visionBody:        z.string().min(1),
+});
+
+// Activities + stats shapes — Json validated as structured arrays
+const statsArraySchema = z.array(
+  z.object({ value: z.string().min(1), label: z.string().min(1) }),
+);
+
+const activitiesArraySchema = z.array(
+  z.object({
+    iconName:      z.string().min(1),
+    imageUrl:      z.string().min(1),
+    imagePublicId: optionalNullableString,
+    category:      z.string().min(1),
+    title:         z.string().min(1),
+    description:   z.string().min(1),
+  }),
+);
+
+export const aboutMechaClubUpdateSchema = z.object({
+  heroTitle:                z.string().min(1).max(300),
+  heroOverline:             optionalNullableString,
+  heroImageUrl:             z.string().min(1),
+  heroImagePublicId:        optionalNullableString,
+  heroImagePosition:        optionalNullableString,
+  introOverline:            optionalNullableString,
+  introHeading:             z.string().min(1),
+  introBody1:               z.string().min(1),
+  introBody2:               z.string().min(1),
+  introImageUrl:            z.string().min(1),
+  introImagePublicId:       optionalNullableString,
+  stats:                    statsArraySchema,
+  activitiesOverline:       optionalNullableString,
+  activitiesHeading:        z.string().min(1),
+  activities:               activitiesArraySchema,
+  networkOverline:          optionalNullableString,
+  networkHeading:           z.string().min(1),
+  networkBody:              z.string().min(1),
+  networkPrimaryCtaLabel:   z.string().min(1),
+  networkPrimaryCtaHref:    z.string().min(1),
+  networkSecondaryCtaLabel: optionalNullableString,
+  networkSecondaryCtaHref:  optionalNullableString,
+});

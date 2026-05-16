@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import {
   Building2,
   GraduationCap,
+  Info,
   Key,
   Microscope,
   Navigation,
@@ -123,6 +124,24 @@ export default async function DashboardHome() {
             icon={PanelBottom}
             title="Manage Footer Links"
             desc="Useful, Get in Touch, Quick & Legal columns"
+          />
+          <ActionCard
+            href="/admin/about-overview"
+            icon={Info}
+            title="About — Overview"
+            desc="Hero + paragraph content for /about/overview"
+          />
+          <ActionCard
+            href="/admin/about-mission-vision"
+            icon={Info}
+            title="About — Mission & Vision"
+            desc="Mission card + Vision card content"
+          />
+          <ActionCard
+            href="/admin/about-mecha-club"
+            icon={Info}
+            title="About — Mecha Club"
+            desc="Hero, intro, stats, activities, network"
           />
           {isSuperAdmin && (
             <ActionCard

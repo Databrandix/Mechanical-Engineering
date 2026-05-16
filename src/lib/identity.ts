@@ -157,6 +157,24 @@ export const getFooterLegalLinks = cache(async () => {
   });
 });
 
+// ─────────────────────────────────────────────────────────────────
+//  About pages — Phase 4 (3 singletons)
+//    Each is a full row including the Json content fields so the
+//    public page can render without further DB calls.
+// ─────────────────────────────────────────────────────────────────
+
+export const getAboutOverview = cache(async () => {
+  return prisma.aboutOverview.findUnique({ where: { id: 'singleton' } });
+});
+
+export const getAboutMissionVision = cache(async () => {
+  return prisma.aboutMissionVision.findUnique({ where: { id: 'singleton' } });
+});
+
+export const getAboutMechaClub = cache(async () => {
+  return prisma.aboutMechaClub.findUnique({ where: { id: 'singleton' } });
+});
+
 // Faculty (Phase 2). Full rows are returned — including Json
 // section content + Dean/Head message extras — so the public
 // pages can render every section without per-page Prisma calls.
