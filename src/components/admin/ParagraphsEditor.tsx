@@ -5,6 +5,12 @@ import { Plus, X, ArrowUp, ArrowDown } from 'lucide-react';
 
 type Props = {
   initialValue?: readonly string[];
+  /** FormData field name for each hidden input. Server reads via
+   *  formData.getAll(name). Defaults to 'messageParagraphs' for the
+   *  Phase 2 Faculty form. */
+  name?: string;
+  /** Override the helper text below the editor. */
+  helpText?: React.ReactNode;
 };
 
 // NOTE on reorder UX: spec said "drag handle"; we use up/down arrows
@@ -12,7 +18,11 @@ type Props = {
 // over tall variable-height elements is awkward (the drop target
 // keeps shifting as the row grows). Arrows give the same outcome
 // without the visual lurching.
-export default function ParagraphsEditor({ initialValue }: Props) {
+export default function ParagraphsEditor({
+  initialValue,
+  name = 'messageParagraphs',
+  helpText,
+}: Props) {
   const [paragraphs, setParagraphs] = useState<string[]>([...(initialValue ?? [])]);
 
   function add() {
@@ -83,14 +93,16 @@ export default function ParagraphsEditor({ initialValue }: Props) {
       >
         <Plus size={14} /> Add paragraph
       </button>
-      <p className="text-xs text-gray-500">
-        HTML allowed (rendered as-is). Inline emphasis pattern:{' '}
-        <code className="font-mono">&lt;strong class=&quot;text-button-yellow&quot;&gt;…&lt;/strong&gt;</code>
-        . The drop-cap on the first paragraph&apos;s first letter is applied automatically by the renderer.
-      </p>
-      {/* Hidden inputs — server reads via FormData.getAll('messageParagraphs') */}
+      {helpText ?? (
+        <p className="text-xs text-gray-500">
+          HTML allowed (rendered as-is). Inline emphasis pattern:{' '}
+          <code className="font-mono">&lt;strong class=&quot;text-button-yellow&quot;&gt;…&lt;/strong&gt;</code>
+          . The drop-cap on the first paragraph&apos;s first letter is applied automatically by the renderer.
+        </p>
+      )}
+      {/* Hidden inputs — server reads via FormData.getAll(name) */}
       {paragraphs.map((p, i) => (
-        <input key={`hidden-${i}`} type="hidden" name="messageParagraphs" value={p} />
+        <input key={`hidden-${i}`} type="hidden" name={name} value={p} />
       ))}
     </div>
   );

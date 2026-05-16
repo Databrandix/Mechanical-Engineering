@@ -11,7 +11,8 @@ type Kind =
   | 'program-image'
   | 'research-icon'
   | 'faculty-photo'
-  | 'faculty-message-hero';
+  | 'faculty-message-hero'
+  | 'about-image';
 
 type Props = {
   /** Which folder + transformation hint the upload goes to. */
@@ -22,6 +23,13 @@ type Props = {
   initialPublicId?: string | null;
   label?: string;
   aspectRatio?: 'square' | 'wide' | 'auto';
+  /**
+   * When provided, hidden form inputs are skipped and the callback
+   * fires on upload/clear. Use for image uploads embedded inside
+   * Json-array editors (Phase 4 ActivitiesEditor) where the parent
+   * serializes the whole array as a single hidden input.
+   */
+  onChange?: (url: string, publicId: string) => void;
 };
 
 export default function ImageUploader({
@@ -31,6 +39,7 @@ export default function ImageUploader({
   initialPublicId,
   label,
   aspectRatio = 'auto',
+  onChange,
 }: Props) {
   const [url, setUrl] = useState<string>(initialUrl ?? '');
   const [publicId, setPublicId] = useState<string>(initialPublicId ?? '');
@@ -69,6 +78,7 @@ export default function ImageUploader({
 
       setUrl(upJson.secure_url);
       setPublicId(upJson.public_id);
+      onChange?.(upJson.secure_url, upJson.public_id);
       toast.success('Image uploaded');
     } catch (err) {
       console.error(err);
@@ -94,6 +104,7 @@ export default function ImageUploader({
     }
     setUrl('');
     setPublicId('');
+    onChange?.('', '');
   }
 
   const aspectClass =
@@ -145,8 +156,12 @@ export default function ImageUploader({
           <span className="text-xs text-gray-500 animate-pulse">Uploading…</span>
         )}
       </div>
-      <input type="hidden" name={`${name}Url`} value={url} />
-      <input type="hidden" name={`${name}PublicId`} value={publicId} />
+      {!onChange && (
+        <>
+          <input type="hidden" name={`${name}Url`} value={url} />
+          <input type="hidden" name={`${name}PublicId`} value={publicId} />
+        </>
+      )}
     </div>
   );
 }
