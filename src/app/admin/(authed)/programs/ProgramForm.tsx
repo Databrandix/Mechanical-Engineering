@@ -46,9 +46,17 @@ export default function ProgramForm({ initial }: { initial: Program | null }) {
         <TextAreaField label="Specializations (one per line, optional)"
                        name="specializations" rows={4}
                        defaultValue={(initial?.specializations ?? []).join('\n')} />
-        <TextField label="CTA text (optional)" name="cta"
-                   defaultValue={initial?.cta ?? ''}
-                   placeholder="e.g. View More" />
+        <div className="grid grid-cols-2 gap-4">
+          <TextField label="CTA text (optional)" name="cta"
+                     defaultValue={initial?.cta ?? ''}
+                     placeholder="e.g. View More" />
+          <TextField label="CTA href (optional)" name="ctaHref"
+                     defaultValue={initial?.ctaHref ?? ''}
+                     placeholder="/admission/requirements" />
+        </div>
+        <p className="text-xs text-gray-500 -mt-2">
+          CTA href: leave blank to fall back to <code className="font-mono">/admission/requirements</code>.
+        </p>
       </Card>
 
       <Card title="Image (optional)">

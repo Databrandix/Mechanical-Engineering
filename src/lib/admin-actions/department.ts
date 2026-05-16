@@ -37,10 +37,13 @@ export async function updateDepartmentAction(
     breadcrumbLabel:    getStr(formData, 'breadcrumbLabel'),
     heroImage1Url:      getStr(formData, 'heroImage1Url'),
     heroImage1PublicId: emptyToNull(formData.get('heroImage1PublicId')),
+    heroImage1Alt:      emptyToNull(formData.get('heroImage1Alt')),
     heroImage2Url:      getStr(formData, 'heroImage2Url'),
     heroImage2PublicId: emptyToNull(formData.get('heroImage2PublicId')),
+    heroImage2Alt:      emptyToNull(formData.get('heroImage2Alt')),
     heroImage3Url:      getStr(formData, 'heroImage3Url'),
     heroImage3PublicId: emptyToNull(formData.get('heroImage3PublicId')),
+    heroImage3Alt:      emptyToNull(formData.get('heroImage3Alt')),
   };
 
   const parsed = departmentUpdateSchema.safeParse(raw);

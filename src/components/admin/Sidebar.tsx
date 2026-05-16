@@ -13,6 +13,8 @@ import {
   Users,
   UsersRound,
   Key,
+  Navigation,
+  PanelBottom,
 } from 'lucide-react';
 
 type SidebarUser = {
@@ -35,6 +37,8 @@ const PRIMARY_NAV: NavItem[] = [
   { href: '/admin/programs',            label: 'Programs',            icon: GraduationCap },
   { href: '/admin/research-areas',      label: 'Research Areas',      icon: Microscope },
   { href: '/admin/faculty',             label: 'Faculty',             icon: UsersRound },
+  { href: '/admin/nav',                 label: 'Navigation',          icon: Navigation },
+  { href: '/admin/footer-links',        label: 'Footer Links',        icon: PanelBottom },
 ];
 
 export default function Sidebar({ user }: { user: SidebarUser }) {
