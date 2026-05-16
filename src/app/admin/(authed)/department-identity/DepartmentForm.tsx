@@ -66,18 +66,33 @@ export default function DepartmentForm({ initial }: { initial: Initial }) {
 
       {/* ─── Hero images ─── */}
       <Card title="Hero images (3)">
-        <ImageUploader kind="department-hero" name="heroImage1" aspectRatio="wide"
-                       label="Hero #1"
-                       initialUrl={initial?.heroImage1Url}
-                       initialPublicId={initial?.heroImage1PublicId} />
-        <ImageUploader kind="department-hero" name="heroImage2" aspectRatio="wide"
-                       label="Hero #2"
-                       initialUrl={initial?.heroImage2Url}
-                       initialPublicId={initial?.heroImage2PublicId} />
-        <ImageUploader kind="department-hero" name="heroImage3" aspectRatio="wide"
-                       label="Hero #3"
-                       initialUrl={initial?.heroImage3Url}
-                       initialPublicId={initial?.heroImage3PublicId} />
+        <p className="text-xs text-gray-500 -mt-2">
+          Alt text describes each image for screen readers. Update the alt when you replace the image.
+        </p>
+        <div className="space-y-3 pb-2 border-b border-gray-100">
+          <ImageUploader kind="department-hero" name="heroImage1" aspectRatio="wide"
+                         label="Hero #1"
+                         initialUrl={initial?.heroImage1Url}
+                         initialPublicId={initial?.heroImage1PublicId} />
+          <TextField label="Alt text #1" name="heroImage1Alt"
+                     defaultValue={initial?.heroImage1Alt ?? ''} />
+        </div>
+        <div className="space-y-3 pb-2 border-b border-gray-100">
+          <ImageUploader kind="department-hero" name="heroImage2" aspectRatio="wide"
+                         label="Hero #2"
+                         initialUrl={initial?.heroImage2Url}
+                         initialPublicId={initial?.heroImage2PublicId} />
+          <TextField label="Alt text #2" name="heroImage2Alt"
+                     defaultValue={initial?.heroImage2Alt ?? ''} />
+        </div>
+        <div className="space-y-3">
+          <ImageUploader kind="department-hero" name="heroImage3" aspectRatio="wide"
+                         label="Hero #3"
+                         initialUrl={initial?.heroImage3Url}
+                         initialPublicId={initial?.heroImage3PublicId} />
+          <TextField label="Alt text #3" name="heroImage3Alt"
+                     defaultValue={initial?.heroImage3Alt ?? ''} />
+        </div>
       </Card>
 
       {/* ─── Errors + submit ─── */}

@@ -29,6 +29,11 @@ export default function ResearchAreaForm({
     initial?.iconPublicId ? 'upload' : 'lucide',
   );
 
+  // Featured toggle controls whether the conditional featured-card
+  // fields render. Save logic (server) always reads these fields —
+  // the toggle is a UX hint, not the server-side gate.
+  const [isFeatured, setIsFeatured] = useState<boolean>(initial?.isFeatured ?? false);
+
   const [state, formAction, pending] = useActionState<State, FormData>(
     action,
     { ok: null },
@@ -38,6 +43,16 @@ export default function ResearchAreaForm({
     if (state.ok === true) toast.success(isEdit ? 'Research area saved' : 'Research area created');
     if (state.ok === false) toast.error(state.error);
   }, [state, isEdit]);
+
+  function handleFeaturedToggle(next: boolean) {
+    if (next && !initial?.isFeatured) {
+      const ok = window.confirm(
+        'Promoting this row to Featured will demote whichever row is currently featured. Continue?',
+      );
+      if (!ok) return;
+    }
+    setIsFeatured(next);
+  }
 
   return (
     <form action={formAction} className="space-y-6">
@@ -94,6 +109,55 @@ export default function ResearchAreaForm({
             initialUrl={initial?.iconUrl}
             initialPublicId={initial?.iconPublicId}
           />
+        )}
+      </Card>
+
+      <Card title="Featured slot (optional)">
+        <p className="text-xs text-gray-500 -mt-2">
+          Exactly one research area can be featured. Promoting this row will demote the current featured row in the same save.
+        </p>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            name="isFeatured"
+            checked={isFeatured}
+            onChange={(e) => handleFeaturedToggle(e.target.checked)}
+            className="w-4 h-4 accent-accent"
+          />
+          <span className="text-sm font-medium text-gray-700">
+            Promote this area into the right-side featured card
+          </span>
+        </label>
+
+        {isFeatured && (
+          <div className="space-y-4 pt-2 border-t border-gray-100">
+            <TextField
+              label="Featured card heading (optional)"
+              name="featuredHeading"
+              defaultValue={initial?.featuredHeading ?? ''}
+              placeholder="Falls back to area name when blank"
+            />
+            <ImageUploader
+              kind="research-icon"
+              name="featuredImage"
+              aspectRatio="wide"
+              label="Featured card image"
+              initialUrl={initial?.featuredImageUrl}
+              initialPublicId={initial?.featuredImagePublicId}
+            />
+            <TextAreaField
+              label="Featured card description (optional)"
+              name="featuredDescription"
+              rows={3}
+              defaultValue={initial?.featuredDescription ?? ''}
+            />
+            <TextField
+              label="Read More href (optional)"
+              name="featuredCtaHref"
+              defaultValue={initial?.featuredCtaHref ?? ''}
+              placeholder="/research"
+            />
+          </div>
         )}
       </Card>
 

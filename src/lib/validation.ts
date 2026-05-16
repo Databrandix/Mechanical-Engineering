@@ -25,10 +25,13 @@ export const departmentUpdateSchema = z.object({
   breadcrumbLabel: z.string().min(1).max(50),
   heroImage1Url:   z.string().min(1),
   heroImage1PublicId: nullableString,
+  heroImage1Alt:   optionalNullableString,
   heroImage2Url:   z.string().min(1),
   heroImage2PublicId: nullableString,
+  heroImage2Alt:   optionalNullableString,
   heroImage3Url:   z.string().min(1),
   heroImage3PublicId: nullableString,
+  heroImage3Alt:   optionalNullableString,
 });
 
 // ─────────────────────────────────────────────────────────────────
@@ -76,6 +79,7 @@ export const programCreateSchema = z.object({
   imagePublicId:   optionalNullableString,
   specializations: z.array(z.string()).default([]),
   cta:             z.string().nullable().optional(),
+  ctaHref:         z.string().nullable().optional(),
 });
 
 export const programUpdateSchema = programCreateSchema.partial();
@@ -97,6 +101,12 @@ const researchAreaBaseShape = z.object({
   areaName:     z.string().min(1).max(200),
   description:  z.string().nullable().optional(),
   displayOrder: z.number().int().min(0).optional(),
+  isFeatured:           z.boolean().optional(),
+  featuredHeading:      optionalNullableString,
+  featuredImageUrl:     optionalNullableString,
+  featuredImagePublicId: optionalNullableString,
+  featuredDescription:  optionalNullableString,
+  featuredCtaHref:      optionalNullableString,
 });
 
 export const researchAreaCreateSchema = researchAreaBaseShape.refine(
@@ -246,3 +256,47 @@ export const uploadKindSchema = z.enum([
 export const uploadSignSchema = z.object({
   kind: uploadKindSchema,
 });
+
+// ─────────────────────────────────────────────────────────────────
+//  Chrome link entities — Phase 3
+//    All link-like tables (TopLink, FooterUseful/GetInTouch/Quick/Legal)
+//    share an identical create-shape; QuickAccessItem adds iconName;
+//    MainNavGroup + MainNavItem are nested.
+// ─────────────────────────────────────────────────────────────────
+
+const linkCreateBase = z.object({
+  name:         z.string().min(1).max(200),
+  href:         z.string().nullable().optional(),
+  isExternal:   z.boolean().optional().default(false),
+  isDisabled:   z.boolean().optional().default(false),
+  displayOrder: z.number().int().min(0).optional(),
+});
+
+export const topLinkCreateSchema = linkCreateBase;
+export const topLinkUpdateSchema = linkCreateBase.partial();
+
+export const footerLinkCreateSchema = linkCreateBase;
+export const footerLinkUpdateSchema = linkCreateBase.partial();
+
+export const quickAccessCreateSchema = linkCreateBase.extend({
+  iconName: z.string().min(1).max(100),
+});
+export const quickAccessUpdateSchema = quickAccessCreateSchema.partial();
+
+export const mainNavGroupCreateSchema = z.object({
+  name:         z.string().min(1).max(200),
+  href:         z.string().nullable().optional(),
+  hasDropdown:  z.boolean().optional().default(false),
+  title:        z.string().nullable().optional(),
+  displayOrder: z.number().int().min(0).optional(),
+});
+export const mainNavGroupUpdateSchema = mainNavGroupCreateSchema.partial();
+
+export const mainNavItemCreateSchema = z.object({
+  name:         z.string().min(1).max(200),
+  href:         z.string().min(1),
+  isExternal:   z.boolean().optional().default(false),
+  isDisabled:   z.boolean().optional().default(false),
+  displayOrder: z.number().int().min(0).optional(),
+});
+export const mainNavItemUpdateSchema = mainNavItemCreateSchema.partial();

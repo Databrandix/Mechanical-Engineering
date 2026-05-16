@@ -4,7 +4,17 @@ import { Poppins, Montserrat, Hind_Siliguri } from 'next/font/google';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import JourneyCTASection from '@/components/sections/JourneyCTASection';
-import { getDepartmentIdentity, getUniversityIdentity } from '@/lib/identity';
+import {
+  getDepartmentIdentity,
+  getUniversityIdentity,
+  getTopLinks,
+  getQuickAccessItems,
+  getMainNav,
+  getFooterUsefulLinks,
+  getFooterGetInTouchLinks,
+  getFooterQuickLinks,
+  getFooterLegalLinks,
+} from '@/lib/identity';
 import './globals.css';
 
 const poppins = Poppins({
@@ -79,10 +89,21 @@ export default async function RootLayout({
   // components out of the React tree entirely on admin routes and
   // eliminates the SSR/client-hydration-mismatch class of bug that
   // a client-side usePathname guard could not reliably solve.
-  const [headersList, dept, uni] = await Promise.all([
+  const [
+    headersList, dept, uni,
+    topLinks, quickAccessItems, mainNav,
+    usefulLinks, getInTouchLinks, quickLinks, legalLinks,
+  ] = await Promise.all([
     headers(),
     getDepartmentIdentity(),
     getUniversityIdentity(),
+    getTopLinks(),
+    getQuickAccessItems(),
+    getMainNav(),
+    getFooterUsefulLinks(),
+    getFooterGetInTouchLinks(),
+    getFooterQuickLinks(),
+    getFooterLegalLinks(),
   ]);
   const isAdmin =
     headersList.get('x-pathname')?.startsWith('/admin') ?? false;
@@ -107,8 +128,10 @@ export default async function RootLayout({
         {!isAdmin && (
           <Navbar
             logoUrl={dept.logoUrl}
-            erpUrl={uni.erpUrl ?? ''}
             applyUrl={uni.applyUrl ?? ''}
+            topLinks={topLinks}
+            quickAccessItems={quickAccessItems}
+            mainNav={mainNav}
           />
         )}
         <main className="flex-grow">{children}</main>
@@ -131,6 +154,10 @@ export default async function RootLayout({
               tiktokUrl:    uni.tiktokUrl,
               whatsappUrl:  uni.whatsappUrl,
             }}
+            usefulLinks={usefulLinks}
+            getInTouchLinks={getInTouchLinks}
+            quickLinks={quickLinks}
+            legalLinks={legalLinks}
           />
         )}
       </body>

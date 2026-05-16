@@ -28,6 +28,15 @@ const WhatsAppIcon = ({ size = 18 }: { size?: number }) => (
   </svg>
 );
 
+// DB-driven footer link shape — same for all 4 columns.
+type FooterLinkRow = {
+  id: string;
+  name: string;
+  href: string | null;
+  isExternal: boolean;
+  isDisabled: boolean;
+};
+
 type FooterProps = {
   logoUrl: string;
   address: string;
@@ -45,6 +54,10 @@ type FooterProps = {
     tiktokUrl:    string | null;
     whatsappUrl:  string | null;
   };
+  usefulLinks: readonly FooterLinkRow[];
+  getInTouchLinks: readonly FooterLinkRow[];
+  quickLinks: readonly FooterLinkRow[];
+  legalLinks: readonly FooterLinkRow[];
 };
 
 export default function Footer({
@@ -55,53 +68,30 @@ export default function Footer({
   copyrightText,
   mapEmbedUrl,
   socials,
+  usefulLinks,
+  getInTouchLinks,
+  quickLinks,
+  legalLinks,
 }: FooterProps) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  type FooterLink = { name: string; href?: string; external?: boolean; disabled?: boolean };
-
-  const usefulLinks: FooterLink[] = [
-    { name: 'Tuition Fee', href: '/admission/tuition-fees' },
-    { name: 'Faculty Staff', href: '/faculty-member' },
-    { name: 'Alumni', href: '/student-society/alumni' },
-    { name: 'Career', href: 'https://su.edu.bd/welcome/career', external: true },
-    { name: 'Event', href: '/student-society/events' },
-    { name: 'Our Blogs', disabled: true },
-  ];
-
-  const getInTouch: FooterLink[] = [
-    { name: 'Contact', href: '/contact' },
-    { name: 'Meet With Us', href: '/contact' },
-    { name: 'Privacy Statement', href: 'https://su.edu.bd/about_us/privacy_policy', external: true },
-    { name: 'Newsletters', disabled: true },
-    { name: 'Location Map', href: '/contact' },
-    { name: 'FAQ', href: '/student-society/faq' },
-  ];
-
-  const quickLinks: FooterLink[] = [
-    { name: 'SU News', href: '/news' },
-    { name: 'Forum', disabled: true },
-    { name: 'Students', disabled: true },
-    { name: 'Parents', disabled: true },
-    { name: 'Teachers', href: 'https://su.edu.bd/faculty_members/all_faculty_details', external: true },
-    { name: 'Administration', href: 'https://su.edu.bd/About_us/new_administration/4', external: true },
-  ];
-
-  const renderFooterLink = (link: FooterLink) => (
+  const renderFooterLink = (link: FooterLinkRow) => (
     <a
-      href={link.href || '#'}
-      {...(link.external && { target: '_blank', rel: 'noopener noreferrer' })}
-      className="hover:text-accent transition-colors"
+      href={link.isDisabled || !link.href ? '#' : link.href}
+      {...(link.isExternal && link.href && !link.isDisabled && {
+        target: '_blank', rel: 'noopener noreferrer',
+      })}
+      className={`transition-colors ${
+        link.isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:text-accent'
+      }`}
+      aria-disabled={link.isDisabled || undefined}
     >
       {link.name}
     </a>
   );
 
-  // Order matches the Phase 0 UniversityIdentity column order; each
-  // icon renders only when its URL is non-null in DB (CMS clears →
-  // icon disappears).
   const socialList = [
     { name: 'Facebook',  Icon: Facebook,     href: socials.facebookUrl  },
     { name: 'Instagram', Icon: Instagram,    href: socials.instagramUrl },
@@ -115,7 +105,6 @@ export default function Footer({
 
   return (
     <footer className="bg-primary text-white pt-16 pb-8 relative overflow-hidden">
-      {/* Decorative background element */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 
       <Container>
@@ -169,40 +158,37 @@ export default function Footer({
             </div>
           </div>
 
-          {/* Mobile pairing — Useful Link + Get in Touch side-by-side; on md+ the wrapper dissolves and each takes its own grid column */}
+          {/* Mobile pairing — Useful Link + Get in Touch */}
           <div className="grid grid-cols-2 gap-6 md:contents">
-            {/* Useful Link */}
             <div>
               <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Useful Link</h4>
               <ul className="space-y-3 text-sm text-white/70">
                 {usefulLinks.map((link) => (
-                  <li key={link.name}>{renderFooterLink(link)}</li>
+                  <li key={link.id}>{renderFooterLink(link)}</li>
                 ))}
               </ul>
             </div>
 
-            {/* Get in Touch */}
             <div>
               <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Get in Touch</h4>
               <ul className="space-y-3 text-sm text-white/70">
-                {getInTouch.map((link) => (
-                  <li key={link.name}>{renderFooterLink(link)}</li>
+                {getInTouchLinks.map((link) => (
+                  <li key={link.id}>{renderFooterLink(link)}</li>
                 ))}
               </ul>
             </div>
           </div>
 
-          {/* Quick Link */}
           <div>
             <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Quick Link</h4>
             <ul className="space-y-3 text-sm text-white/70">
               {quickLinks.map((link) => (
-                <li key={link.name}>{renderFooterLink(link)}</li>
+                <li key={link.id}>{renderFooterLink(link)}</li>
               ))}
             </ul>
           </div>
 
-          {/* Google Maps — entire card hidden when mapEmbedUrl is null */}
+          {/* Google Maps */}
           {mapEmbedUrl && (
             <div>
               <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Google Maps</h4>
@@ -233,25 +219,25 @@ export default function Footer({
           <p className="text-xs text-white/50">
             {copyrightText}
           </p>
-          <div className="flex gap-6 text-xs text-white/50">
-            <a
-              href="https://su.edu.bd/about_us/privacy_policy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
-              Privacy Statement
-            </a>
-            <a
-              href="https://su.edu.bd/about_us/privacy_policy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
-              Terms of Use
-            </a>
-            <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" className="hover:underline">Sitemap</a>
-          </div>
+          {legalLinks.length > 0 && (
+            <div className="flex gap-6 text-xs text-white/50">
+              {legalLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.isDisabled || !link.href ? '#' : link.href}
+                  {...(link.isExternal && link.href && !link.isDisabled && {
+                    target: '_blank', rel: 'noopener noreferrer',
+                  })}
+                  className={`transition-colors ${
+                    link.isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:underline'
+                  }`}
+                  aria-disabled={link.isDisabled || undefined}
+                >
+                  {link.name}
+                </a>
+              ))}
+            </div>
+          )}
           <button
             onClick={scrollToTop}
             aria-label="Scroll to top"

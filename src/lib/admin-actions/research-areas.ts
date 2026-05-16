@@ -39,6 +39,21 @@ function readIcon(formData: FormData) {
   return { iconName, iconPublicId, iconUrl };
 }
 
+// Featured slot — at most one ResearchArea should have isFeatured=true.
+// When the incoming row sets isFeatured=true and another row already
+// holds it, the other row is demoted inside the same transaction so a
+// transient "two featured" window never exists.
+function readFeatured(formData: FormData) {
+  return {
+    isFeatured:            formData.get('isFeatured') === 'on',
+    featuredHeading:       emptyToNull(formData.get('featuredHeading')),
+    featuredImageUrl:      emptyToNull(formData.get('featuredImageUrl')),
+    featuredImagePublicId: emptyToNull(formData.get('featuredImagePublicId')),
+    featuredDescription:   emptyToNull(formData.get('featuredDescription')),
+    featuredCtaHref:       emptyToNull(formData.get('featuredCtaHref')),
+  };
+}
+
 export async function createResearchAreaAction(
   _prev: ActionResult | { ok: null },
   formData: FormData,
@@ -47,8 +62,10 @@ export async function createResearchAreaAction(
   if (denied) return denied;
 
   const icon = readIcon(formData);
+  const featured = readFeatured(formData);
   const raw = {
     ...icon,
+    ...featured,
     areaName:    getStr(formData, 'areaName'),
     description: emptyToNull(formData.get('description')),
   };
@@ -72,15 +89,30 @@ export async function createResearchAreaAction(
   const usesUpload = !!parsed.data.iconPublicId && !!parsed.data.iconUrl;
 
   try {
-    await prisma.researchArea.create({
-      data: {
-        areaName:     parsed.data.areaName,
-        description:  parsed.data.description ?? null,
-        displayOrder,
-        iconName:     usesUpload ? null : parsed.data.iconName!,
-        iconPublicId: usesUpload ? parsed.data.iconPublicId! : null,
-        iconUrl:      usesUpload ? parsed.data.iconUrl!      : null,
-      },
+    await prisma.$transaction(async (tx) => {
+      // Demote any existing featured row when this new row claims it.
+      if (parsed.data.isFeatured) {
+        await tx.researchArea.updateMany({
+          where: { isFeatured: true },
+          data:  { isFeatured: false },
+        });
+      }
+      await tx.researchArea.create({
+        data: {
+          areaName:     parsed.data.areaName,
+          description:  parsed.data.description ?? null,
+          displayOrder,
+          iconName:     usesUpload ? null : parsed.data.iconName!,
+          iconPublicId: usesUpload ? parsed.data.iconPublicId! : null,
+          iconUrl:      usesUpload ? parsed.data.iconUrl!      : null,
+          isFeatured:            parsed.data.isFeatured ?? false,
+          featuredHeading:       parsed.data.featuredHeading ?? null,
+          featuredImageUrl:      parsed.data.featuredImageUrl ?? null,
+          featuredImagePublicId: parsed.data.featuredImagePublicId ?? null,
+          featuredDescription:   parsed.data.featuredDescription ?? null,
+          featuredCtaHref:       parsed.data.featuredCtaHref ?? null,
+        },
+      });
     });
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Database error' };
@@ -104,8 +136,10 @@ export async function updateResearchAreaAction(
   if (denied) return denied;
 
   const icon = readIcon(formData);
+  const featured = readFeatured(formData);
   const raw = {
     ...icon,
+    ...featured,
     areaName:    getStr(formData, 'areaName'),
     description: emptyToNull(formData.get('description')),
   };
@@ -128,9 +162,24 @@ export async function updateResearchAreaAction(
   data.iconName     = usesUpload ? null : parsed.data.iconName ?? null;
   data.iconPublicId = usesUpload ? parsed.data.iconPublicId! : null;
   data.iconUrl      = usesUpload ? parsed.data.iconUrl!      : null;
+  data.isFeatured            = parsed.data.isFeatured ?? false;
+  data.featuredHeading       = parsed.data.featuredHeading ?? null;
+  data.featuredImageUrl      = parsed.data.featuredImageUrl ?? null;
+  data.featuredImagePublicId = parsed.data.featuredImagePublicId ?? null;
+  data.featuredDescription   = parsed.data.featuredDescription ?? null;
+  data.featuredCtaHref       = parsed.data.featuredCtaHref ?? null;
 
   try {
-    await prisma.researchArea.update({ where: { id }, data });
+    await prisma.$transaction(async (tx) => {
+      // Demote any other featured row when this row claims it.
+      if (parsed.data.isFeatured) {
+        await tx.researchArea.updateMany({
+          where: { isFeatured: true, id: { not: id } },
+          data:  { isFeatured: false },
+        });
+      }
+      await tx.researchArea.update({ where: { id }, data });
+    });
   } catch (e: unknown) {
     if ((e as { code?: string })?.code === 'P2025') {
       return { ok: false, error: 'Research area not found' };

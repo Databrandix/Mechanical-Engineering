@@ -25,6 +25,11 @@ export const programs: {
   },
 ];
 
+// quickLinks — Navbar mobile drawer no longer reads this (Phase 3:
+// derives from main_nav 'Admission' group); kept here for the
+// homepage QuickLinksSection content card, which Phase 5+ will
+// migrate to its own DB table along with the rest of the homepage
+// content sections.
 export const quickLinks: { name: string; href: string; external?: boolean; disabled?: boolean }[] = [
   { name: 'Admission Requirements', href: '/admission/requirements' },
   { name: 'Tuition Fees', href: '/admission/tuition-fees' },
