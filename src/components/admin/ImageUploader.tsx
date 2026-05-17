@@ -23,6 +23,9 @@ type Kind =
 export type UploadMeta = {
   fileType: 'image' | 'pdf';
   fileName: string;
+  /** Cloudinary returns width/height on image uploads (raw PDFs may omit). */
+  width?: number;
+  height?: number;
 };
 
 type Props = {
@@ -120,9 +123,13 @@ export default function ImageUploader({
       setPublicId(upJson.public_id);
       setFileType(nextFileType);
       setFileName(nextFileName);
+      const w = typeof upJson.width === 'number' ? upJson.width : undefined;
+      const h = typeof upJson.height === 'number' ? upJson.height : undefined;
       onChange?.(upJson.secure_url, upJson.public_id, {
         fileType: nextFileType,
         fileName: nextFileName,
+        width: w,
+        height: h,
       });
       toast.success(nextFileType === 'pdf' ? 'PDF uploaded' : 'Image uploaded');
     } catch (err) {

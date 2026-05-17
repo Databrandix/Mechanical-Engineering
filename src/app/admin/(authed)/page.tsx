@@ -2,12 +2,16 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import {
   Building2,
+  CalendarDays,
   FlaskConical,
   GraduationCap,
+  Image as ImageIcon,
   Info,
   Key,
+  Megaphone,
   Microscope,
   Navigation,
+  Newspaper,
   PanelBottom,
   University,
   Users,
@@ -29,6 +33,7 @@ export default async function DashboardHome() {
   const [
     programsCount, researchAreasCount, facultyCount,
     labCount, laboratoryLabCount,
+    newsCount, eventCount, noticeCount, galleryCount,
     adminUsersCount, previousSession,
   ] = await Promise.all([
     prisma.program.count(),
@@ -36,6 +41,10 @@ export default async function DashboardHome() {
     prisma.faculty.count(),
     prisma.lab.count(),
     prisma.laboratoryLab.count(),
+    prisma.news.count(),
+    prisma.event.count(),
+    prisma.notice.count(),
+    prisma.galleryImage.count(),
     isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
     prisma.session.findFirst({
       where: {
@@ -71,6 +80,10 @@ export default async function DashboardHome() {
           <StatCard label="Total Faculty" value={facultyCount} />
           <StatCard label="Labs" value={labCount} />
           <StatCard label="Laboratories" value={laboratoryLabCount} />
+          <StatCard label="News Articles" value={newsCount} />
+          <StatCard label="Events" value={eventCount} />
+          <StatCard label="Notices" value={noticeCount} />
+          <StatCard label="Gallery Images" value={galleryCount} />
           {isSuperAdmin && (
             <StatCard label="Total Admin Users" value={adminUsersCount!} />
           )}
@@ -162,6 +175,30 @@ export default async function DashboardHome() {
             icon={FlaskConical}
             title="Laboratory Facility"
             desc="Grid laboratories + landing features section"
+          />
+          <ActionCard
+            href="/admin/news"
+            icon={Newspaper}
+            title="Manage News"
+            desc="Articles for /news + homepage NewsSection"
+          />
+          <ActionCard
+            href="/admin/events"
+            icon={CalendarDays}
+            title="Manage Events"
+            desc="Events for student-society/events + homepage EventsSection"
+          />
+          <ActionCard
+            href="/admin/notices"
+            icon={Megaphone}
+            title="Manage Notices"
+            desc="Notice board entries with image/PDF attachments"
+          />
+          <ActionCard
+            href="/admin/gallery"
+            icon={ImageIcon}
+            title="Manage Gallery"
+            desc="Photo gallery — reorderable masonry"
           />
           {isSuperAdmin && (
             <ActionCard

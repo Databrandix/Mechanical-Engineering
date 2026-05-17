@@ -19,6 +19,11 @@ import {
   Info,
   ChevronDown,
   FlaskConical,
+  Newspaper,
+  CalendarDays,
+  Megaphone,
+  Image as ImageIcon,
+  FolderOpen,
 } from 'lucide-react';
 
 type SidebarUser = {
@@ -56,6 +61,13 @@ const LAB_SYSTEMS_NAV: NavItem[] = [
   { href: '/admin/laboratory-facility', label: 'Laboratory Facility', icon: FlaskConical },
 ];
 
+const CONTENT_HUBS_NAV: NavItem[] = [
+  { href: '/admin/news',     label: 'News',     icon: Newspaper },
+  { href: '/admin/events',   label: 'Events',   icon: CalendarDays },
+  { href: '/admin/notices',  label: 'Notices',  icon: Megaphone },
+  { href: '/admin/gallery',  label: 'Gallery',  icon: ImageIcon },
+];
+
 export default function Sidebar({ user }: { user: SidebarUser }) {
   const pathname = usePathname();
   const isSuperAdmin = user.role === 'super_admin';
@@ -64,6 +76,8 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
   const [aboutOpen, setAboutOpen] = useState<boolean>(aboutActive);
   const labSystemsActive = LAB_SYSTEMS_NAV.some((n) => pathname?.startsWith(n.href));
   const [labSystemsOpen, setLabSystemsOpen] = useState<boolean>(labSystemsActive);
+  const contentHubsActive = CONTENT_HUBS_NAV.some((n) => pathname?.startsWith(n.href));
+  const [contentHubsOpen, setContentHubsOpen] = useState<boolean>(contentHubsActive);
 
   async function handleLogout() {
     try {
@@ -159,6 +173,35 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
         {labSystemsOpen && (
           <div className="pl-6 space-y-1">
             {LAB_SYSTEMS_NAV.map(({ href, label }) => (
+              <Link key={href} href={href} className={linkClass(!!isActive(href))}>
+                <span className="text-[10px] leading-none">●</span>
+                {label}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* Content Hubs — collapsible group (Phase 6) */}
+        <button
+          type="button"
+          onClick={() => setContentHubsOpen((v) => !v)}
+          aria-expanded={contentHubsOpen}
+          className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            contentHubsActive ? 'text-accent' : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <span className="flex items-center gap-3">
+            <FolderOpen size={16} />
+            Content Hubs
+          </span>
+          <ChevronDown
+            size={14}
+            className={`transition-transform ${contentHubsOpen ? 'rotate-180' : ''}`}
+          />
+        </button>
+        {contentHubsOpen && (
+          <div className="pl-6 space-y-1">
+            {CONTENT_HUBS_NAV.map(({ href, label }) => (
               <Link key={href} href={href} className={linkClass(!!isActive(href))}>
                 <span className="text-[10px] leading-none">●</span>
                 {label}
