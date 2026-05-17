@@ -17,6 +17,12 @@ import { news as newsData } from '../src/lib/news-data';
 import { events as eventsData } from '../src/lib/events-data';
 import { notices as noticesData } from '../src/lib/notices-data';
 import { galleryImages as galleryData } from '../src/lib/gallery-data';
+import { alumni as alumniData } from '../src/lib/alumni-data';
+import { clubs as clubsData } from '../src/lib/clubs-data';
+import { faqs as faqData } from '../src/lib/faq-data';
+import { visitors as visitorsData } from '../src/lib/visitors-data';
+import { researchPapers as researchPapersData } from '../src/lib/research-data';
+import { busRoutes as busRoutesData } from '../src/lib/transport-data';
 
 const BCRYPT_ROUNDS = 12;
 
@@ -1016,6 +1022,230 @@ async function seedGalleryImages() {
   console.log(`✓ Gallery images seeded (${galleryData.length} rows)`);
 }
 
+// ════════════════════════════════════════════════════════════════
+//  PHASE 7 — Student Society + Transport (final CMS migration)
+//  Pattern: count-gated bulk insert (idempotent — re-running won't
+//  duplicate). Source data preserved verbatim from each *-data.ts
+//  file so visual identity is byte-equivalent post-seed.
+// ════════════════════════════════════════════════════════════════
+
+async function seedAlumni() {
+  const count = await prisma.alumni.count();
+  if (count > 0) {
+    console.log(`✓ Alumni already seeded (${count} rows)`);
+    return;
+  }
+  for (let i = 0; i < alumniData.length; i++) {
+    const a = alumniData[i];
+    await prisma.alumni.create({
+      data: {
+        slug:          a.id,
+        studentId:     a.studentId,
+        name:          a.name,
+        department:    a.department,
+        designation:   a.designation,
+        company:       a.company,
+        photoUrl:      a.photo,
+        photoPublicId: null,
+        displayOrder:  i,
+      },
+    });
+  }
+  console.log(`✓ Alumni seeded (${alumniData.length} rows)`);
+}
+
+async function seedClubs() {
+  const count = await prisma.club.count();
+  if (count > 0) {
+    console.log(`✓ Clubs already seeded (${count} rows)`);
+    return;
+  }
+  for (let i = 0; i < clubsData.length; i++) {
+    const c = clubsData[i];
+    await prisma.club.create({
+      data: {
+        slug:          c.id,
+        name:          c.name,
+        abbreviation:  c.abbreviation,
+        description:   c.description,
+        imageUrl:      c.image,
+        imagePublicId: null,
+        displayOrder:  i,
+      },
+    });
+  }
+  console.log(`✓ Clubs seeded (${clubsData.length} rows)`);
+}
+
+async function seedFaqs() {
+  const count = await prisma.faq.count();
+  if (count > 0) {
+    console.log(`✓ FAQs already seeded (${count} rows)`);
+    return;
+  }
+  // displayOrder by source array index; the legacy `id: number` field
+  // (1-33) was sequential anyway, so this preserves the rendered order.
+  for (let i = 0; i < faqData.length; i++) {
+    const q = faqData[i];
+    await prisma.faq.create({
+      data: {
+        category:     q.category,
+        question:     q.question,
+        answer:       q.answer,
+        displayOrder: i,
+      },
+    });
+  }
+  console.log(`✓ FAQs seeded (${faqData.length} rows)`);
+}
+
+async function seedVisitors() {
+  const count = await prisma.visitor.count();
+  if (count > 0) {
+    console.log(`✓ Visitors already seeded (${count} rows)`);
+    return;
+  }
+  for (let i = 0; i < visitorsData.length; i++) {
+    const v = visitorsData[i];
+    await prisma.visitor.create({
+      data: {
+        slug:          v.id,
+        name:          v.name,
+        role:          v.role ?? null,
+        affiliation:   v.affiliation ?? null,
+        photoUrl:      v.photo,
+        photoPublicId: null,
+        quote:         v.quote as unknown as Prisma.InputJsonValue,
+        displayOrder:  i,
+      },
+    });
+  }
+  console.log(`✓ Visitors seeded (${visitorsData.length} rows)`);
+}
+
+// Best-effort 4-digit year parse from the free-form `date` field.
+// Source data has shapes like "14 August 2019", "January–February 2023",
+// "September 2022", "" (empty). Returns null when no 4-digit number found.
+function parseYearFromDate(date: string | null | undefined): number | null {
+  if (!date) return null;
+  const m = /(\d{4})/.exec(date);
+  if (!m) return null;
+  const n = Number.parseInt(m[1], 10);
+  return Number.isFinite(n) && n >= 1900 && n <= 2100 ? n : null;
+}
+
+async function seedResearchPapers() {
+  const count = await prisma.researchPaper.count();
+  if (count > 0) {
+    console.log(`✓ Research papers already seeded (${count} rows)`);
+    return;
+  }
+  for (let i = 0; i < researchPapersData.length; i++) {
+    const p = researchPapersData[i];
+    await prisma.researchPaper.create({
+      data: {
+        title:           p.title,
+        authors:         p.authors,
+        area:            p.area,
+        date:            p.date && p.date.length > 0 ? p.date : null,
+        publicationYear: parseYearFromDate(p.date),
+        displayOrder:    i,
+      },
+    });
+  }
+  console.log(`✓ Research papers seeded (${researchPapersData.length} rows)`);
+}
+
+async function seedBusRoutes() {
+  const count = await prisma.busRoute.count();
+  if (count > 0) {
+    console.log(`✓ Bus routes already seeded (${count} rows)`);
+    return;
+  }
+  for (let i = 0; i < busRoutesData.length; i++) {
+    const r = busRoutesData[i];
+    await prisma.busRoute.create({
+      data: {
+        slug:           r.id,
+        routeName:      r.routeName,
+        busNumber:      r.busNumber,
+        contact:        r.contact,
+        departureTimes: r.departureTimes,
+        returnTimes:    r.returnTimes,
+        displayOrder:   i,
+      },
+    });
+  }
+  console.log(`✓ Bus routes seeded (${busRoutesData.length} rows)`);
+}
+
+async function seedSyllabus() {
+  const count = await prisma.syllabus.count();
+  if (count > 0) {
+    console.log(`✓ Syllabus already seeded (${count} rows)`);
+    return;
+  }
+  // Source: inline const in src/app/student-society/syllabus/page.tsx
+  // (Postgraduate entry intentionally absent — page renders "coming soon"
+  // empty state when level filter = Postgraduate).
+  await prisma.syllabus.create({
+    data: {
+      slug:          'bsc-mechanical-engineering',
+      title:         'B.Sc. in Mechanical Engineering',
+      shortTitle:    'B. Sc. in Mechanical Engineering',
+      department:    'Mechanical Engineering',
+      level:         'Undergraduate',
+      coverUrl:      '/assets/syllabus-me-cover.webp',
+      coverPublicId: null,
+      pdfUrl:        '/assets/syllabus-me.pdf',
+      pdfPublicId:   null,
+      pdfFileName:   'syllabus-me.pdf',
+      summary:
+        'Detailed course-by-course syllabus covering the four-year B.Sc. programme — Thermal Engineering, Design & Manufacturing, Automotive Engineering, Robotics & Automation, Materials Science, and Renewable Energy Systems.',
+      displayOrder:  0,
+    },
+  });
+  console.log('✓ Syllabus seeded (1 row)');
+}
+
+async function seedTransportLanding() {
+  // Source: hardcoded JSX in src/app/transport-service/page.tsx —
+  // the chrome that wraps the busRoutes grid (intro paragraph,
+  // gradient banner, 3-row "Important Instructions" card).
+  await prisma.transportLanding.upsert({
+    where: { id: 'singleton' },
+    update: {},
+    create: {
+      id: 'singleton',
+      introBody:
+        'Sonargaon University (SU) provides a comprehensive bus service covering major routes to ensure a comfortable commute for our students and staff.',
+      bannerHeading: 'Free University Bus Service',
+      // HTML allowed — preserves the yellow-highlight pattern from
+      // the legacy render. Same author-trust caveat as Phase 2/4/6.
+      bannerBody:
+        'The university provides free bus services covering major city areas and outskirts — <strong class="text-button-yellow">Mograpara</strong>, <strong class="text-button-yellow">Gauchhia</strong>, <strong class="text-button-yellow">Kadamtali</strong>, <strong class="text-button-yellow">Abdullahpur</strong>, and <strong class="text-button-yellow">Savar</strong>.',
+      instructions: [
+        {
+          iconName: 'MapPin',
+          title: 'Pick-up Points',
+          body: 'Please contact the respective bus drivers/supervisors at the provided numbers to confirm your specific pick-up location and exact time.',
+        },
+        {
+          iconName: 'Sparkles',
+          title: 'Special Service — Mohakhali',
+          body: 'A dedicated bus leaves for Mohakhali from SU six days a week at <strong>08:00 AM</strong>. For details, contact: <a href="tel:01958642587">01958-642587</a>.',
+        },
+        {
+          iconName: 'Bus',
+          title: 'Free Service',
+          body: 'The university provides free bus services covering major city areas and outskirts like Mograpara, Gauchhia, Kadamtali, Abdullahpur, and Savar.',
+        },
+      ] as unknown as Prisma.InputJsonValue,
+    },
+  });
+  console.log('✓ TransportLanding seeded');
+}
+
 async function main() {
   console.log('Seeding database…\n');
   await seedDepartmentIdentity();
@@ -1052,6 +1282,16 @@ async function main() {
   await seedEvents();
   await seedNotices();
   await seedGalleryImages();
+
+  console.log('\nPhase 7 student society + transport…');
+  await seedAlumni();
+  await seedClubs();
+  await seedFaqs();
+  await seedVisitors();
+  await seedResearchPapers();
+  await seedBusRoutes();
+  await seedSyllabus();
+  await seedTransportLanding();
 
   console.log('\nDone.');
 }

@@ -258,6 +258,12 @@ export const uploadKindSchema = z.enum([
   'event-image',
   'notice-file',
   'gallery-image',
+  // Phase 7
+  'alumni-photo',
+  'club-image',
+  'visitor-photo',
+  'syllabus-cover',
+  'syllabus-pdf',
 ]);
 
 export const uploadSignSchema = z.object({
