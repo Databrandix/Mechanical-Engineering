@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Search, X, ArrowRight } from 'lucide-react';
-import { search, SearchItem } from '@/lib/search-index';
+import { search, type SearchItem } from '@/lib/search';
 
 const TYPE_BADGE_COLOR: Record<SearchItem['type'], string> = {
   Page: 'bg-primary/10 text-primary',
@@ -15,17 +15,22 @@ const TYPE_BADGE_COLOR: Record<SearchItem['type'], string> = {
   Research: 'bg-indigo-100 text-indigo-700',
   Transport: 'bg-cyan-100 text-cyan-700',
   Event: 'bg-rose-100 text-rose-700',
+  Notice: 'bg-orange-100 text-orange-700',
+  Program: 'bg-teal-100 text-teal-700',
+  ResearchArea: 'bg-indigo-100 text-indigo-700',
+  Gallery: 'bg-slate-100 text-slate-700',
 };
 
 interface SearchOverlayProps {
   open: boolean;
   onClose: () => void;
+  items: readonly SearchItem[];
 }
 
-export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
+export default function SearchOverlay({ open, onClose, items }: SearchOverlayProps) {
   const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const results = useMemo(() => search(query, 30), [query]);
+  const results = useMemo(() => search(query, items, 30), [query, items]);
 
   // Focus input when opened
   useEffect(() => {

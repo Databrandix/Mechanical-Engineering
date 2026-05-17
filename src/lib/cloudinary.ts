@@ -38,6 +38,13 @@ const KIND_TO_SUBFOLDER: Record<string, string> = {
   'faculty-message-hero':  'faculty/message-hero',
   'about-image':           'about',
   'lab-image':             'labs',
+  // Phase 6 content hubs. 'notice-file' accepts both image and PDF
+  // via the /auto/upload endpoint; resource_type is auto-detected on
+  // upload and surfaced via upJson.format (pdf vs webp/jpg/png).
+  'news-cover':            'news',
+  'event-image':           'events',
+  'notice-file':           'notices',
+  'gallery-image':         'gallery',
 };
 
 function folderFor(kind: string): string {

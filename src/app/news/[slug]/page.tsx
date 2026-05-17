@@ -1,21 +1,49 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Calendar, Tag, ArrowRight, ChevronRight, Home } from 'lucide-react';
 import Container from '@/components/ui/Container';
-import { news, getNewsBySlug, getRelatedNews } from '@/lib/news-data';
+import { prisma } from '@/lib/db';
+import { getNewsBySlug, getNewsSlugs } from '@/lib/identity';
 
-export function generateStaticParams() {
-  return news.map((n) => ({ slug: n.slug }));
+export async function generateStaticParams() {
+  const slugs = await getNewsSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const article = getNewsBySlug(slug);
+  const article = await getNewsBySlug(slug);
   if (!article) return { title: 'News article not found' };
   return {
     title: `${article.shortTitle} — Department of Mechanical Engineering`,
     description: article.summary,
   };
+}
+
+// Defensive Json reads — the body / meta columns are typed `Json`
+// in Prisma; runtime shapes match Phase 6 admin form output but a
+// hand-edited row could deviate. Coerce on read so the renderer
+// never crashes on a malformed column.
+function coerceParagraphs(v: unknown): string[] {
+  if (!Array.isArray(v)) return [];
+  return v.filter((p): p is string => typeof p === 'string' && p.length > 0);
+}
+
+function coerceKeyValueList(v: unknown): { label: string; value: string }[] {
+  if (!Array.isArray(v)) return [];
+  return v
+    .filter((r): r is { label?: unknown; value?: unknown } => typeof r === 'object' && r !== null)
+    .map((r) => ({
+      label: typeof r.label === 'string' ? r.label : '',
+      value: typeof r.value === 'string' ? r.value : '',
+    }))
+    .filter((r) => r.label && r.value);
+}
+
+function formatDate(d: Date, displayDate: string | null): string {
+  if (displayDate) return displayDate;
+  return new Date(d).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 export default async function NewsDetailPage({
@@ -24,10 +52,22 @@ export default async function NewsDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = getNewsBySlug(slug);
+  const article = await getNewsBySlug(slug);
   if (!article) notFound();
 
-  const related = getRelatedNews(slug, 3);
+  // Related news — top 3 newest excluding the current article.
+  // Lives outside the cache() wrappers because the slug filter is
+  // per-page; a small uncached query is fine.
+  const related = await prisma.news.findMany({
+    where: { slug: { not: slug } },
+    orderBy: { publishedAt: 'desc' },
+    take: 3,
+    select: { slug: true, shortTitle: true, category: true, coverUrl: true },
+  });
+
+  const paragraphs = coerceParagraphs(article.body);
+  const metaRows = coerceKeyValueList(article.meta);
+  const dateLabel = formatDate(article.publishedAt, article.displayDate);
 
   return (
     <main className="bg-gray-50">
@@ -39,14 +79,14 @@ export default async function NewsDetailPage({
             aria-label="Breadcrumb"
             className="flex items-center gap-2 text-sm text-gray-500 mb-6"
           >
-            <a href="/" className="inline-flex items-center gap-1 hover:text-accent transition-colors">
+            <Link href="/" className="inline-flex items-center gap-1 hover:text-accent transition-colors">
               <Home size={13} />
               Home
-            </a>
+            </Link>
             <ChevronRight size={13} className="opacity-60" />
-            <a href="/news" className="hover:text-accent transition-colors">
+            <Link href="/news" className="hover:text-accent transition-colors">
               News
-            </a>
+            </Link>
             <ChevronRight size={13} className="opacity-60" />
             <span className="text-primary font-medium line-clamp-1">{article.shortTitle}</span>
           </nav>
@@ -59,7 +99,7 @@ export default async function NewsDetailPage({
           {/* Cover image with badges overlay */}
           <div className="relative rounded-2xl overflow-hidden bg-gray-100 mb-8 md:mb-10">
             <Image
-              src={article.cover}
+              src={article.coverUrl}
               alt={article.shortTitle}
               width={1200}
               height={750}
@@ -74,26 +114,28 @@ export default async function NewsDetailPage({
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-button-yellow text-primary text-xs font-bold shadow-md">
                 <Calendar size={12} />
-                {article.date}
+                {dateLabel}
               </span>
             </div>
           </div>
 
           {/* Body */}
-          <article className="space-y-5 text-[16px] md:text-[17px] leading-[1.85] text-gray-800 mb-12 md:mb-16">
-            {article.body.map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
-          </article>
+          {paragraphs.length > 0 && (
+            <article className="space-y-5 text-[16px] md:text-[17px] leading-[1.85] text-gray-800 mb-12 md:mb-16">
+              {paragraphs.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </article>
+          )}
 
           {/* Meta details */}
-          {article.meta && article.meta.length > 0 && (
+          {metaRows.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-100 p-6 md:p-7 mb-12 md:mb-16">
               <h3 className="font-display text-lg font-bold text-primary mb-4">
                 Event Details
               </h3>
               <dl className="grid sm:grid-cols-[180px_1fr] gap-x-6 gap-y-3 text-[14px]">
-                {article.meta.map(({ label, value }) => (
+                {metaRows.map(({ label, value }) => (
                   <div key={label} className="contents">
                     <dt className="font-semibold text-primary">{label}</dt>
                     <dd className="text-gray-700">{value}</dd>
@@ -106,7 +148,7 @@ export default async function NewsDetailPage({
           {/* Related stories — yellow CTA card + 3 related */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
             {/* Explore yellow card */}
-            <a
+            <Link
               href="/news"
               className="bg-button-yellow rounded-2xl p-6 md:p-7 flex flex-col justify-between min-h-[200px] hover:brightness-105 transition-all group"
             >
@@ -117,17 +159,17 @@ export default async function NewsDetailPage({
                 More News
                 <ArrowRight size={14} />
               </span>
-            </a>
+            </Link>
 
             {/* 3 related news cards */}
             {related.map((item) => (
-              <a
+              <Link
                 key={item.slug}
                 href={`/news/${item.slug}`}
                 className="relative rounded-2xl overflow-hidden min-h-[200px] group bg-gray-200"
               >
                 <Image
-                  src={item.cover}
+                  src={item.coverUrl}
                   alt={item.shortTitle}
                   fill
                   sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
@@ -142,7 +184,7 @@ export default async function NewsDetailPage({
                     {item.shortTitle}
                   </h4>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </Container>

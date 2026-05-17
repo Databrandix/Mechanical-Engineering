@@ -15,6 +15,7 @@ import {
   getFooterQuickLinks,
   getFooterLegalLinks,
 } from '@/lib/identity';
+import { getSearchIndex } from '@/lib/search-index';
 import './globals.css';
 
 const poppins = Poppins({
@@ -89,12 +90,18 @@ export default async function RootLayout({
   // components out of the React tree entirely on admin routes and
   // eliminates the SSR/client-hydration-mismatch class of bug that
   // a client-side usePathname guard could not reliably solve.
+  const headersList = await headers();
+  const isAdmin =
+    headersList.get('x-pathname')?.startsWith('/admin') ?? false;
+
+  // The search index aggregates 8 DB tables + 5 file-based arrays.
+  // Skip the work on /admin/* where Navbar isn't rendered anyway.
   const [
-    headersList, dept, uni,
+    dept, uni,
     topLinks, quickAccessItems, mainNav,
     usefulLinks, getInTouchLinks, quickLinks, legalLinks,
+    searchItems,
   ] = await Promise.all([
-    headers(),
     getDepartmentIdentity(),
     getUniversityIdentity(),
     getTopLinks(),
@@ -104,9 +111,8 @@ export default async function RootLayout({
     getFooterGetInTouchLinks(),
     getFooterQuickLinks(),
     getFooterLegalLinks(),
+    isAdmin ? Promise.resolve([] as Awaited<ReturnType<typeof getSearchIndex>>) : getSearchIndex(),
   ]);
-  const isAdmin =
-    headersList.get('x-pathname')?.startsWith('/admin') ?? false;
 
   // Inject DB-driven brand colors as CSS custom properties on <html>.
   // Cascade overrides the @theme defaults in globals.css so every
@@ -132,6 +138,7 @@ export default async function RootLayout({
             topLinks={topLinks}
             quickAccessItems={quickAccessItems}
             mainNav={mainNav}
+            searchItems={searchItems}
           />
         )}
         <main className="flex-grow">{children}</main>

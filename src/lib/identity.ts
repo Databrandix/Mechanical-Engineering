@@ -245,3 +245,82 @@ export const getDean = cache(async () => {
 export const getHead = cache(async () => {
   return prisma.faculty.findFirst({ where: { isHead: true } });
 });
+
+// ─────────────────────────────────────────────────────────────────
+//  Content hubs — Phase 6 (News, Events, Notices, GalleryImage)
+//    News + Notices sort by publishedAt DESC (newest first).
+//    Events sort by eventDate DESC NULLS LAST, then createdAt DESC.
+//    Gallery sorts by displayOrder ASC (admin drag-reorder).
+// ─────────────────────────────────────────────────────────────────
+
+// News list (paginated). `take`/`skip` callers compute from ?page=N.
+// Returns the full row so callers can render cards + detail pages
+// from the same shape; Json columns (body, meta) are read defensively
+// at render time via coerceParagraphs / coerceKeyValueList.
+export const getNews = cache(async (opts?: { skip?: number; take?: number }) => {
+  return prisma.news.findMany({
+    orderBy: { publishedAt: 'desc' },
+    skip: opts?.skip,
+    take: opts?.take,
+  });
+});
+
+export const getNewsCount = cache(async () => {
+  return prisma.news.count();
+});
+
+export const getNewsBySlug = cache(async (slug: string) => {
+  return prisma.news.findUnique({ where: { slug } });
+});
+
+export const getNewsSlugs = cache(async () => {
+  const rows = await prisma.news.findMany({ select: { slug: true } });
+  return rows.map((r) => r.slug);
+});
+
+// Homepage NewsSection — top 5 (main + 4 sides).
+export const getNewsHomeTop = cache(async () => {
+  return prisma.news.findMany({
+    orderBy: { publishedAt: 'desc' },
+    take: 5,
+  });
+});
+
+export const getEvents = cache(async () => {
+  return prisma.event.findMany({
+    orderBy: [{ eventDate: { sort: 'desc', nulls: 'last' } }, { createdAt: 'desc' }],
+  });
+});
+
+export const getEventBySlug = cache(async (slug: string) => {
+  return prisma.event.findUnique({ where: { slug } });
+});
+
+export const getEventSlugs = cache(async () => {
+  const rows = await prisma.event.findMany({ select: { slug: true } });
+  return rows.map((r) => r.slug);
+});
+
+// Homepage EventsSection — top 3 (same sort as full list).
+export const getEventsHomeTop = cache(async () => {
+  return prisma.event.findMany({
+    orderBy: [{ eventDate: { sort: 'desc', nulls: 'last' } }, { createdAt: 'desc' }],
+    take: 3,
+  });
+});
+
+export const getNotices = cache(async () => {
+  return prisma.notice.findMany({ orderBy: { publishedAt: 'desc' } });
+});
+
+// Homepage NoticesSection — top 5 (date descending).
+export const getNoticesHomeTop = cache(async () => {
+  return prisma.notice.findMany({
+    orderBy: { publishedAt: 'desc' },
+    take: 5,
+  });
+});
+
+export const getGalleryImages = cache(async () => {
+  return prisma.galleryImage.findMany({ orderBy: { displayOrder: 'asc' } });
+});

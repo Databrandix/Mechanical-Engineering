@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { ImageOff, X } from 'lucide-react';
+import { FileText, ImageOff, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 type Kind =
@@ -13,7 +13,20 @@ type Kind =
   | 'faculty-photo'
   | 'faculty-message-hero'
   | 'about-image'
-  | 'lab-image';
+  | 'lab-image'
+  // Phase 6
+  | 'news-cover'
+  | 'event-image'
+  | 'notice-file'
+  | 'gallery-image';
+
+export type UploadMeta = {
+  fileType: 'image' | 'pdf';
+  fileName: string;
+  /** Cloudinary returns width/height on image uploads (raw PDFs may omit). */
+  width?: number;
+  height?: number;
+};
 
 type Props = {
   /** Which folder + transformation hint the upload goes to. */
@@ -22,15 +35,31 @@ type Props = {
   name: string;
   initialUrl?: string | null;
   initialPublicId?: string | null;
+  /**
+   * Initial file metadata. Only relevant for kinds that may carry a PDF
+   * (currently 'notice-file'); ignored otherwise. Phase 6.
+   */
+  initialFileType?: 'image' | 'pdf' | null;
+  initialFileName?: string | null;
   label?: string;
   aspectRatio?: 'square' | 'wide' | 'auto';
+  /**
+   * Accept attribute for the underlying <input type="file">. Default
+   * 'image/*' preserves Phase 0-5 behaviour. Phase 6 'notice-file'
+   * uploads pass 'image/*,application/pdf' so the picker shows both.
+   */
+  accept?: string;
   /**
    * When provided, hidden form inputs are skipped and the callback
    * fires on upload/clear. Use for image uploads embedded inside
    * Json-array editors (Phase 4 ActivitiesEditor) where the parent
    * serializes the whole array as a single hidden input.
+   *
+   * Phase 6 adds an optional `meta` 3rd arg so Notice forms can surface
+   * fileType ('image' | 'pdf') and the original filename. Existing
+   * callers that only accept (url, publicId) keep working unchanged.
    */
-  onChange?: (url: string, publicId: string) => void;
+  onChange?: (url: string, publicId: string, meta?: UploadMeta) => void;
 };
 
 export default function ImageUploader({
@@ -38,12 +67,19 @@ export default function ImageUploader({
   name,
   initialUrl,
   initialPublicId,
+  initialFileType,
+  initialFileName,
   label,
   aspectRatio = 'auto',
+  accept = 'image/*',
   onChange,
 }: Props) {
   const [url, setUrl] = useState<string>(initialUrl ?? '');
   const [publicId, setPublicId] = useState<string>(initialPublicId ?? '');
+  const [fileType, setFileType] = useState<'image' | 'pdf'>(
+    initialFileType ?? 'image',
+  );
+  const [fileName, setFileName] = useState<string>(initialFileName ?? '');
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -77,10 +113,25 @@ export default function ImageUploader({
       }
       const upJson = await upRes.json();
 
+      // Detect type from Cloudinary's `format` field (more reliable than
+      // resource_type, which varies by account/plan for PDFs).
+      const format = String(upJson.format ?? '').toLowerCase();
+      const nextFileType: 'image' | 'pdf' = format === 'pdf' ? 'pdf' : 'image';
+      const nextFileName = String(upJson.original_filename ?? file.name ?? '');
+
       setUrl(upJson.secure_url);
       setPublicId(upJson.public_id);
-      onChange?.(upJson.secure_url, upJson.public_id);
-      toast.success('Image uploaded');
+      setFileType(nextFileType);
+      setFileName(nextFileName);
+      const w = typeof upJson.width === 'number' ? upJson.width : undefined;
+      const h = typeof upJson.height === 'number' ? upJson.height : undefined;
+      onChange?.(upJson.secure_url, upJson.public_id, {
+        fileType: nextFileType,
+        fileName: nextFileName,
+        width: w,
+        height: h,
+      });
+      toast.success(nextFileType === 'pdf' ? 'PDF uploaded' : 'Image uploaded');
     } catch (err) {
       console.error(err);
       toast.error(err instanceof Error ? err.message : 'Upload failed');
@@ -105,12 +156,16 @@ export default function ImageUploader({
     }
     setUrl('');
     setPublicId('');
-    onChange?.('', '');
+    setFileType('image');
+    setFileName('');
+    onChange?.('', '', { fileType: 'image', fileName: '' });
   }
 
   const aspectClass =
     aspectRatio === 'square' ? 'aspect-square' :
     aspectRatio === 'wide'   ? 'aspect-[3/1]' : '';
+
+  const isPdf = fileType === 'pdf';
 
   return (
     <div className="space-y-2">
@@ -121,26 +176,57 @@ export default function ImageUploader({
         className={`relative bg-gray-50 border-2 border-dashed border-gray-200 rounded-lg overflow-hidden ${aspectClass}`}
       >
         {url ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={url}
-              alt=""
-              className={`w-full ${aspectRatio === 'auto' ? 'max-h-40 object-contain' : 'h-full object-cover'}`}
-            />
-            <button
-              type="button"
-              onClick={clearImage}
-              className="absolute top-2 right-2 bg-white/90 hover:bg-white text-gray-700 rounded-full p-1.5 shadow-md transition-colors focus:outline-none focus:ring-2 focus:ring-accent/50"
-              aria-label="Remove image"
-            >
-              <X size={14} />
-            </button>
-          </>
+          isPdf ? (
+            <div className="flex items-start gap-3 p-4">
+              <div className="w-10 h-10 rounded-md bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                <FileText size={20} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-medium text-gray-800 truncate">
+                  {fileName || 'PDF document'}
+                </div>
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-accent hover:underline"
+                >
+                  Open PDF in new tab
+                </a>
+              </div>
+              <button
+                type="button"
+                onClick={clearImage}
+                className="bg-white/90 hover:bg-white text-gray-700 rounded-full p-1.5 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-accent/50 shrink-0"
+                aria-label="Remove file"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={url}
+                alt=""
+                className={`w-full ${aspectRatio === 'auto' ? 'max-h-40 object-contain' : 'h-full object-cover'}`}
+              />
+              <button
+                type="button"
+                onClick={clearImage}
+                className="absolute top-2 right-2 bg-white/90 hover:bg-white text-gray-700 rounded-full p-1.5 shadow-md transition-colors focus:outline-none focus:ring-2 focus:ring-accent/50"
+                aria-label="Remove image"
+              >
+                <X size={14} />
+              </button>
+            </>
+          )
         ) : (
           <div className="flex flex-col items-center justify-center h-32 text-gray-400">
             <ImageOff size={24} />
-            <span className="text-xs mt-1">No image</span>
+            <span className="text-xs mt-1">
+              {accept.includes('pdf') ? 'No file' : 'No image'}
+            </span>
           </div>
         )}
       </div>
@@ -148,7 +234,7 @@ export default function ImageUploader({
         <input
           ref={fileRef}
           type="file"
-          accept="image/*"
+          accept={accept}
           onChange={handleFile}
           disabled={uploading}
           className="text-sm text-gray-600 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border file:border-gray-200 file:bg-white file:text-gray-700 file:text-sm file:font-medium hover:file:bg-gray-50 file:cursor-pointer"

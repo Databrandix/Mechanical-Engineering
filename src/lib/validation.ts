@@ -253,6 +253,11 @@ export const uploadKindSchema = z.enum([
   'faculty-message-hero',
   'about-image',
   'lab-image',
+  // Phase 6
+  'news-cover',
+  'event-image',
+  'notice-file',
+  'gallery-image',
 ]);
 
 export const uploadSignSchema = z.object({
@@ -432,3 +437,133 @@ export const aboutMechaClubUpdateSchema = z.object({
   networkSecondaryCtaLabel: optionalNullableString,
   networkSecondaryCtaHref:  optionalNullableString,
 });
+
+// ════════════════════════════════════════════════════════════════
+//  PHASE 6 — Content hubs (News, Events, Notices, Gallery)
+//  Each entity has a create + update schema; update reuses create
+//  via .partial() where the public render tolerates missing fields,
+//  but News/Events/Notices keep the same shape on update because
+//  the admin always submits the whole form.
+// ════════════════════════════════════════════════════════════════
+
+// Slug is reused across News, Event, Notice. Same rule as Phase 5.
+const slugRegexHub = /^[a-z0-9-]+$/;
+
+// {label, value}[] used by News.meta and Event.details. Server already
+// parses the JSON-encoded hidden input from KeyValueListEditor, then
+// passes the parsed array through this schema.
+const keyValueArraySchema = z.array(
+  z.object({
+    label: z.string().min(1),
+    value: z.string().min(1),
+  }),
+).default([]);
+
+// string[] paragraph array used by News.body and Event.description.
+// Empty strings are stripped server-side before parsing, so the schema
+// can require non-empty entries.
+const paragraphsArraySchema = z.array(z.string().min(1)).default([]);
+
+// ─── News ────────────────────────────────────────────────────────
+
+export const newsCategoryEnum = z.enum([
+  'Academic',
+  'Achievement',
+  'Event',
+  'Workshop',
+  'Seminar',
+  'Industrial Visit',
+]);
+
+export const newsCreateSchema = z.object({
+  slug:          z.string().min(1).max(160).regex(slugRegexHub, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  title:         z.string().min(1).max(500),
+  shortTitle:    z.string().min(1).max(300),
+  category:      newsCategoryEnum,
+  publishedAt:   z.coerce.date(),
+  displayDate:   optionalNullableString,
+  summary:       z.string().min(1),
+  coverUrl:      z.string().min(1),
+  coverPublicId: optionalNullableString,
+  body:          paragraphsArraySchema,
+  meta:          keyValueArraySchema,
+});
+
+export const newsUpdateSchema = newsCreateSchema;
+
+// ─── Event ──────────────────────────────────────────────────────
+
+export const eventCategoryEnum = z.enum([
+  'Sports',
+  'Industrial Visit',
+  'Achievement',
+  'Partnership',
+  'Seminar',
+  'Exhibition',
+]);
+
+export const eventStatusEnum = z.enum(['Past', 'Current', 'Upcoming']);
+
+export const eventCreateSchema = z.object({
+  slug:          z.string().min(1).max(160).regex(slugRegexHub, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  title:         z.string().min(1).max(500),
+  shortTitle:    z.string().min(1).max(300),
+  category:      eventCategoryEnum,
+  status:        eventStatusEnum,
+  // null when admin didn't fill in a structured date (e.g. "Apr 20"
+  // without a year). coerce.date() handles ISO strings posted from
+  // <input type="datetime-local"> / <input type="date">.
+  eventDate:     z.coerce.date().nullable(),
+  displayDate:   optionalNullableString,
+  time:          optionalNullableString,
+  venue:         optionalNullableString,
+  imageUrl:      z.string().min(1),
+  imagePublicId: optionalNullableString,
+  summary:       z.string().min(1),
+  description:   paragraphsArraySchema,
+  focus:         z.string().min(1),
+  details:       keyValueArraySchema,
+  ctaLabel:      optionalNullableString,
+  ctaHref:       optionalNullableString,
+  ctaExternal:   z.boolean().default(false),
+});
+
+export const eventUpdateSchema = eventCreateSchema;
+
+// ─── Notice ─────────────────────────────────────────────────────
+
+export const noticeCategoryEnum = z.enum(['Academic', 'Holiday', 'Transport']);
+
+export const noticeFileTypeEnum = z.enum(['image', 'pdf']);
+
+export const noticeCreateSchema = z.object({
+  slug:         z.string().min(1).max(160).regex(slugRegexHub, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  title:        z.string().min(1).max(500),
+  category:     noticeCategoryEnum,
+  department:   z.string().min(1).max(300),
+  publishedAt:  z.coerce.date(),
+  displayDate:  optionalNullableString,
+  description:  z.string().min(1),
+  fileUrl:      optionalNullableString,
+  filePublicId: optionalNullableString,
+  // fileType is set by the ImageUploader from the Cloudinary upload
+  // response. Schema accepts either enum value or null/empty (no file
+  // attached). Empty string from FormData is coerced to null upstream.
+  fileType:     noticeFileTypeEnum.nullable().optional(),
+  fileName:     optionalNullableString,
+});
+
+export const noticeUpdateSchema = noticeCreateSchema;
+
+// ─── GalleryImage ───────────────────────────────────────────────
+
+export const galleryImageCreateSchema = z.object({
+  imageUrl:      z.string().min(1),
+  imagePublicId: optionalNullableString,
+  alt:           z.string().min(1).max(500),
+  width:         z.number().int().min(1).max(10000),
+  height:        z.number().int().min(1).max(10000),
+  displayOrder:  z.number().int().min(0).optional(),
+});
+
+export const galleryImageUpdateSchema = galleryImageCreateSchema.partial();

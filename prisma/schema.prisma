@@ -565,3 +565,126 @@ model LaboratoryLab {
   @@index([displayOrder])
   @@map("laboratory_lab")
 }
+
+// ════════════════════════════════════════════════════════════════
+//  Phase 6 — Content hubs (News, Events, Notices, Gallery)
+//    Four multi-row entities driving the ongoing-content surfaces:
+//      /news + /news/[slug]
+//      /student-society/events + /[slug]
+//      /student-society/notice-board (list only; file is the artifact)
+//      /gallery (lightbox-on-list, flat — no albums per Decision A)
+//    Homepage cross-refs: NewsSection (5), EventsSection (3),
+//    NoticesSection (5). Gallery has no homepage section.
+// ════════════════════════════════════════════════════════════════
+
+model News {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  shortTitle    String
+  // category — Academic | Achievement | Event | Workshop | Seminar | Industrial Visit
+  // Validated via Zod against the closed set; stored as String for forward
+  // flexibility (matches Phase 2 Faculty designation pattern).
+  category      String
+  // publishedAt — structured date used for sort + auto-formatted display
+  // when displayDate is null. Required so list ordering is deterministic.
+  publishedAt   DateTime
+  // displayDate — admin override (e.g. "2024" when only the year is known
+  // or admin wants a custom format). Null = derive from publishedAt.
+  displayDate   String?
+  summary       String   @db.Text
+  coverUrl      String
+  coverPublicId String?
+  // body — Json string[]: paragraph array. Same shape as the legacy
+  // news-data.ts. Reuses the Phase 2 Faculty paragraph editor.
+  body          Json
+  // meta — Json [{label,value}]: optional extra rows (Participants /
+  // Location / Period / Organising Partner …). Defaults to empty array.
+  meta          Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([publishedAt])
+  @@map("news")
+}
+
+model Event {
+  id            String    @id @default(cuid())
+  slug          String    @unique
+  title         String
+  shortTitle    String
+  // category — Sports | Industrial Visit | Achievement | Partnership | Seminar | Exhibition
+  category      String
+  // status — Past | Current | Upcoming. Admin sets manually (no auto-derive
+  // from eventDate). Matches the existing render which has events with
+  // null dates marked Current.
+  status        String
+  // eventDate — nullable; some events have no fixed date (e.g. "current
+  // partnerships"). Sort ordering: eventDate DESC NULLS LAST, createdAt DESC.
+  eventDate     DateTime?
+  // displayDate — admin override (e.g. "20 Apr", "2024"). Null = derive
+  // from eventDate, both null = hide the date pill.
+  displayDate   String?
+  time          String?
+  venue         String?
+  imageUrl      String
+  imagePublicId String?
+  summary       String    @db.Text
+  // description — Json string[]: paragraphs for the detail page.
+  description   Json
+  focus         String    @db.Text
+  // details — Json [{label,value}]: optional "Chief Guest / Chairperson /
+  // Date / Venue" sidebar rows. Defaults to empty array.
+  details       Json
+  ctaLabel      String?
+  ctaHref       String?
+  ctaExternal   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([eventDate])
+  @@index([status])
+  @@map("event")
+}
+
+model Notice {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  // category — Academic | Holiday | Transport
+  category     String
+  department   String                  // e.g. "Office of the Registrar"
+  publishedAt  DateTime
+  displayDate  String?
+  description  String   @db.Text
+  // File attachment — nullable so admin can save metadata-only initially.
+  // Upload flow: Cloudinary auto/upload accepts both image (jpg/png/webp)
+  // and PDF; fileType is set from the response resource_type or extension
+  // so the public renderer can show the right icon (Image vs FileText).
+  fileUrl      String?
+  filePublicId String?
+  fileType     String?                 // 'image' | 'pdf'
+  fileName     String?                 // original filename for the <a download> attribute
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([publishedAt])
+  @@map("notice")
+}
+
+model GalleryImage {
+  id            String   @id @default(cuid())
+  imageUrl      String
+  imagePublicId String?
+  alt           String
+  // width/height — required for the masonry grid's aspect-ratio
+  // calculation (matches the legacy gallery-data.ts dimensions array).
+  width         Int
+  height        Int
+  displayOrder  Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("gallery_image")
+}

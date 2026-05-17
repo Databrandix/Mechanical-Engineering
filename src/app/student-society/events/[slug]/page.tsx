@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
   Tag,
@@ -13,15 +14,16 @@ import {
 } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { events, getEventBySlug, type EventCategory } from '@/lib/events-data';
+import { getEventBySlug, getEventSlugs } from '@/lib/identity';
 
-export function generateStaticParams() {
-  return events.map((e) => ({ slug: e.slug }));
+export async function generateStaticParams() {
+  const slugs = await getEventSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const ev = getEventBySlug(slug);
+  const ev = await getEventBySlug(slug);
   if (!ev) return { title: 'Event not found' };
   return {
     title: `${ev.shortTitle} — Department of Mechanical Engineering`,
@@ -29,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-const categoryStyles: Record<EventCategory, string> = {
+const CATEGORY_STYLES: Record<string, string> = {
   Sports: 'bg-emerald-100 text-emerald-700',
   'Industrial Visit': 'bg-amber-100 text-amber-700',
   Achievement: 'bg-violet-100 text-violet-700',
@@ -38,26 +40,53 @@ const categoryStyles: Record<EventCategory, string> = {
   Exhibition: 'bg-primary/10 text-primary',
 };
 
+function coerceParagraphs(v: unknown): string[] {
+  if (!Array.isArray(v)) return [];
+  return v.filter((p): p is string => typeof p === 'string' && p.length > 0);
+}
+
+function coerceKeyValueList(v: unknown): { label: string; value: string }[] {
+  if (!Array.isArray(v)) return [];
+  return v
+    .filter((r): r is { label?: unknown; value?: unknown } => typeof r === 'object' && r !== null)
+    .map((r) => ({
+      label: typeof r.label === 'string' ? r.label : '',
+      value: typeof r.value === 'string' ? r.value : '',
+    }))
+    .filter((r) => r.label && r.value);
+}
+
+function formatDate(d: Date | null, displayDate: string | null): string | null {
+  if (displayDate) return displayDate;
+  if (!d) return null;
+  return new Date(d).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
 export default async function EventDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const ev = getEventBySlug(slug);
+  const ev = await getEventBySlug(slug);
   if (!ev) notFound();
+
+  const description = coerceParagraphs(ev.description);
+  const details = coerceKeyValueList(ev.details);
+  const dateLabel = formatDate(ev.eventDate, ev.displayDate);
+  const catStyle = CATEGORY_STYLES[ev.category] ?? 'bg-gray-100 text-gray-700';
 
   return (
     <PageShell title={ev.shortTitle} overline="Events" contentClassName="bg-gray-50 py-12 md:py-20">
       <Container>
         {/* Back link */}
-        <a
+        <Link
           href="/student-society/events"
           className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-accent transition-colors mb-6"
         >
           <ArrowLeft size={16} />
           Back to all events
-        </a>
+        </Link>
 
         {/* Two-column: main + sidebar */}
         <div className="grid lg:grid-cols-[1fr_360px] gap-6">
@@ -65,7 +94,7 @@ export default async function EventDetailPage({
           <article className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="overflow-hidden bg-gray-100">
               <Image
-                src={ev.image}
+                src={ev.imageUrl}
                 alt={ev.shortTitle}
                 width={1200}
                 height={750}
@@ -90,7 +119,7 @@ export default async function EventDetailPage({
 
             <div className="space-y-5">
               <DetailRow Icon={Building2} label="Department" value="Mechanical Engineering" />
-              {ev.date && <DetailRow Icon={Calendar} label="Date" value={ev.date} />}
+              {dateLabel && <DetailRow Icon={Calendar} label="Date" value={dateLabel} />}
               {ev.time && <DetailRow Icon={Clock} label="Time" value={ev.time} />}
               {ev.venue && <DetailRow Icon={MapPin} label="Venue" value={ev.venue} />}
 
@@ -101,7 +130,7 @@ export default async function EventDetailPage({
                 <div>
                   <div className="text-xs text-gray-500 mb-1">Category</div>
                   <span
-                    className={`inline-block px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${categoryStyles[ev.category]}`}
+                    className={`inline-block px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${catStyle}`}
                   >
                     {ev.category}
                   </span>
@@ -118,11 +147,11 @@ export default async function EventDetailPage({
         </div>
 
         {/* Full description + extras (below two-column) */}
-        {(ev.description.length > 0 || ev.focus || ev.details || ev.cta) && (
+        {(description.length > 0 || ev.focus || details.length > 0 || (ev.ctaLabel && ev.ctaHref)) && (
           <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
-            {ev.description.length > 0 && (
+            {description.length > 0 && (
               <div className="space-y-4 text-[16px] leading-[1.85] text-gray-800">
-                {ev.description.map((p, i) => (
+                {description.map((p, i) => (
                   <p key={i}>{p}</p>
                 ))}
               </div>
@@ -140,13 +169,13 @@ export default async function EventDetailPage({
               </div>
             )}
 
-            {ev.details && ev.details.length > 0 && (
+            {details.length > 0 && (
               <div className="mt-8 bg-gray-50 rounded-xl p-6">
                 <h3 className="font-display text-lg font-bold text-primary mb-4">
                   Additional Information
                 </h3>
                 <dl className="grid sm:grid-cols-[200px_1fr] gap-x-6 gap-y-3 text-[14px]">
-                  {ev.details.map(({ label, value }) => (
+                  {details.map(({ label, value }) => (
                     <div key={label} className="contents">
                       <dt className="font-semibold text-primary">{label}</dt>
                       <dd className="text-gray-700">{value}</dd>
@@ -156,14 +185,14 @@ export default async function EventDetailPage({
               </div>
             )}
 
-            {ev.cta && (
+            {ev.ctaLabel && ev.ctaHref && (
               <div className="mt-8">
                 <a
-                  href={ev.cta.href}
-                  {...(ev.cta.external && { target: '_blank', rel: 'noopener noreferrer' })}
+                  href={ev.ctaHref}
+                  {...(ev.ctaExternal && { target: '_blank', rel: 'noopener noreferrer' })}
                   className="inline-flex items-center gap-2 px-7 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-md shadow-md hover:brightness-110 hover:-translate-y-0.5 transition-all"
                 >
-                  {ev.cta.label}
+                  {ev.ctaLabel}
                   <ArrowRight size={16} />
                 </a>
               </div>
