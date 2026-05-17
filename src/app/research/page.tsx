@@ -1,7 +1,7 @@
 import { Calendar, MapPin, Users, FileText } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { researchPapers } from '@/lib/research-data';
+import { getResearchPapers } from '@/lib/identity';
 
 export const metadata = {
   title: 'Research — Department of Mechanical Engineering',
@@ -9,7 +9,9 @@ export const metadata = {
     'Published research papers from the Department of Mechanical Engineering, Sonargaon University.',
 };
 
-export default function ResearchPage() {
+export default async function ResearchPage() {
+  const papers = await getResearchPapers();
+
   return (
     <PageShell
       title="Research Publications"
@@ -26,51 +28,55 @@ export default function ResearchPage() {
           </p>
           <p className="mt-4 inline-flex items-center gap-2 text-[13px] font-semibold text-primary bg-primary/5 px-4 py-1.5 rounded-full">
             <FileText size={14} />
-            {researchPapers.length} Publications
+            {papers.length} Publications
           </p>
         </div>
 
-        <div className="mx-auto max-w-6xl grid gap-5 md:gap-6 lg:grid-cols-2">
-          {researchPapers.map((paper) => (
-            <article
-              key={paper.id}
-              className="flex gap-4 rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-shadow p-5 md:p-6"
-            >
-              {/* Number badge */}
-              <div className="shrink-0">
-                <div className="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center font-display font-bold text-[15px]">
-                  {paper.id}
-                </div>
-              </div>
-
-              {/* Body */}
-              <div className="flex-1 min-w-0">
-                <h3 className="text-[15px] md:text-[16px] font-bold leading-snug text-primary mb-3">
-                  {paper.title}
-                </h3>
-
-                <div className="flex flex-wrap gap-x-5 gap-y-2 mb-3 text-[12.5px]">
-                  {paper.date && (
-                    <span className="inline-flex items-center gap-1.5 text-gray-600">
-                      <Calendar size={13} className="text-accent" />
-                      {paper.date}
-                    </span>
-                  )}
+        {papers.length === 0 ? (
+          <div className="bg-white rounded-2xl border border-dashed border-gray-300 p-12 text-center">
+            <p className="text-gray-500">No research papers yet.</p>
+          </div>
+        ) : (
+          <div className="mx-auto max-w-6xl grid gap-5 md:gap-6 lg:grid-cols-2">
+            {papers.map((paper, idx) => (
+              <article
+                key={paper.id}
+                className="flex gap-4 rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-shadow p-5 md:p-6"
+              >
+                <div className="shrink-0">
+                  <div className="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center font-display font-bold text-[15px]">
+                    {idx + 1}
+                  </div>
                 </div>
 
-                <div className="flex items-start gap-2 mb-2 text-[13px] leading-[1.6]">
-                  <Users size={13} className="shrink-0 mt-1 text-accent" />
-                  <span className="text-gray-700 font-medium">{paper.authors}</span>
-                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-[15px] md:text-[16px] font-bold leading-snug text-primary mb-3">
+                    {paper.title}
+                  </h3>
 
-                <div className="flex items-start gap-2 text-[12.5px] leading-[1.6]">
-                  <MapPin size={13} className="shrink-0 mt-1 text-gray-400" />
-                  <span className="text-gray-500">{paper.area}</span>
+                  <div className="flex flex-wrap gap-x-5 gap-y-2 mb-3 text-[12.5px]">
+                    {paper.date && (
+                      <span className="inline-flex items-center gap-1.5 text-gray-600">
+                        <Calendar size={13} className="text-accent" />
+                        {paper.date}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-start gap-2 mb-2 text-[13px] leading-[1.6]">
+                    <Users size={13} className="shrink-0 mt-1 text-accent" />
+                    <span className="text-gray-700 font-medium">{paper.authors}</span>
+                  </div>
+
+                  <div className="flex items-start gap-2 text-[12.5px] leading-[1.6]">
+                    <MapPin size={13} className="shrink-0 mt-1 text-gray-400" />
+                    <span className="text-gray-500">{paper.area}</span>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
-        </div>
+              </article>
+            ))}
+          </div>
+        )}
       </Container>
     </PageShell>
   );

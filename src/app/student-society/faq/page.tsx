@@ -1,5 +1,6 @@
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
+import { getFaqs } from '@/lib/identity';
 import FAQList from './FAQList';
 
 export const metadata = {
@@ -8,7 +9,9 @@ export const metadata = {
     'Frequently asked questions about admission, rankings, campus, programs, and exams at Sonargaon University.',
 };
 
-export default function FAQPage() {
+export default async function FAQPage() {
+  const faqs = await getFaqs();
+
   return (
     <PageShell
       title="Frequently Asked Questions"
@@ -19,7 +22,14 @@ export default function FAQPage() {
     >
       <Container>
         <div className="mx-auto max-w-[1400px]">
-          <FAQList />
+          <FAQList
+            faqs={faqs.map((f) => ({
+              id:       f.id,
+              category: f.category,
+              question: f.question,
+              answer:   f.answer,
+            }))}
+          />
         </div>
       </Container>
     </PageShell>

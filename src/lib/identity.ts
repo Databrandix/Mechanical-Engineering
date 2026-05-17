@@ -324,3 +324,41 @@ export const getNoticesHomeTop = cache(async () => {
 export const getGalleryImages = cache(async () => {
   return prisma.galleryImage.findMany({ orderBy: { displayOrder: 'asc' } });
 });
+
+// ─────────────────────────────────────────────────────────────────
+//  Student Society + Campus Services — Phase 7
+//    Last batch of multi-row content. Closes out the *-data.ts
+//    file-based reads everywhere except scripts/seed.ts bootstrap.
+// ─────────────────────────────────────────────────────────────────
+
+export const getAlumni = cache(async () => {
+  return prisma.alumni.findMany({ orderBy: { displayOrder: 'asc' } });
+});
+
+export const getClubs = cache(async () => {
+  return prisma.club.findMany({ orderBy: { displayOrder: 'asc' } });
+});
+
+export const getFaqs = cache(async () => {
+  return prisma.faq.findMany({ orderBy: { displayOrder: 'asc' } });
+});
+
+export const getVisitors = cache(async () => {
+  return prisma.visitor.findMany({ orderBy: { displayOrder: 'asc' } });
+});
+
+export const getResearchPapers = cache(async () => {
+  return prisma.researchPaper.findMany({ orderBy: { displayOrder: 'asc' } });
+});
+
+export const getBusRoutes = cache(async () => {
+  return prisma.busRoute.findMany({ orderBy: { displayOrder: 'asc' } });
+});
+
+export const getSyllabi = cache(async () => {
+  return prisma.syllabus.findMany({ orderBy: { displayOrder: 'asc' } });
+});
+
+export const getTransportLanding = cache(async () => {
+  return prisma.transportLanding.findUnique({ where: { id: 'singleton' } });
+});
