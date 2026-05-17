@@ -24,6 +24,14 @@ import {
   Megaphone,
   Image as ImageIcon,
   FolderOpen,
+  UserCircle2,
+  Users2,
+  HelpCircle,
+  Sparkles,
+  BookText,
+  Bus,
+  Map as MapIcon,
+  Library,
 } from 'lucide-react';
 
 type SidebarUser = {
@@ -68,6 +76,20 @@ const CONTENT_HUBS_NAV: NavItem[] = [
   { href: '/admin/gallery',  label: 'Gallery',  icon: ImageIcon },
 ];
 
+const STUDENT_SOCIETY_NAV: NavItem[] = [
+  { href: '/admin/alumni',          label: 'Alumni',          icon: UserCircle2 },
+  { href: '/admin/clubs',           label: 'Clubs',           icon: Users2 },
+  { href: '/admin/faqs',            label: 'FAQs',            icon: HelpCircle },
+  { href: '/admin/visitors',        label: 'Visitors',        icon: Sparkles },
+  { href: '/admin/research-papers', label: 'Research Papers', icon: Library },
+  { href: '/admin/syllabus',        label: 'Syllabus',        icon: BookText },
+];
+
+const CAMPUS_SERVICES_NAV: NavItem[] = [
+  { href: '/admin/bus-routes',        label: 'Bus Routes',        icon: Bus },
+  { href: '/admin/transport-landing', label: 'Transport Landing', icon: MapIcon },
+];
+
 export default function Sidebar({ user }: { user: SidebarUser }) {
   const pathname = usePathname();
   const isSuperAdmin = user.role === 'super_admin';
@@ -78,6 +100,10 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
   const [labSystemsOpen, setLabSystemsOpen] = useState<boolean>(labSystemsActive);
   const contentHubsActive = CONTENT_HUBS_NAV.some((n) => pathname?.startsWith(n.href));
   const [contentHubsOpen, setContentHubsOpen] = useState<boolean>(contentHubsActive);
+  const studentSocietyActive = STUDENT_SOCIETY_NAV.some((n) => pathname?.startsWith(n.href));
+  const [studentSocietyOpen, setStudentSocietyOpen] = useState<boolean>(studentSocietyActive);
+  const campusServicesActive = CAMPUS_SERVICES_NAV.some((n) => pathname?.startsWith(n.href));
+  const [campusServicesOpen, setCampusServicesOpen] = useState<boolean>(campusServicesActive);
 
   async function handleLogout() {
     try {
@@ -202,6 +228,58 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
         {contentHubsOpen && (
           <div className="pl-6 space-y-1">
             {CONTENT_HUBS_NAV.map(({ href, label }) => (
+              <Link key={href} href={href} className={linkClass(!!isActive(href))}>
+                <span className="text-[10px] leading-none">●</span>
+                {label}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* Student Society — collapsible group (Phase 7) */}
+        <button
+          type="button"
+          onClick={() => setStudentSocietyOpen((v) => !v)}
+          aria-expanded={studentSocietyOpen}
+          className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            studentSocietyActive ? 'text-accent' : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <span className="flex items-center gap-3">
+            <Users2 size={16} />
+            Student Society
+          </span>
+          <ChevronDown size={14} className={`transition-transform ${studentSocietyOpen ? 'rotate-180' : ''}`} />
+        </button>
+        {studentSocietyOpen && (
+          <div className="pl-6 space-y-1">
+            {STUDENT_SOCIETY_NAV.map(({ href, label }) => (
+              <Link key={href} href={href} className={linkClass(!!isActive(href))}>
+                <span className="text-[10px] leading-none">●</span>
+                {label}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* Campus Services — collapsible group (Phase 7) */}
+        <button
+          type="button"
+          onClick={() => setCampusServicesOpen((v) => !v)}
+          aria-expanded={campusServicesOpen}
+          className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            campusServicesActive ? 'text-accent' : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <span className="flex items-center gap-3">
+            <Bus size={16} />
+            Campus Services
+          </span>
+          <ChevronDown size={14} className={`transition-transform ${campusServicesOpen ? 'rotate-180' : ''}`} />
+        </button>
+        {campusServicesOpen && (
+          <div className="pl-6 space-y-1">
+            {CAMPUS_SERVICES_NAV.map(({ href, label }) => (
               <Link key={href} href={href} className={linkClass(!!isActive(href))}>
                 <span className="text-[10px] leading-none">●</span>
                 {label}

@@ -1224,21 +1224,23 @@ async function seedTransportLanding() {
       // the legacy render. Same author-trust caveat as Phase 2/4/6.
       bannerBody:
         'The university provides free bus services covering major city areas and outskirts — <strong class="text-button-yellow">Mograpara</strong>, <strong class="text-button-yellow">Gauchhia</strong>, <strong class="text-button-yellow">Kadamtali</strong>, <strong class="text-button-yellow">Abdullahpur</strong>, and <strong class="text-button-yellow">Savar</strong>.',
+      // Shape matches Phase 5 LaboratoryFacility `features` so the
+      // FeaturesEditor admin component is reused (constraint #4).
       instructions: [
         {
           iconName: 'MapPin',
           title: 'Pick-up Points',
-          body: 'Please contact the respective bus drivers/supervisors at the provided numbers to confirm your specific pick-up location and exact time.',
+          description: 'Please contact the respective bus drivers/supervisors at the provided numbers to confirm your specific pick-up location and exact time.',
         },
         {
           iconName: 'Sparkles',
           title: 'Special Service — Mohakhali',
-          body: 'A dedicated bus leaves for Mohakhali from SU six days a week at <strong>08:00 AM</strong>. For details, contact: <a href="tel:01958642587">01958-642587</a>.',
+          description: 'A dedicated bus leaves for Mohakhali from SU six days a week at <strong>08:00 AM</strong>. For details, contact: <a href="tel:01958642587">01958-642587</a>.',
         },
         {
           iconName: 'Bus',
           title: 'Free Service',
-          body: 'The university provides free bus services covering major city areas and outskirts like Mograpara, Gauchhia, Kadamtali, Abdullahpur, and Savar.',
+          description: 'The university provides free bus services covering major city areas and outskirts like Mograpara, Gauchhia, Kadamtali, Abdullahpur, and Savar.',
         },
       ] as unknown as Prisma.InputJsonValue,
     },

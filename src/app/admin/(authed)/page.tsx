@@ -2,19 +2,27 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import {
   Building2,
+  Bus,
+  BookText,
   CalendarDays,
   FlaskConical,
   GraduationCap,
+  HelpCircle,
   Image as ImageIcon,
   Info,
   Key,
+  Library,
+  Map as MapIcon,
   Megaphone,
   Microscope,
   Navigation,
   Newspaper,
   PanelBottom,
+  Sparkles,
   University,
+  UserCircle2,
   Users,
+  Users2,
   UsersRound,
 } from 'lucide-react';
 import { prisma } from '@/lib/db';
@@ -34,6 +42,8 @@ export default async function DashboardHome() {
     programsCount, researchAreasCount, facultyCount,
     labCount, laboratoryLabCount,
     newsCount, eventCount, noticeCount, galleryCount,
+    alumniCount, clubCount, faqCount, visitorCount,
+    researchPaperCount, busRouteCount, syllabusCount,
     adminUsersCount, previousSession,
   ] = await Promise.all([
     prisma.program.count(),
@@ -45,6 +55,13 @@ export default async function DashboardHome() {
     prisma.event.count(),
     prisma.notice.count(),
     prisma.galleryImage.count(),
+    prisma.alumni.count(),
+    prisma.club.count(),
+    prisma.faq.count(),
+    prisma.visitor.count(),
+    prisma.researchPaper.count(),
+    prisma.busRoute.count(),
+    prisma.syllabus.count(),
     isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
     prisma.session.findFirst({
       where: {
@@ -84,6 +101,13 @@ export default async function DashboardHome() {
           <StatCard label="Events" value={eventCount} />
           <StatCard label="Notices" value={noticeCount} />
           <StatCard label="Gallery Images" value={galleryCount} />
+          <StatCard label="Alumni" value={alumniCount} />
+          <StatCard label="Clubs" value={clubCount} />
+          <StatCard label="FAQs" value={faqCount} />
+          <StatCard label="Visitors" value={visitorCount} />
+          <StatCard label="Research Papers" value={researchPaperCount} />
+          <StatCard label="Bus Routes" value={busRouteCount} />
+          <StatCard label="Syllabi" value={syllabusCount} />
           {isSuperAdmin && (
             <StatCard label="Total Admin Users" value={adminUsersCount!} />
           )}
@@ -199,6 +223,54 @@ export default async function DashboardHome() {
             icon={ImageIcon}
             title="Manage Gallery"
             desc="Photo gallery — reorderable masonry"
+          />
+          <ActionCard
+            href="/admin/alumni"
+            icon={UserCircle2}
+            title="Manage Alumni"
+            desc="Alumni grid for /student-society/alumni"
+          />
+          <ActionCard
+            href="/admin/clubs"
+            icon={Users2}
+            title="Manage Clubs"
+            desc="Student clubs directory for /student-society/club-list"
+          />
+          <ActionCard
+            href="/admin/faqs"
+            icon={HelpCircle}
+            title="Manage FAQs"
+            desc="Q&A pairs — 5-category index"
+          />
+          <ActionCard
+            href="/admin/visitors"
+            icon={Sparkles}
+            title="Manage Visitors"
+            desc="Distinguished visitor quotes"
+          />
+          <ActionCard
+            href="/admin/research-papers"
+            icon={Library}
+            title="Manage Research Papers"
+            desc="Publications for /research"
+          />
+          <ActionCard
+            href="/admin/syllabus"
+            icon={BookText}
+            title="Manage Syllabus"
+            desc="Course-by-course syllabi with PDF download"
+          />
+          <ActionCard
+            href="/admin/bus-routes"
+            icon={Bus}
+            title="Manage Bus Routes"
+            desc="University bus service routes and timings"
+          />
+          <ActionCard
+            href="/admin/transport-landing"
+            icon={MapIcon}
+            title="Transport Landing"
+            desc="Page chrome — intro, banner, instructions"
           />
           {isSuperAdmin && (
             <ActionCard
