@@ -3,24 +3,35 @@
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, ChevronLeft, ChevronRight, FolderOpen } from 'lucide-react';
-import { faqs, faqCategories, FAQCategory } from '@/lib/faq-data';
+
+// Plain serializable shape — id is now a cuid string (Phase 7 DB
+// migration). The legacy sequential number `id` from faq-data.ts is
+// gone; ordering comes from prisma.faq.findMany with displayOrder.
+export type FaqRow = {
+  id: string;
+  category: string;
+  question: string;
+  answer: string;
+};
+
+type Props = { faqs: readonly FaqRow[] };
 
 const PER_PAGE = 12;
-type CategoryFilter = 'All' | FAQCategory;
+const ALL_CATEGORIES = ['All', 'Admission', 'Rankings', 'Campus', 'Programs', 'Exams'] as const;
 
-export default function FAQList() {
-  const [activeCat, setActiveCat] = useState<CategoryFilter>('All');
-  const [openId, setOpenId] = useState<number | null>(null);
+export default function FAQList({ faqs }: Props) {
+  const [activeCat, setActiveCat] = useState<(typeof ALL_CATEGORIES)[number]>('All');
+  const [openId, setOpenId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
 
   const filtered = useMemo(
     () => (activeCat === 'All' ? faqs : faqs.filter((f) => f.category === activeCat)),
-    [activeCat]
+    [activeCat, faqs],
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const visible = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
-  const handleCatChange = (cat: CategoryFilter) => {
+  const handleCatChange = (cat: (typeof ALL_CATEGORIES)[number]) => {
     setActiveCat(cat);
     setPage(1);
     setOpenId(null);
@@ -32,12 +43,18 @@ export default function FAQList() {
     setOpenId(null);
   };
 
+  if (faqs.length === 0) {
+    return (
+      <p className="text-center text-gray-500 py-12">No FAQs yet.</p>
+    );
+  }
+
   return (
     <>
       {/* Filter pills */}
       <div className="mb-8 flex flex-wrap items-center gap-2 md:gap-3">
         <FolderOpen size={18} className="text-gray-400 mr-1" aria-hidden="true" />
-        {faqCategories.map((cat) => {
+        {ALL_CATEGORIES.map((cat) => {
           const active = cat === activeCat;
           return (
             <button

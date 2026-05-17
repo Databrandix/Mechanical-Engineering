@@ -258,6 +258,12 @@ export const uploadKindSchema = z.enum([
   'event-image',
   'notice-file',
   'gallery-image',
+  // Phase 7
+  'alumni-photo',
+  'club-image',
+  'visitor-photo',
+  'syllabus-cover',
+  'syllabus-pdf',
 ]);
 
 export const uploadSignSchema = z.object({
@@ -567,3 +573,135 @@ export const galleryImageCreateSchema = z.object({
 });
 
 export const galleryImageUpdateSchema = galleryImageCreateSchema.partial();
+
+// ════════════════════════════════════════════════════════════════
+//  PHASE 7 — Student Society + Transport
+//  7 multi-row entities + 1 singleton. Slug regex shared with
+//  Phase 5/6 (slugRegexHub above).
+// ════════════════════════════════════════════════════════════════
+
+// ─── Alumni ─────────────────────────────────────────────────────
+
+export const alumniCreateSchema = z.object({
+  slug:          z.string().min(1).max(160).regex(slugRegexHub, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  studentId:     z.string().min(1).max(50),
+  name:          z.string().min(1).max(300),
+  department:    z.string().min(1).max(300),
+  designation:   z.string().min(1).max(300),
+  company:       z.string().min(1).max(500),
+  photoUrl:      optionalNullableString,
+  photoPublicId: optionalNullableString,
+});
+
+export const alumniUpdateSchema = alumniCreateSchema;
+
+// ─── Club ───────────────────────────────────────────────────────
+
+export const clubCreateSchema = z.object({
+  slug:          z.string().min(1).max(160).regex(slugRegexHub, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  name:          z.string().min(1).max(300),
+  abbreviation:  z.string().min(1).max(50),
+  description:   z.string().min(1),
+  imageUrl:      z.string().min(1),
+  imagePublicId: optionalNullableString,
+});
+
+export const clubUpdateSchema = clubCreateSchema;
+
+// ─── FAQ ────────────────────────────────────────────────────────
+
+export const faqCategoryEnum = z.enum([
+  'Admission',
+  'Rankings',
+  'Campus',
+  'Programs',
+  'Exams',
+]);
+
+export const faqCreateSchema = z.object({
+  category: faqCategoryEnum,
+  question: z.string().min(1),
+  answer:   z.string().min(1),
+});
+
+export const faqUpdateSchema = faqCreateSchema;
+
+// ─── Visitor ────────────────────────────────────────────────────
+
+export const visitorCreateSchema = z.object({
+  slug:          z.string().min(1).max(160).regex(slugRegexHub, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  name:          z.string().min(1).max(300),
+  role:          optionalNullableString,
+  affiliation:   optionalNullableString,
+  photoUrl:      z.string().min(1),
+  photoPublicId: optionalNullableString,
+  quote:         paragraphsArraySchema,
+});
+
+export const visitorUpdateSchema = visitorCreateSchema;
+
+// ─── ResearchPaper ──────────────────────────────────────────────
+
+export const researchPaperCreateSchema = z.object({
+  title:           z.string().min(1),
+  authors:         z.string().min(1),
+  area:            z.string().min(1),
+  date:            optionalNullableString,
+  publicationYear: z.number().int().min(1900).max(2100).nullable().optional(),
+});
+
+export const researchPaperUpdateSchema = researchPaperCreateSchema;
+
+// ─── BusRoute ───────────────────────────────────────────────────
+
+const timeStringsArraySchema = z.array(z.string().min(1)).default([]);
+
+export const busRouteCreateSchema = z.object({
+  slug:           z.string().min(1).max(160).regex(slugRegexHub, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  routeName:      z.string().min(1).max(300),
+  busNumber:      z.string().min(1).max(100),
+  contact:        z.string().min(1).max(100),
+  departureTimes: timeStringsArraySchema,
+  returnTimes:    timeStringsArraySchema,
+});
+
+export const busRouteUpdateSchema = busRouteCreateSchema;
+
+// ─── Syllabus ───────────────────────────────────────────────────
+
+export const syllabusLevelEnum = z.enum(['Undergraduate', 'Postgraduate']);
+
+export const syllabusCreateSchema = z.object({
+  slug:          z.string().min(1).max(160).regex(slugRegexHub, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  title:         z.string().min(1).max(500),
+  shortTitle:    z.string().min(1).max(300),
+  department:    z.string().min(1).max(300),
+  level:         syllabusLevelEnum,
+  coverUrl:      z.string().min(1),
+  coverPublicId: optionalNullableString,
+  pdfUrl:        optionalNullableString,
+  pdfPublicId:   optionalNullableString,
+  pdfFileName:   optionalNullableString,
+  summary:       z.string().min(1),
+});
+
+export const syllabusUpdateSchema = syllabusCreateSchema;
+
+// ─── TransportLanding (singleton) ───────────────────────────────
+
+// Same shape as Phase 5 LaboratoryFacility `features` so the existing
+// FeaturesEditor component is reused 1:1 (constraint #4).
+const transportInstructionsSchema = z.array(
+  z.object({
+    iconName:    z.string().min(1),
+    title:       z.string().min(1),
+    description: z.string().min(1),
+  }),
+);
+
+export const transportLandingUpdateSchema = z.object({
+  introBody:     z.string().min(1),
+  bannerHeading: z.string().min(1).max(300),
+  bannerBody:    z.string().min(1),
+  instructions:  transportInstructionsSchema,
+});

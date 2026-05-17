@@ -18,7 +18,13 @@ type Kind =
   | 'news-cover'
   | 'event-image'
   | 'notice-file'
-  | 'gallery-image';
+  | 'gallery-image'
+  // Phase 7
+  | 'alumni-photo'
+  | 'club-image'
+  | 'visitor-photo'
+  | 'syllabus-cover'
+  | 'syllabus-pdf';
 
 export type UploadMeta = {
   fileType: 'image' | 'pdf';

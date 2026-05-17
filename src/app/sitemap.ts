@@ -1,7 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { faculty } from '@/lib/faculty-data';
-import { events } from '@/lib/events-data';
-import { news } from '@/lib/news-data';
+import { prisma } from '@/lib/db';
 
 const BASE_URL = 'https://mechanical-engineering-olive.vercel.app';
 
@@ -26,15 +24,27 @@ const staticRoutes: { path: string; priority: number; changeFrequency: 'weekly' 
   { path: '/student-society/alumni', priority: 0.6, changeFrequency: 'monthly' },
   { path: '/student-society/club-list', priority: 0.6, changeFrequency: 'monthly' },
   { path: '/student-society/faq', priority: 0.6, changeFrequency: 'monthly' },
+  { path: '/student-society/visitor', priority: 0.5, changeFrequency: 'monthly' },
   { path: '/student-society/syllabus', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/news', priority: 0.8, changeFrequency: 'weekly' },
+  { path: '/gallery', priority: 0.6, changeFrequency: 'monthly' },
   { path: '/research', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/contact', priority: 0.7, changeFrequency: 'yearly' },
   { path: '/transport-service', priority: 0.6, changeFrequency: 'yearly' },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+// Sitemap is a server function — Phase 7 cuts the stale faculty-data
+// / events-data / news-data file reads and pulls slugs directly from
+// the DB. Three small queries, each `select`-narrowed to the slug
+// column so the payload stays minimal.
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+
+  const [facultyRows, eventRows, newsRows] = await Promise.all([
+    prisma.faculty.findMany({ select: { slug: true } }),
+    prisma.event.findMany({ select: { slug: true } }),
+    prisma.news.findMany({ select: { slug: true } }),
+  ]);
 
   const statics: MetadataRoute.Sitemap = staticRoutes.map(({ path, priority, changeFrequency }) => ({
     url: `${BASE_URL}${path}`,
@@ -43,22 +53,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority,
   }));
 
-  const facultyPages: MetadataRoute.Sitemap = faculty.map((member) => ({
-    url: `${BASE_URL}/faculty-member/${member.slug}`,
+  const facultyPages: MetadataRoute.Sitemap = facultyRows.map((m) => ({
+    url: `${BASE_URL}/faculty-member/${m.slug}`,
     lastModified: now,
     changeFrequency: 'monthly',
     priority: 0.6,
   }));
 
-  const eventPages: MetadataRoute.Sitemap = events.map((event) => ({
-    url: `${BASE_URL}/student-society/events/${event.slug}`,
+  const eventPages: MetadataRoute.Sitemap = eventRows.map((e) => ({
+    url: `${BASE_URL}/student-society/events/${e.slug}`,
     lastModified: now,
     changeFrequency: 'monthly',
     priority: 0.5,
   }));
 
-  const newsPages: MetadataRoute.Sitemap = news.map((article) => ({
-    url: `${BASE_URL}/news/${article.slug}`,
+  const newsPages: MetadataRoute.Sitemap = newsRows.map((n) => ({
+    url: `${BASE_URL}/news/${n.slug}`,
     lastModified: now,
     changeFrequency: 'monthly',
     priority: 0.5,
@@ -66,4 +76,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...statics, ...facultyPages, ...eventPages, ...newsPages];
 }
-

@@ -3,11 +3,6 @@
 // import SearchItem + search() from '@/lib/search' instead.
 import { cache } from 'react';
 import { prisma } from '@/lib/db';
-import { faqs } from './faq-data';
-import { clubs } from './clubs-data';
-import { alumni } from './alumni-data';
-import { researchPapers } from './research-data';
-import { busRoutes } from './transport-data';
 import type { SearchItem } from './search';
 
 // Re-export the type from the pure module so existing server-side
@@ -16,19 +11,22 @@ import type { SearchItem } from './search';
 export type { SearchItem } from './search';
 
 // ─────────────────────────────────────────────────────────────────
-//  Search index — Phase 6 (Decision F2) — server-only
+//  Search index — Phase 7 (FINAL — 100% DB-driven)
 //
 //  The root layout calls getSearchIndex() once per request and
 //  passes the SearchItem[] down through Navbar → SearchOverlay as
 //  a client prop. Filtering runs locally via search(query, items)
 //  defined in '@/lib/search'.
 //
-//  DB-driven entities (Phase 2/3/5/6):
+//  DB-driven entities (Phase 2/3/5/6/7) — all 15 covered here:
 //    Faculty, Programs, Research Areas, Labs, News, Events,
-//    Notices, Gallery
+//    Notices, Gallery, Alumni, Club, FAQ, Visitor, ResearchPaper,
+//    BusRoute, Syllabus
 //
-//  Still file-based (Phase 7+ will migrate):
-//    FAQs, Clubs, Alumni, Research Papers, Transport (bus routes)
+//  Phase 6 had 5 file-based reads (faqs, clubs, alumni,
+//  researchPapers, busRoutes). All migrated to DB in Phase 7;
+//  Phase 8 hygiene will delete the now-orphaned *-data.ts files
+//  (still imported by scripts/seed.ts for bootstrap).
 //
 //  Static pages: hand-maintained route metadata; cheaper than
 //  trying to derive from the router tree.
@@ -60,6 +58,7 @@ const staticPages: SearchItem[] = [
   { title: 'Events', type: 'Page', href: '/student-society/events', description: 'Department events and activities' },
   { title: 'Alumni', type: 'Page', href: '/student-society/alumni', description: 'Notable alumni from the department' },
   { title: 'FAQ', type: 'Page', href: '/student-society/faq', description: 'Frequently asked questions' },
+  { title: 'Visitors', type: 'Page', href: '/student-society/visitor', description: 'Distinguished visitors and their quotes' },
   { title: 'Syllabus', type: 'Page', href: '/student-society/syllabus', description: 'Department syllabus and curriculum' },
   { title: 'Club List', type: 'Page', href: '/student-society/club-list', description: 'Student clubs and societies' },
 
@@ -83,6 +82,13 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     eventRows,
     noticeRows,
     galleryRows,
+    alumniRows,
+    clubRows,
+    faqRows,
+    visitorRows,
+    researchPaperRows,
+    busRouteRows,
+    syllabusRows,
   ] = await Promise.all([
     prisma.faculty.findMany({
       select: { slug: true, name: true, designation: true, secondaryTitle: true },
@@ -108,6 +114,27 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     prisma.galleryImage.findMany({
       select: { alt: true },
     }),
+    prisma.alumni.findMany({
+      select: { slug: true, name: true, designation: true, company: true },
+    }),
+    prisma.club.findMany({
+      select: { slug: true, name: true, abbreviation: true, description: true },
+    }),
+    prisma.faq.findMany({
+      select: { question: true, answer: true },
+    }),
+    prisma.visitor.findMany({
+      select: { slug: true, name: true, role: true, affiliation: true },
+    }),
+    prisma.researchPaper.findMany({
+      select: { title: true, authors: true, area: true },
+    }),
+    prisma.busRoute.findMany({
+      select: { routeName: true, busNumber: true, contact: true },
+    }),
+    prisma.syllabus.findMany({
+      select: { slug: true, title: true, shortTitle: true, summary: true, pdfUrl: true },
+    }),
   ]);
 
   // Faculty (Phase 2 — DB)
@@ -118,8 +145,7 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     type: 'Faculty',
   }));
 
-  // Programs (Phase 1 — DB). All link to /admission/requirements
-  // since there's no per-program public page.
+  // Programs (Phase 1 — DB).
   const programItems: SearchItem[] = programRows.map((p) => ({
     title: `${p.programName} (${p.degreeCode})`,
     description: p.description ?? undefined,
@@ -127,7 +153,7 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     type: 'Program',
   }));
 
-  // Research areas — link to /research (no per-area public page).
+  // Research areas (Phase 1 — DB).
   const researchAreaItems: SearchItem[] = researchAreaRows.map((r) => ({
     title: r.areaName,
     description: r.description ?? undefined,
@@ -159,9 +185,7 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     type: 'Event',
   }));
 
-  // Notices (Phase 6 — DB). href prefers the file attachment when
-  // present (matches the public render's "View Full Notice" link);
-  // falls back to the notice-board list page when no file uploaded.
+  // Notices (Phase 6 — DB)
   const noticeItems: SearchItem[] = noticeRows.map((n) => ({
     title: n.title,
     description: n.description,
@@ -169,8 +193,7 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     type: 'Notice',
   }));
 
-  // Gallery (Phase 6 — DB). Alt text is searchable; href goes to the
-  // gallery list since there's no per-image detail page.
+  // Gallery (Phase 6 — DB)
   const galleryItems: SearchItem[] = galleryRows
     .filter((g) => g.alt && g.alt.trim().length > 0)
     .map((g) => ({
@@ -179,40 +202,62 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
       type: 'Gallery',
     }));
 
-  // Still file-based (Phase 7+ will migrate these)
-  const faqItems: SearchItem[] = faqs.map((q) => ({
-    title: q.question,
-    description: q.answer,
-    href: '/student-society/faq',
-    type: 'FAQ',
-  }));
-
-  const clubItems: SearchItem[] = clubs.map((c) => ({
-    title: `${c.name} (${c.abbreviation})`,
-    description: c.description,
-    href: '/student-society/club-list',
-    type: 'Club',
-  }));
-
-  const alumniItems: SearchItem[] = alumni.map((a) => ({
+  // Alumni (Phase 7 — DB)
+  const alumniItems: SearchItem[] = alumniRows.map((a) => ({
     title: a.name,
     description: `${a.designation} · ${a.company}`,
     href: '/student-society/alumni',
     type: 'Alumni',
   }));
 
-  const researchItems: SearchItem[] = researchPapers.map((r) => ({
+  // Clubs (Phase 7 — DB)
+  const clubItems: SearchItem[] = clubRows.map((c) => ({
+    title: `${c.name} (${c.abbreviation})`,
+    description: c.description,
+    href: '/student-society/club-list',
+    type: 'Club',
+  }));
+
+  // FAQs (Phase 7 — DB) — question is the search title; answer goes
+  // in the description so substring matches in either field hit.
+  const faqItems: SearchItem[] = faqRows.map((q) => ({
+    title: q.question,
+    description: q.answer,
+    href: '/student-society/faq',
+    type: 'FAQ',
+  }));
+
+  // Visitors (Phase 7 — DB)
+  const visitorItems: SearchItem[] = visitorRows.map((v) => ({
+    title: v.name,
+    description: [v.role, v.affiliation].filter(Boolean).join(' · ') || undefined,
+    href: '/student-society/visitor',
+    type: 'Visitor',
+  }));
+
+  // Research papers (Phase 7 — DB)
+  const researchItems: SearchItem[] = researchPaperRows.map((r) => ({
     title: r.title,
     description: r.authors,
     href: '/research',
     type: 'Research',
   }));
 
-  const transportItems: SearchItem[] = busRoutes.map((r) => ({
+  // Bus routes (Phase 7 — DB)
+  const transportItems: SearchItem[] = busRouteRows.map((r) => ({
     title: r.routeName,
     description: `Bus ${r.busNumber} · Contact ${r.contact}`,
     href: '/transport-service',
     type: 'Transport',
+  }));
+
+  // Syllabi (Phase 7 — DB). Link to the PDF when uploaded, else the
+  // list page where the "Download" button surfaces alongside others.
+  const syllabusItems: SearchItem[] = syllabusRows.map((s) => ({
+    title: s.title,
+    description: s.summary,
+    href: s.pdfUrl ?? '/student-society/syllabus',
+    type: 'Syllabus',
   }));
 
   return [
@@ -225,11 +270,13 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     ...eventItems,
     ...noticeItems,
     ...galleryItems,
-    ...faqItems,
-    ...clubItems,
     ...alumniItems,
+    ...clubItems,
+    ...faqItems,
+    ...visitorItems,
     ...researchItems,
     ...transportItems,
+    ...syllabusItems,
   ];
 });
 

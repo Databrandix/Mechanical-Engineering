@@ -688,3 +688,162 @@ model GalleryImage {
   @@index([displayOrder])
   @@map("gallery_image")
 }
+
+// ════════════════════════════════════════════════════════════════
+//  Phase 7 — Student Society + Transport (final CMS migration)
+//    7 multi-row entities + 1 singleton, all replacing the last
+//    file-based reads from src/lib/*-data.ts.
+//    After Phase 7, every visible public surface is DB-driven
+//    (only /admission/* singletons remain hardcoded for Phase 8).
+// ════════════════════════════════════════════════════════════════
+
+model Alumni {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  studentId     String
+  name          String
+  department    String
+  designation   String
+  company       String
+  photoUrl      String?
+  photoPublicId String?
+  displayOrder  Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("alumni")
+}
+
+model Club {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  abbreviation  String
+  description   String   @db.Text
+  imageUrl      String
+  imagePublicId String?
+  displayOrder  Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("club")
+}
+
+model Faq {
+  id           String   @id @default(cuid())
+  // category — Admission | Rankings | Campus | Programs | Exams.
+  // Validated via Zod against the closed set; stored as String for
+  // forward flexibility (matches Phase 2 / Phase 6 enum-as-string).
+  category     String
+  question     String   @db.Text
+  answer       String   @db.Text
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@index([category])
+  @@map("faq")
+}
+
+model Visitor {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  role          String?
+  affiliation   String?
+  photoUrl      String
+  photoPublicId String?
+  // quote — Json string[] paragraphs (reuses Phase 2 ParagraphsEditor
+  // and Phase 6 coerceParagraphs read defence). Single-paragraph rows
+  // store as `[string]`, multi-paragraph as `[string, string, …]`.
+  quote         Json
+  displayOrder  Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("visitor")
+}
+
+model ResearchPaper {
+  id              String   @id @default(cuid())
+  title           String   @db.Text
+  authors         String   @db.Text
+  area            String   @db.Text
+  // date — free-form string. Source data has inconsistent formats:
+  // "14 August 2019", "January–February 2023", "2023", "" (empty).
+  // No DateTime parse; publicationYear below is the optional
+  // structured sort key.
+  date            String?
+  publicationYear Int?
+  displayOrder    Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@index([publicationYear])
+  @@map("research_paper")
+}
+
+model BusRoute {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  routeName      String                       // "Technical → SU"
+  busNumber      String
+  contact        String
+  // String[] paired arrays; admin form serializes via JSON-encoded
+  // hidden input (same pattern as Phase 5 GalleryEditor).
+  departureTimes String[]
+  returnTimes    String[]
+  displayOrder   Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("bus_route")
+}
+
+model Syllabus {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  shortTitle    String
+  department    String
+  // level — 'Undergraduate' | 'Postgraduate'. Zod-validated.
+  level         String
+  coverUrl      String
+  coverPublicId String?
+  // PDF attachment — nullable so admin can save metadata-only first.
+  // Cloudinary raw resource type via accept='application/pdf'
+  // (reuses Phase 6 ImageUploader extension).
+  pdfUrl        String?
+  pdfPublicId   String?
+  pdfFileName   String?
+  summary       String   @db.Text
+  displayOrder  Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("syllabus")
+}
+
+// Singleton — the chrome around the BusRoute grid on /transport-service.
+// introBody + bannerHeading/bannerBody + instructions are the three
+// hardcoded blocks the page wraps around the data-driven grid.
+model TransportLanding {
+  id            String   @id @default("singleton")
+  introBody     String   @db.Text
+  bannerHeading String
+  bannerBody    String   @db.Text
+  // instructions Json: [{iconName, title, body}] — 3 rows
+  // (MapPin / Sparkles / Bus icons in current render). Reuses the
+  // Phase 5 LaboratoryFacility "features" Json shape.
+  instructions  Json
+  updatedAt     DateTime @updatedAt
+
+  @@map("transport_landing")
+}

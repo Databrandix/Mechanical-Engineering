@@ -45,6 +45,14 @@ const KIND_TO_SUBFOLDER: Record<string, string> = {
   'event-image':           'events',
   'notice-file':           'notices',
   'gallery-image':         'gallery',
+  // Phase 7 student society + transport. 'syllabus-pdf' reuses the
+  // same /auto/upload endpoint as 'notice-file' (auto-detects PDF),
+  // and the admin form's ImageUploader uses accept='application/pdf'.
+  'alumni-photo':          'alumni',
+  'club-image':            'clubs',
+  'visitor-photo':         'visitors',
+  'syllabus-cover':        'syllabus/covers',
+  'syllabus-pdf':          'syllabus/pdfs',
 };
 
 function folderFor(kind: string): string {
