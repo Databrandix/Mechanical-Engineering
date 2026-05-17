@@ -253,6 +253,11 @@ export const uploadKindSchema = z.enum([
   'faculty-message-hero',
   'about-image',
   'lab-image',
+  // Phase 6
+  'news-cover',
+  'event-image',
+  'notice-file',
+  'gallery-image',
 ]);
 
 export const uploadSignSchema = z.object({

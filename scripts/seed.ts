@@ -13,6 +13,10 @@ import type { Prisma } from '@prisma/client';
 import { prisma } from '../src/lib/db';
 import { faculty as facultyData } from '../src/lib/faculty-data';
 import { labs as labsData } from '../src/lib/labs-data';
+import { news as newsData } from '../src/lib/news-data';
+import { events as eventsData } from '../src/lib/events-data';
+import { notices as noticesData } from '../src/lib/notices-data';
+import { galleryImages as galleryData } from '../src/lib/gallery-data';
 
 const BCRYPT_ROUNDS = 12;
 
@@ -863,6 +867,155 @@ async function seedLaboratoryLabs() {
   console.log(`✓ LaboratoryLabs seeded (${rows.length} rows)`);
 }
 
+// ════════════════════════════════════════════════════════════════
+//  PHASE 6 — Content hubs (News, Events, Notices, Gallery)
+//  Pattern: bulk insert when empty (idempotent). News/Notices use
+//  isoDate as publishedAt + raw `date` string as displayDate.
+//  Events parse the free-form `date` field where possible; null
+//  date events keep eventDate=null with displayDate populated.
+// ════════════════════════════════════════════════════════════════
+
+const MONTH_PREFIXES = [
+  'jan', 'feb', 'mar', 'apr', 'may', 'jun',
+  'jul', 'aug', 'sep', 'oct', 'nov', 'dec',
+];
+
+// Parse the legacy free-form Event date string into a DateTime if
+// possible. Returns null for unparseable shapes (e.g. "2024", "20 Apr").
+function parseLooseEventDate(displayDate: string | null): Date | null {
+  if (!displayDate) return null;
+  const m = /^(\d{1,2})\s+([A-Za-z]+)(?:,\s*(\d{4}))?$/.exec(displayDate.trim());
+  if (!m) return null;
+  const day = parseInt(m[1], 10);
+  const monIdx = MONTH_PREFIXES.findIndex((mn) => m[2].toLowerCase().startsWith(mn));
+  const year = m[3] ? parseInt(m[3], 10) : null;
+  if (monIdx < 0 || year === null) return null;
+  return new Date(Date.UTC(year, monIdx, day));
+}
+
+async function seedNews() {
+  const count = await prisma.news.count();
+  if (count > 0) {
+    console.log(`✓ News already seeded (${count} rows)`);
+    return;
+  }
+  // Source: src/lib/news-data.ts. isoDate parses cleanly; the
+  // formatted `date` string is preserved as displayDate so the
+  // public render is byte-identical until admin edits.
+  for (const n of newsData) {
+    await prisma.news.create({
+      data: {
+        slug:          n.slug,
+        title:         n.title,
+        shortTitle:    n.shortTitle,
+        category:      n.category,
+        publishedAt:   new Date(n.isoDate),
+        displayDate:   n.date,
+        summary:       n.summary,
+        coverUrl:      n.cover,
+        coverPublicId: null,
+        // Imported typed arrays — TS won't widen the specific shape
+        // ({label,value}[]) to Prisma's InputJsonObject signature
+        // without a unknown bounce. Runtime values are JSON-safe.
+        body:          n.body as unknown as Prisma.InputJsonValue,
+        meta:          (n.meta ?? []) as unknown as Prisma.InputJsonValue,
+      },
+    });
+  }
+  console.log(`✓ News seeded (${newsData.length} rows)`);
+}
+
+async function seedEvents() {
+  const count = await prisma.event.count();
+  if (count > 0) {
+    console.log(`✓ Events already seeded (${count} rows)`);
+    return;
+  }
+  // Source: src/lib/events-data.ts. Best-effort date parse; rows
+  // with unparseable (or null) dates keep eventDate=null and rely
+  // on displayDate for the date pill. status preserved as-is.
+  for (const e of eventsData) {
+    await prisma.event.create({
+      data: {
+        slug:          e.slug,
+        title:         e.title,
+        shortTitle:    e.shortTitle,
+        category:      e.category,
+        status:        e.status,
+        eventDate:     parseLooseEventDate(e.date),
+        displayDate:   e.date,
+        time:          e.time ?? null,
+        venue:         e.venue ?? null,
+        imageUrl:      e.image,
+        imagePublicId: null,
+        summary:       e.summary,
+        description:   e.description as unknown as Prisma.InputJsonValue,
+        focus:         e.focus,
+        details:       (e.details ?? []) as unknown as Prisma.InputJsonValue,
+        ctaLabel:      e.cta?.label ?? null,
+        ctaHref:       e.cta?.href ?? null,
+        ctaExternal:   e.cta?.external ?? false,
+      },
+    });
+  }
+  console.log(`✓ Events seeded (${eventsData.length} rows)`);
+}
+
+async function seedNotices() {
+  const count = await prisma.notice.count();
+  if (count > 0) {
+    console.log(`✓ Notices already seeded (${count} rows)`);
+    return;
+  }
+  // Source: src/lib/notices-data.ts. fileUrl points at the existing
+  // /assets/notices/<slug>.<ext> so live notices keep working until
+  // admin re-uploads; filePublicId=null marks them as not-yet-on-
+  // Cloudinary (replacing one via admin will populate it).
+  for (const n of noticesData) {
+    await prisma.notice.create({
+      data: {
+        slug:         n.slug,
+        title:        n.title,
+        category:     n.category,
+        department:   n.department,
+        publishedAt:  new Date(n.isoDate),
+        displayDate:  n.date,
+        description:  n.description,
+        fileUrl:      n.file,
+        filePublicId: null,
+        fileType:     n.fileType,
+        fileName:     n.file.split('/').pop() ?? null,
+      },
+    });
+  }
+  console.log(`✓ Notices seeded (${noticesData.length} rows)`);
+}
+
+async function seedGalleryImages() {
+  const count = await prisma.galleryImage.count();
+  if (count > 0) {
+    console.log(`✓ Gallery images already seeded (${count} rows)`);
+    return;
+  }
+  // Source: src/lib/gallery-data.ts (programmatically generated
+  // from a 27-entry dimensions array). Flat list per Decision A —
+  // no albums. imagePublicId=null until admin re-uploads.
+  for (let i = 0; i < galleryData.length; i++) {
+    const g = galleryData[i];
+    await prisma.galleryImage.create({
+      data: {
+        imageUrl:      g.src,
+        imagePublicId: null,
+        alt:           g.alt,
+        width:         g.width,
+        height:        g.height,
+        displayOrder:  i,
+      },
+    });
+  }
+  console.log(`✓ Gallery images seeded (${galleryData.length} rows)`);
+}
+
 async function main() {
   console.log('Seeding database…\n');
   await seedDepartmentIdentity();
@@ -893,6 +1046,12 @@ async function main() {
   await seedLabs();
   await seedLaboratoryFacilityLanding();
   await seedLaboratoryLabs();
+
+  console.log('\nPhase 6 content hubs…');
+  await seedNews();
+  await seedEvents();
+  await seedNotices();
+  await seedGalleryImages();
 
   console.log('\nDone.');
 }
