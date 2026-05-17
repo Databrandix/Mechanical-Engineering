@@ -12,7 +12,8 @@ type Kind =
   | 'research-icon'
   | 'faculty-photo'
   | 'faculty-message-hero'
-  | 'about-image';
+  | 'about-image'
+  | 'lab-image';
 
 type Props = {
   /** Which folder + transformation hint the upload goes to. */

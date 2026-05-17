@@ -18,6 +18,7 @@ import {
   PanelBottom,
   Info,
   ChevronDown,
+  FlaskConical,
 } from 'lucide-react';
 
 type SidebarUser = {
@@ -50,12 +51,19 @@ const ABOUT_PAGES_NAV: NavItem[] = [
   { href: '/admin/about-mecha-club',      label: 'Mecha Club',       icon: Info },
 ];
 
+const LAB_SYSTEMS_NAV: NavItem[] = [
+  { href: '/admin/lab-facility',        label: 'Lab Facility',        icon: FlaskConical },
+  { href: '/admin/laboratory-facility', label: 'Laboratory Facility', icon: FlaskConical },
+];
+
 export default function Sidebar({ user }: { user: SidebarUser }) {
   const pathname = usePathname();
   const isSuperAdmin = user.role === 'super_admin';
   // Auto-open the About Pages group when the active route is inside it.
   const aboutActive = ABOUT_PAGES_NAV.some((n) => pathname?.startsWith(n.href));
   const [aboutOpen, setAboutOpen] = useState<boolean>(aboutActive);
+  const labSystemsActive = LAB_SYSTEMS_NAV.some((n) => pathname?.startsWith(n.href));
+  const [labSystemsOpen, setLabSystemsOpen] = useState<boolean>(labSystemsActive);
 
   async function handleLogout() {
     try {
@@ -122,6 +130,35 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
         {aboutOpen && (
           <div className="pl-6 space-y-1">
             {ABOUT_PAGES_NAV.map(({ href, label }) => (
+              <Link key={href} href={href} className={linkClass(!!isActive(href))}>
+                <span className="text-[10px] leading-none">●</span>
+                {label}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* Lab Systems — collapsible group */}
+        <button
+          type="button"
+          onClick={() => setLabSystemsOpen((v) => !v)}
+          aria-expanded={labSystemsOpen}
+          className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            labSystemsActive ? 'text-accent' : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <span className="flex items-center gap-3">
+            <FlaskConical size={16} />
+            Lab Systems
+          </span>
+          <ChevronDown
+            size={14}
+            className={`transition-transform ${labSystemsOpen ? 'rotate-180' : ''}`}
+          />
+        </button>
+        {labSystemsOpen && (
+          <div className="pl-6 space-y-1">
+            {LAB_SYSTEMS_NAV.map(({ href, label }) => (
               <Link key={href} href={href} className={linkClass(!!isActive(href))}>
                 <span className="text-[10px] leading-none">●</span>
                 {label}
