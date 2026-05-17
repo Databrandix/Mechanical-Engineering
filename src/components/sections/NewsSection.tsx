@@ -4,9 +4,34 @@ import Image from 'next/image';
 import { motion } from 'motion/react';
 import Container from '../ui/Container';
 import SectionTitle from '../ui/SectionTitle';
-import { news } from '@/lib/news-data';
 
-export default function NewsSection() {
+// DB row shape — kept narrow on purpose (the homepage section only
+// needs cover + title + category + display date). Server fetcher
+// in lib/identity.ts can return the full row; only these fields
+// are read here.
+type NewsRow = {
+  slug: string;
+  title: string;
+  category: string;
+  publishedAt: Date | string;
+  displayDate: string | null;
+  coverUrl: string;
+};
+
+type Props = {
+  news: readonly NewsRow[];
+};
+
+function formatDate(row: NewsRow): string {
+  if (row.displayDate) return row.displayDate;
+  const d = new Date(row.publishedAt);
+  return d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+export default function NewsSection({ news }: Props) {
+  // Empty state — render nothing rather than a broken layout.
+  if (news.length === 0) return null;
+
   const [main, ...others] = news;
   const sideItems = others.slice(0, 4);
 
@@ -30,7 +55,7 @@ export default function NewsSection() {
           >
             <div className="relative rounded-2xl overflow-hidden bg-gray-100 mb-5 h-[280px] md:h-[400px]">
               <Image
-                src={main.cover}
+                src={main.coverUrl}
                 alt={main.title}
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -44,7 +69,7 @@ export default function NewsSection() {
             <h3 className="text-xl md:text-2xl lg:text-3xl font-display font-bold text-primary leading-tight mb-2 group-hover:text-accent transition-colors">
               {main.title}
             </h3>
-            <span className="text-sm text-gray-500">{main.date}</span>
+            <span className="text-sm text-gray-500">{formatDate(main)}</span>
           </motion.a>
 
           {/* Side list */}
@@ -67,11 +92,11 @@ export default function NewsSection() {
                   <h4 className="text-base md:text-lg font-display font-bold text-primary leading-snug mb-2 group-hover:text-accent transition-colors line-clamp-3">
                     {item.title}
                   </h4>
-                  <span className="text-sm text-gray-500">{item.date}</span>
+                  <span className="text-sm text-gray-500">{formatDate(item)}</span>
                 </div>
                 <div className="relative w-32 md:w-44 h-24 md:h-28 rounded-xl overflow-hidden shrink-0 bg-gray-100">
                   <Image
-                    src={item.cover}
+                    src={item.coverUrl}
                     alt={item.title}
                     fill
                     sizes="(min-width: 768px) 176px, 128px"

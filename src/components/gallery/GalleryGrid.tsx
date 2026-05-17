@@ -10,24 +10,37 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { galleryImages } from '@/lib/gallery-data';
 
-export default function GalleryGrid() {
+// Phase 6: images arrive as a prop (DB-driven via server page).
+// Shape is the narrow subset the masonry + lightbox need.
+type GalleryImageRow = {
+  id: string;
+  imageUrl: string;
+  alt: string;
+  width: number;
+  height: number;
+};
+
+type Props = {
+  images: readonly GalleryImageRow[];
+};
+
+export default function GalleryGrid({ images }: Props) {
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const isOpen = activeIdx !== null;
-  const active = activeIdx !== null ? galleryImages[activeIdx] : null;
+  const active = activeIdx !== null ? images[activeIdx] : null;
 
   const close = useCallback(() => setActiveIdx(null), []);
   const next = useCallback(() => {
     setActiveIdx((idx) =>
-      idx === null ? null : (idx + 1) % galleryImages.length
+      idx === null ? null : (idx + 1) % images.length
     );
   }, []);
   const prev = useCallback(() => {
     setActiveIdx((idx) =>
       idx === null
         ? null
-        : (idx - 1 + galleryImages.length) % galleryImages.length
+        : (idx - 1 + images.length) % images.length
     );
   }, []);
 
@@ -74,7 +87,7 @@ export default function GalleryGrid() {
 
       {/* Masonry grid */}
       <div className="columns-2 sm:columns-3 lg:columns-4 gap-3 md:gap-4 [&>button]:mb-3 md:[&>button]:mb-4">
-        {galleryImages.map((img, idx) => (
+        {images.map((img, idx) => (
           <button
             type="button"
             key={img.id}
@@ -83,7 +96,7 @@ export default function GalleryGrid() {
             className="group relative break-inside-avoid block w-full overflow-hidden bg-gray-100 ring-1 ring-gray-200/80 shadow-sm hover:shadow-2xl hover:ring-primary/30 hover:-translate-y-1 transition-all duration-300 cursor-zoom-in"
           >
             <Image
-              src={img.src}
+              src={img.imageUrl}
               alt={img.alt}
               width={img.width}
               height={img.height}
@@ -98,7 +111,7 @@ export default function GalleryGrid() {
             </span>
 
             <span className="absolute top-3 right-3 inline-flex h-7 min-w-[34px] items-center justify-center rounded-full bg-white/90 backdrop-blur-sm px-2 text-[10px] font-bold tracking-wider text-primary shadow opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {String(idx + 1).padStart(2, '0')} / {galleryImages.length}
+              {String(idx + 1).padStart(2, '0')} / {images.length}
             </span>
 
             <span className="absolute top-0 left-0 h-12 w-12 bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
@@ -125,7 +138,7 @@ export default function GalleryGrid() {
             <div className="absolute top-0 inset-x-0 flex items-center justify-between px-4 md:px-8 py-4 text-white pointer-events-none">
               <span className="text-sm font-medium tracking-wide bg-white/10 px-3 py-1 rounded-full">
                 {String(activeIdx + 1).padStart(2, '0')} /{' '}
-                {galleryImages.length}
+                {images.length}
               </span>
               <button
                 type="button"
@@ -166,7 +179,7 @@ export default function GalleryGrid() {
                 className="relative"
               >
                 <Image
-                  src={active.src}
+                  src={active.imageUrl}
                   alt={active.alt}
                   width={active.width}
                   height={active.height}

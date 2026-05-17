@@ -1,6 +1,7 @@
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import GalleryGrid from '@/components/gallery/GalleryGrid';
+import { getGalleryImages } from '@/lib/identity';
 
 export const metadata = {
   title: 'Gallery — Department of Mechanical Engineering',
@@ -8,7 +9,9 @@ export const metadata = {
     'Campus life moments from the Department of Mechanical Engineering, Sonargaon University.',
 };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const images = await getGalleryImages();
+
   return (
     <PageShell
       title="Photo Gallery"
@@ -18,7 +21,15 @@ export default function GalleryPage() {
       contentClassName="bg-gray-50 py-12 md:py-16"
     >
       <Container>
-        <GalleryGrid />
+        <GalleryGrid
+          images={images.map((g) => ({
+            id:       g.id,
+            imageUrl: g.imageUrl,
+            alt:      g.alt,
+            width:    g.width,
+            height:   g.height,
+          }))}
+        />
       </Container>
     </PageShell>
   );

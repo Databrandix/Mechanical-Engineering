@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import Container from '../ui/Container';
 import SearchOverlay from './SearchOverlay';
+import type { SearchItem } from '@/lib/search-index';
 
 // Icon resolution for QuickAccessItem.iconName (admin types a Lucide
 // name; we look it up here). Unknown name falls back to a generic
@@ -68,6 +69,7 @@ type NavbarProps = {
   topLinks: readonly TopLinkRow[];
   quickAccessItems: readonly QuickAccessRow[];
   mainNav: readonly MainNavGroupRow[];
+  searchItems: readonly SearchItem[];
 };
 
 export default function Navbar({
@@ -76,6 +78,7 @@ export default function Navbar({
   topLinks,
   quickAccessItems,
   mainNav,
+  searchItems,
 }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -426,7 +429,7 @@ export default function Navbar({
       </div>
 
       {/* Search Overlay */}
-      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} items={searchItems} />
     </nav>
   );
 }
