@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import {
   Building2,
+  FlaskConical,
   GraduationCap,
   Info,
   Key,
@@ -25,21 +26,26 @@ export default async function DashboardHome() {
   const role = (session.user.role ?? 'admin') as 'super_admin' | 'admin';
   const isSuperAdmin = role === 'super_admin';
 
-  const [programsCount, researchAreasCount, facultyCount, adminUsersCount, previousSession] =
-    await Promise.all([
-      prisma.program.count(),
-      prisma.researchArea.count(),
-      prisma.faculty.count(),
-      isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
-      prisma.session.findFirst({
-        where: {
-          userId: session.user.id,
-          createdAt: { lt: session.session.createdAt },
-        },
-        orderBy: { createdAt: 'desc' },
-        select: { createdAt: true },
-      }),
-    ]);
+  const [
+    programsCount, researchAreasCount, facultyCount,
+    labCount, laboratoryLabCount,
+    adminUsersCount, previousSession,
+  ] = await Promise.all([
+    prisma.program.count(),
+    prisma.researchArea.count(),
+    prisma.faculty.count(),
+    prisma.lab.count(),
+    prisma.laboratoryLab.count(),
+    isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
+    prisma.session.findFirst({
+      where: {
+        userId: session.user.id,
+        createdAt: { lt: session.session.createdAt },
+      },
+      orderBy: { createdAt: 'desc' },
+      select: { createdAt: true },
+    }),
+  ]);
 
   const previousLoginAt = previousSession?.createdAt ?? null;
 
@@ -63,6 +69,8 @@ export default async function DashboardHome() {
           <StatCard label="Total Programs" value={programsCount} />
           <StatCard label="Total Research Areas" value={researchAreasCount} />
           <StatCard label="Total Faculty" value={facultyCount} />
+          <StatCard label="Labs" value={labCount} />
+          <StatCard label="Laboratories" value={laboratoryLabCount} />
           {isSuperAdmin && (
             <StatCard label="Total Admin Users" value={adminUsersCount!} />
           )}
@@ -142,6 +150,18 @@ export default async function DashboardHome() {
             icon={Info}
             title="About — Mecha Club"
             desc="Hero, intro, stats, activities, network"
+          />
+          <ActionCard
+            href="/admin/lab-facility"
+            icon={FlaskConical}
+            title="Lab Facility"
+            desc="Slug-based lab list with gallery (also feeds homepage)"
+          />
+          <ActionCard
+            href="/admin/laboratory-facility"
+            icon={FlaskConical}
+            title="Laboratory Facility"
+            desc="Grid laboratories + landing features section"
           />
           {isSuperAdmin && (
             <ActionCard
