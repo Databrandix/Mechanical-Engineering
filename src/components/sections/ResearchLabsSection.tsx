@@ -5,11 +5,24 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight, FlaskConical } from 'lucide-react';
 import Container from '../ui/Container';
-import { labs } from '@/lib/labs-data';
 
 const LAB_FACILITY_PATH = '/about/lab-facility';
 
-export default function ResearchLabsSection() {
+// Public Lab shape — matches getLabs() select in identity.ts.
+// Same shape as LabFacilityClient consumes.
+type LabRow = {
+  id: string;
+  slug: string;
+  name: string;
+  tagline: string;
+  heroImageUrl: string | null;
+};
+
+type Props = {
+  labs: readonly LabRow[];
+};
+
+export default function ResearchLabsSection({ labs }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -124,9 +137,9 @@ export default function ResearchLabsSection() {
               whileHover={{ y: -8 }}
               className="snap-center md:snap-start shrink-0 w-[88%] sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] h-[460px] md:h-[500px] relative rounded-3xl overflow-hidden group shadow-xl bg-primary"
             >
-              {lab.heroImage ? (
+              {lab.heroImageUrl ? (
                 <Image
-                  src={lab.heroImage}
+                  src={lab.heroImageUrl}
                   alt={lab.name}
                   fill
                   sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 88vw"

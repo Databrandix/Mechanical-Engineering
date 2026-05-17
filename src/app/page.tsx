@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 import HeroSection from '@/components/sections/HeroSection';
-import { getDepartmentIdentity, getProgramsWithCta, getResearchAreas } from '@/lib/identity';
+import { getDepartmentIdentity, getProgramsWithCta, getResearchAreas, getLabs } from '@/lib/identity';
 
 function sectionSkeleton(minHeight: string) {
   return function Skeleton() {
@@ -37,10 +37,11 @@ const ServicesSection = dynamic(() => import('@/components/sections/ServicesSect
 });
 
 export default async function HomePage() {
-  const [dept, programs, researchAreas] = await Promise.all([
+  const [dept, programs, researchAreas, labs] = await Promise.all([
     getDepartmentIdentity(),
     getProgramsWithCta(),
     getResearchAreas(),
+    getLabs(),
   ]);
   return (
     <>
@@ -53,7 +54,7 @@ export default async function HomePage() {
       <ProgramsSection programs={programs} />
       <QuickLinksSection />
       <NoticesSection />
-      <ResearchLabsSection />
+      <ResearchLabsSection labs={labs} />
       <MajorResearchSection areas={researchAreas} />
       <EventsSection />
       <NewsSection />
