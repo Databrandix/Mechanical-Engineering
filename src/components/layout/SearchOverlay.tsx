@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Search, X, ArrowRight } from 'lucide-react';
-import { search, type SearchItem } from '@/lib/search-index';
+import { search, type SearchItem } from '@/lib/search';
 
 const TYPE_BADGE_COLOR: Record<SearchItem['type'], string> = {
   Page: 'bg-primary/10 text-primary',

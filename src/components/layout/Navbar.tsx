@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import Container from '../ui/Container';
 import SearchOverlay from './SearchOverlay';
-import type { SearchItem } from '@/lib/search-index';
+import type { SearchItem } from '@/lib/search';
 
 // Icon resolution for QuickAccessItem.iconName (admin types a Lucide
 // name; we look it up here). Unknown name falls back to a generic

@@ -1,3 +1,6 @@
+// NOTE: this module imports Prisma — it MUST NOT be imported from
+// any client component. Client code (Navbar, SearchOverlay) must
+// import SearchItem + search() from '@/lib/search' instead.
 import { cache } from 'react';
 import { prisma } from '@/lib/db';
 import { faqs } from './faq-data';
@@ -5,13 +8,20 @@ import { clubs } from './clubs-data';
 import { alumni } from './alumni-data';
 import { researchPapers } from './research-data';
 import { busRoutes } from './transport-data';
+import type { SearchItem } from './search';
+
+// Re-export the type from the pure module so existing server-side
+// consumers can keep importing it from here. Client components
+// must import from '@/lib/search' (no Prisma transitive dep).
+export type { SearchItem } from './search';
 
 // ─────────────────────────────────────────────────────────────────
-//  Search index — Phase 6 (Decision F2)
+//  Search index — Phase 6 (Decision F2) — server-only
 //
-//  Server-side aggregator. The root layout calls getSearchIndex(),
-//  passes the result down through Navbar → SearchOverlay as a
-//  client prop. Filtering runs locally via search(query, items).
+//  The root layout calls getSearchIndex() once per request and
+//  passes the SearchItem[] down through Navbar → SearchOverlay as
+//  a client prop. Filtering runs locally via search(query, items)
+//  defined in '@/lib/search'.
 //
 //  DB-driven entities (Phase 2/3/5/6):
 //    Faculty, Programs, Research Areas, Labs, News, Events,
@@ -23,27 +33,6 @@ import { busRoutes } from './transport-data';
 //  Static pages: hand-maintained route metadata; cheaper than
 //  trying to derive from the router tree.
 // ─────────────────────────────────────────────────────────────────
-
-export interface SearchItem {
-  title: string;
-  description?: string;
-  href: string;
-  type:
-    | 'Page'
-    | 'Faculty'
-    | 'News'
-    | 'FAQ'
-    | 'Lab'
-    | 'Club'
-    | 'Alumni'
-    | 'Research'
-    | 'Transport'
-    | 'Event'
-    | 'Notice'
-    | 'Program'
-    | 'ResearchArea'
-    | 'Gallery';
-}
 
 const staticPages: SearchItem[] = [
   // About
@@ -244,24 +233,5 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
   ];
 });
 
-// Pure scorer — runs client-side. Items come in as a prop from the
-// server-rendered layout (Decision F2). Score: prefix match (4) >
-// title-includes (3) > description-includes (+1).
-export function search(query: string, items: readonly SearchItem[], limit = 20): SearchItem[] {
-  const q = query.trim().toLowerCase();
-  if (!q) return [];
-  const scored = items
-    .map((item) => {
-      const title = item.title.toLowerCase();
-      const desc = (item.description || '').toLowerCase();
-      let score = 0;
-      if (title.includes(q)) score += title.startsWith(q) ? 4 : 3;
-      if (desc.includes(q)) score += 1;
-      return { item, score };
-    })
-    .filter(({ score }) => score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit)
-    .map(({ item }) => item);
-  return scored;
-}
+// search() lives in '@/lib/search' so client bundles can use it
+// without pulling the Prisma transitive dep from this file.
