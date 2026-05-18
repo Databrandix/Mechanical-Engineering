@@ -36,6 +36,10 @@ import {
   Scroll,
   ClipboardList,
   CircleDollarSign,
+  ArrowLeftRight,
+  Layers,
+  HeartHandshake,
+  Trophy,
 } from 'lucide-react';
 
 type SidebarUser = {
@@ -95,10 +99,14 @@ const CAMPUS_SERVICES_NAV: NavItem[] = [
 ];
 
 const ADMISSION_NAV: NavItem[] = [
-  { href: '/admin/admission-notices',       label: 'Admission Notices',     icon: Scroll },
-  { href: '/admin/prospectus-entries',      label: 'Prospectus',            icon: FileText },
-  { href: '/admin/admission-requirements',  label: 'Admission Requirements',icon: ClipboardList },
-  { href: '/admin/program-fee-structures',  label: 'Program Fee Structures',icon: CircleDollarSign },
+  { href: '/admin/admission-notices',          label: 'Admission Notices',     icon: Scroll },
+  { href: '/admin/prospectus-entries',         label: 'Prospectus',            icon: FileText },
+  { href: '/admin/admission-requirements',     label: 'Admission Requirements',icon: ClipboardList },
+  { href: '/admin/program-fee-structures',     label: 'Program Fee Structures',icon: CircleDollarSign },
+  { href: '/admin/admission-transfer-credits', label: 'Transfer Credits',      icon: ArrowLeftRight },
+  { href: '/admin/waiver-scholarship-landing', label: 'Waiver/Scholarship Landing', icon: Layers },
+  { href: '/admin/waiver-categories',          label: 'Waiver Categories',     icon: HeartHandshake },
+  { href: '/admin/scholarships',               label: 'Scholarships',          icon: Trophy },
 ];
 
 export default function Sidebar({ user }: { user: SidebarUser }) {

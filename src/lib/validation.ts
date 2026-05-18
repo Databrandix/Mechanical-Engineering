@@ -837,3 +837,95 @@ export const programFeeStructureCreateSchema = z.object({
 });
 
 export const programFeeStructureUpdateSchema = programFeeStructureCreateSchema;
+
+// ─────────────────────────────────────────────────────────────────
+//  Phase 8c — Admission CMS Part 3 (Transfer Credits + Waiver/Scholarship)
+// ─────────────────────────────────────────────────────────────────
+
+// ─── AdmissionTransferCredits (singleton) ─────────────────────
+const headingBodySchema = z.object({
+  heading: z.string().min(1).max(300),
+  body:    z.string().min(1),
+});
+
+const titleDescriptionSchema = z.object({
+  title:       z.string().min(1).max(300),
+  description: z.string().min(1),
+});
+
+const transferSummaryRowSchema = z.object({
+  label: z.string().min(1).max(200),
+  value: z.string().min(1).max(300),
+});
+
+export const admissionTransferCreditsUpdateSchema = z.object({
+  intro:               z.string().min(1),
+  minimumGradeBullets: z.array(headingBodySchema).default([]),
+  limitMaxLabel:       z.string().min(1).max(200),
+  limitMaxValue:       z.string().min(1).max(100),
+  limitMaxSubtitle:    z.string().min(1).max(300),
+  limitFeeLabel:       z.string().min(1).max(200),
+  limitFeeValue:       z.string().min(1).max(100),
+  limitFeeSubtitle:    z.string().min(1).max(300),
+  documentsIntroText:  z.string().min(1),
+  documents:           z.array(titleDescriptionSchema).default([]),
+  summaryKicker:       z.string().min(1).max(200),
+  summaryHeading:      z.string().min(1).max(300),
+  summaryRows:         z.array(transferSummaryRowSchema).default([]),
+});
+
+// ─── WaiverScholarshipLanding (singleton) ─────────────────────
+// status is a fixed enum: Active = row is visible on the public
+// summary table; Inactive = row is hidden (admin keeps it on
+// record without showing it). Renderer (CP8c.3) filters inactive.
+export const waiverSummaryStatusEnum = z.enum(['Active', 'Inactive']);
+
+const waiverSummaryRowSchema = z.object({
+  category: z.string().min(1).max(300),
+  max:      z.string().min(1).max(200),
+  status:   waiverSummaryStatusEnum,
+});
+
+export const waiverScholarshipLandingUpdateSchema = z.object({
+  intro:              z.string().min(1),
+  part1Kicker:        z.string().min(1).max(100),
+  part1Heading:       z.string().min(1).max(300),
+  summaryHeading:     z.string().min(1).max(300),
+  summarySubheading:  z.string().min(1).max(500),
+  summaryRows:        z.array(waiverSummaryRowSchema).default([]),
+  summaryFooterNote:  z.string().min(1),
+  part2Kicker:        z.string().min(1).max(100),
+  part2Heading:       z.string().min(1).max(300),
+  part2Intro:         z.string().min(1),
+  keyTakeawaysKicker: z.string().min(1).max(200),
+  keyTakeaways:       paragraphsArraySchema,
+});
+
+// ─── WaiverCategory (multi-row) ───────────────────────────────
+const headingTextSchema = z.object({
+  heading: z.string().min(1).max(300),
+  text:    z.string().min(1),
+});
+
+export const waiverCategoryCreateSchema = z.object({
+  slug:     z.string().min(1).max(160).regex(slugRegexHub, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  iconName: z.string().min(1).max(80),
+  title:    z.string().min(1).max(300),
+  items:    z.array(headingTextSchema).default([]),
+  note:     optionalNullableString,
+});
+
+export const waiverCategoryUpdateSchema = waiverCategoryCreateSchema;
+
+// ─── Scholarship (multi-row) ──────────────────────────────────
+export const scholarshipCreateSchema = z.object({
+  slug:        z.string().min(1).max(160).regex(slugRegexHub, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  name:        z.string().min(1).max(200),
+  credits:     z.string().min(1).max(200),
+  base:        z.string().min(1).max(100),
+  perfect:     z.string().min(1).max(100),
+  near:        z.string().min(1).max(100),
+  isHighlight: z.boolean().default(false),
+});
+
+export const scholarshipUpdateSchema = scholarshipCreateSchema;

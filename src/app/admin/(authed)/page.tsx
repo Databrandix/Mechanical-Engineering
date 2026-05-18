@@ -28,6 +28,10 @@ import {
   FileText,
   ClipboardList,
   CircleDollarSign,
+  ArrowLeftRight,
+  Layers,
+  HeartHandshake,
+  Trophy,
 } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
@@ -50,6 +54,8 @@ export default async function DashboardHome() {
     researchPaperCount, busRouteCount, syllabusCount,
     admissionNoticeCount, prospectusEntryCount,
     admissionRequirementsConfigured, programFeeStructureCount,
+    admissionTransferCreditsConfigured, waiverScholarshipLandingConfigured,
+    waiverCategoryCount, scholarshipCount,
     adminUsersCount, previousSession,
   ] = await Promise.all([
     prisma.program.count(),
@@ -72,6 +78,10 @@ export default async function DashboardHome() {
     prisma.prospectusEntry.count(),
     prisma.admissionRequirements.count(),
     prisma.programFeeStructure.count(),
+    prisma.admissionTransferCredits.count(),
+    prisma.waiverScholarshipLanding.count(),
+    prisma.waiverCategory.count(),
+    prisma.scholarship.count(),
     isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
     prisma.session.findFirst({
       where: {
@@ -124,6 +134,14 @@ export default async function DashboardHome() {
                     value={admissionRequirementsConfigured ? 'Configured' : 'Not configured'}
                     stringValue />
           <StatCard label="Program Fee Structures" value={programFeeStructureCount} />
+          <StatCard label="Transfer Credits"
+                    value={admissionTransferCreditsConfigured ? 'Configured' : 'Not configured'}
+                    stringValue />
+          <StatCard label="Waiver/Scholarship Landing"
+                    value={waiverScholarshipLandingConfigured ? 'Configured' : 'Not configured'}
+                    stringValue />
+          <StatCard label="Waiver Categories" value={waiverCategoryCount} />
+          <StatCard label="Scholarships (Slabs)" value={scholarshipCount} />
           {isSuperAdmin && (
             <StatCard label="Total Admin Users" value={adminUsersCount!} />
           )}
@@ -311,6 +329,30 @@ export default async function DashboardHome() {
             icon={CircleDollarSign}
             title="Program Fee Structures"
             desc="Per-program tuition fee tables for /admission/tuition-fees"
+          />
+          <ActionCard
+            href="/admin/admission-transfer-credits"
+            icon={ArrowLeftRight}
+            title="Transfer Credits"
+            desc="Credit transfer policy for /admission/transfer-credits"
+          />
+          <ActionCard
+            href="/admin/waiver-scholarship-landing"
+            icon={Layers}
+            title="Waiver/Scholarship Landing"
+            desc="Page chrome for /admission/waiver-scholarship"
+          />
+          <ActionCard
+            href="/admin/waiver-categories"
+            icon={HeartHandshake}
+            title="Manage Waiver Categories"
+            desc="Tuition fee waiver category cards (Part 01)"
+          />
+          <ActionCard
+            href="/admin/scholarships"
+            icon={Trophy}
+            title="Manage Scholarships"
+            desc="Merit scholarship slab cards (Part 02)"
           />
           {isSuperAdmin && (
             <ActionCard
