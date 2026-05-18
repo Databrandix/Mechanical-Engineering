@@ -1248,6 +1248,83 @@ async function seedTransportLanding() {
   console.log('✓ TransportLanding seeded');
 }
 
+// ─────────────────────────────────────────────────────────────────
+//  Phase 8a — Admission CMS Part 1 (Notices + Prospectus)
+// ─────────────────────────────────────────────────────────────────
+
+async function seedAdmissionNotice() {
+  const slug = 'summer-2026-inauguration';
+  const bodyParagraphs: string[] = [
+    'By order of the university authority, this is to inform all Deans of Faculties, Heads of Departments, Coordinators, and Section / Office Heads that the Inauguration Ceremony of the <strong>Summer-2026 Admission Fair</strong> has been scheduled for <strong>tomorrow, March 06, 2026, at 04:00 PM</strong> at the 147/I, Green Road building of Sonargaon University.',
+    'The ceremony will be presided over by the Honourable Vice-Chancellor (Acting) of the University, <strong>Professor Dr. Mohammad Ekramul Islam</strong>.',
+    '<strong>Advocate Umme Salma</strong>, Honourable Member of the Board of Trustees, SU Trust, has kindly consented to grace the occasion as the <em>Chief Guest</em>. Additionally, the Honourable Advisor of Sonargaon University, <strong>Mr. Azizul Bari (Shipu)</strong>, will be present as the <em>Inaugurator</em> of the event.',
+    '<strong>All concerned are requested to attend the inauguration ceremony at the scheduled time.</strong>',
+  ];
+  const ccList: string[] = [
+    'Office of the Board of Trustees, SU Trust',
+    'Office of the Vice-Chancellor',
+    'Office of the Pro-Vice-Chancellor',
+    'Office of the Treasurer',
+    'Office File',
+  ];
+
+  const data = {
+    slug,
+    title: 'Attendance at the Inauguration Ceremony of the Summer-2026 Admission Fair',
+    refNo: 'SU/Reg/Notice/2026/74',
+    subject: 'Attendance at the Inauguration Ceremony of the Summer-2026 Admission Fair',
+    publishedAt: new Date('2026-03-05T00:00:00Z'),
+    displayDate: 'March 05, 2026',
+    headerOverline: 'Office of the Registrar',
+    bodyParagraphs: bodyParagraphs as unknown as Prisma.InputJsonValue,
+    signatoryPreamble: 'By order of the Vice-Chancellor (Acting),',
+    signatoryName: 'S. M. Nurul Huda',
+    signatoryDesignation: 'Registrar',
+    ccLabel: 'Copy for Kind Information (not according to seniority)',
+    ccList: ccList as unknown as Prisma.InputJsonValue,
+    heroImageUrl: '/assets/admission-hero.webp',
+    heroImagePublicId: null,
+    fileUrl: '/assets/admission-notice-summer-2026.pdf',
+    filePublicId: null,
+    fileName: 'SU-Admission-Notice-Summer-2026.pdf',
+    isActive: true,
+    displayOrder: 0,
+  };
+
+  await prisma.admissionNotice.upsert({
+    where: { slug },
+    create: data,
+    update: data,
+  });
+  console.log('✓ AdmissionNotice seeded (1 row)');
+}
+
+async function seedProspectusEntries() {
+  const rows = [
+    {
+      slug: 'bsc-mechanical-engineering',
+      title: 'B.Sc. in Mechanical Engineering',
+      shortTitle: 'B. Sc. in Mechanical Engineering',
+      department: 'Mechanical Engineering',
+      level: 'Undergraduate',
+      coverUrl: '/assets/prospectus-me-cover.webp',
+      coverPublicId: null,
+      pdfUrl: '/assets/prospectus-me.pdf',
+      pdfPublicId: null,
+      pdfFileName: 'prospectus-me.pdf',
+      displayOrder: 0,
+    },
+  ];
+  for (const row of rows) {
+    await prisma.prospectusEntry.upsert({
+      where: { slug: row.slug },
+      create: row,
+      update: row,
+    });
+  }
+  console.log(`✓ ProspectusEntry seeded (${rows.length} row${rows.length === 1 ? '' : 's'})`);
+}
+
 async function main() {
   console.log('Seeding database…\n');
   await seedDepartmentIdentity();
@@ -1294,6 +1371,10 @@ async function main() {
   await seedBusRoutes();
   await seedSyllabus();
   await seedTransportLanding();
+
+  console.log('\nPhase 8a admission CMS part 1…');
+  await seedAdmissionNotice();
+  await seedProspectusEntries();
 
   console.log('\nDone.');
 }

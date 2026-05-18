@@ -24,7 +24,12 @@ type Kind =
   | 'club-image'
   | 'visitor-photo'
   | 'syllabus-cover'
-  | 'syllabus-pdf';
+  | 'syllabus-pdf'
+  // Phase 8a
+  | 'admission-notice-hero'
+  | 'admission-notice-file'
+  | 'prospectus-cover'
+  | 'prospectus-pdf';
 
 export type UploadMeta = {
   fileType: 'image' | 'pdf';
