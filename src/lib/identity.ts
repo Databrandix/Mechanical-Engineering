@@ -403,3 +403,26 @@ export const getProgramFeeStructures = cache(async () => {
     },
   });
 });
+
+// ─────────────────────────────────────────────────────────────────
+//  Admission CMS Part 3 — Phase 8c
+//    /admission/transfer-credits reads the singleton.
+//    /admission/waiver-scholarship reads landing singleton +
+//    WaiverCategory[] (Part 01) + Scholarship[] (Part 02).
+// ─────────────────────────────────────────────────────────────────
+
+export const getAdmissionTransferCredits = cache(async () => {
+  return prisma.admissionTransferCredits.findUnique({ where: { id: 'singleton' } });
+});
+
+export const getWaiverScholarshipLanding = cache(async () => {
+  return prisma.waiverScholarshipLanding.findUnique({ where: { id: 'singleton' } });
+});
+
+export const getWaiverCategories = cache(async () => {
+  return prisma.waiverCategory.findMany({ orderBy: { displayOrder: 'asc' } });
+});
+
+export const getScholarships = cache(async () => {
+  return prisma.scholarship.findMany({ orderBy: { displayOrder: 'asc' } });
+});
