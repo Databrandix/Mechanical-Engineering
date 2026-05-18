@@ -24,6 +24,8 @@ import {
   Users,
   Users2,
   UsersRound,
+  Scroll,
+  FileText,
 } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
@@ -44,6 +46,7 @@ export default async function DashboardHome() {
     newsCount, eventCount, noticeCount, galleryCount,
     alumniCount, clubCount, faqCount, visitorCount,
     researchPaperCount, busRouteCount, syllabusCount,
+    admissionNoticeCount, prospectusEntryCount,
     adminUsersCount, previousSession,
   ] = await Promise.all([
     prisma.program.count(),
@@ -62,6 +65,8 @@ export default async function DashboardHome() {
     prisma.researchPaper.count(),
     prisma.busRoute.count(),
     prisma.syllabus.count(),
+    prisma.admissionNotice.count(),
+    prisma.prospectusEntry.count(),
     isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
     prisma.session.findFirst({
       where: {
@@ -108,6 +113,8 @@ export default async function DashboardHome() {
           <StatCard label="Research Papers" value={researchPaperCount} />
           <StatCard label="Bus Routes" value={busRouteCount} />
           <StatCard label="Syllabi" value={syllabusCount} />
+          <StatCard label="Admission Notices" value={admissionNoticeCount} />
+          <StatCard label="Prospectus Entries" value={prospectusEntryCount} />
           {isSuperAdmin && (
             <StatCard label="Total Admin Users" value={adminUsersCount!} />
           )}
@@ -271,6 +278,18 @@ export default async function DashboardHome() {
             icon={MapIcon}
             title="Transport Landing"
             desc="Page chrome — intro, banner, instructions"
+          />
+          <ActionCard
+            href="/admin/admission-notices"
+            icon={Scroll}
+            title="Manage Admission Notices"
+            desc="Formal Registrar letters for /admission/notice"
+          />
+          <ActionCard
+            href="/admin/prospectus-entries"
+            icon={FileText}
+            title="Manage Prospectus"
+            desc="Program prospectus PDFs for /admission/prospectus"
           />
           {isSuperAdmin && (
             <ActionCard
