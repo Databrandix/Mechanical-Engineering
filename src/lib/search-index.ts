@@ -92,6 +92,9 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     admissionNoticeRows,
     prospectusEntryRows,
     feeStructureRows,
+    transferCreditsRow,
+    waiverCategoryRows,
+    scholarshipRows,
   ] = await Promise.all([
     prisma.faculty.findMany({
       select: { slug: true, name: true, designation: true, secondaryTitle: true },
@@ -156,6 +159,23 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     prisma.programFeeStructure.findMany({
       orderBy: { displayOrder: 'asc' },
       select: { introOverline: true },
+    }),
+    // Phase 8c — TransferCredits singleton entry. Existing static
+    // "Transfer Credits" Page entry stays alongside (matches the
+    // Phase 8a precedent of leaving static admission entries in
+    // place); this DB entry surfaces the more specific subject
+    // line so search results read better.
+    prisma.admissionTransferCredits.findUnique({
+      where: { id: 'singleton' },
+      select: { summaryHeading: true },
+    }),
+    prisma.waiverCategory.findMany({
+      orderBy: { displayOrder: 'asc' },
+      select: { title: true, items: true },
+    }),
+    prisma.scholarship.findMany({
+      orderBy: { displayOrder: 'asc' },
+      select: { name: true, credits: true, base: true },
     }),
   ]);
 
@@ -312,6 +332,50 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     type: 'Fees',
   }));
 
+  // ─── Phase 8c ───
+  const transferCreditsItems: SearchItem[] = transferCreditsRow
+    ? [{
+        title: 'Credit Transfer — Policy & Documents',
+        description: 'Minimum grades, transfer limits, fee, required documents',
+        href: '/admission/transfer-credits',
+        type: 'TransferCredits',
+      }]
+    : [];
+
+  // WaiverCategory — one entry per category. Description is the
+  // first item's heading (admins searching for a specific waiver
+  // type land on the right category).
+  const waiverCategoryItems: SearchItem[] = waiverCategoryRows.map((c) => {
+    const items = Array.isArray(c.items) ? c.items : [];
+    const firstHeading = (() => {
+      for (const it of items) {
+        if (typeof it === 'object' && it !== null && 'heading' in it) {
+          const h = (it as { heading?: unknown }).heading;
+          if (typeof h === 'string' && h.length > 0) return h;
+        }
+      }
+      return '';
+    })();
+    return {
+      title: c.title,
+      description: firstHeading
+        ? `Includes: ${firstHeading}${items.length > 1 ? ` (+${items.length - 1} more)` : ''}`
+        : 'Tuition fee waiver category',
+      href: '/admission/waiver-scholarship',
+      type: 'WaiverCategory',
+    };
+  });
+
+  // Scholarship — one entry per merit slab. Description blends
+  // credits descriptor + the base rate so searches like "15 credits"
+  // or "Slab 3" both land here.
+  const scholarshipItems: SearchItem[] = scholarshipRows.map((s) => ({
+    title: `${s.name} — ${s.credits}`,
+    description: `Base scholarship: ${s.base}`,
+    href: '/admission/waiver-scholarship',
+    type: 'Scholarship',
+  }));
+
   return [
     ...staticPages,
     ...facultyItems,
@@ -332,6 +396,9 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     ...admissionNoticeItems,
     ...prospectusItems,
     ...feeItems,
+    ...transferCreditsItems,
+    ...waiverCategoryItems,
+    ...scholarshipItems,
   ];
 });
 

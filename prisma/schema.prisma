@@ -954,11 +954,14 @@ model AdmissionRequirements {
 }
 
 // One row per Program. Json columns hold the deeply nested overview/
-// shifts/policies trees. Admin edits via JSON textarea (no new
-// component per constraint #4); Zod validates shape on submit.
-// onDelete: Cascade so deleting a Program tears down its fee
-// structure cleanly. Future 1:N escape: drop @unique on programId,
-// add intakeYear field.
+// shifts/policies trees. Phase 8c relaxed the original "no new
+// components" reading of constraint #4 — admin form for these Json
+// columns ships structured editors (OverviewStatsEditor,
+// ShiftsEditor, PoliciesEditor) since no existing editor fits the
+// shape (see PR #10). Zod validates shape on submit. onDelete:
+// Cascade so deleting a Program tears down its fee structure
+// cleanly. Future 1:N escape: drop @unique on programId, add
+// intakeYear field.
 model ProgramFeeStructure {
   id              String   @id @default(cuid())
   programId       String   @unique
@@ -983,4 +986,108 @@ model ProgramFeeStructure {
 
   @@index([displayOrder])
   @@map("program_fee_structure")
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  Phase 8c — Admission CMS Part 3 (Transfer Credits + Waiver/Scholarship)
+//  Final mini-phase of the 3-part Admission CMS series. After this
+//  migration, all 6 /admission/* pages are DB-driven and every
+//  visible user-facing surface on the public site is admin-editable.
+// ─────────────────────────────────────────────────────────────────
+
+// Singleton — universal credit transfer policy (no per-program
+// differentiation). Two stat cards (max limit + transfer fee) are
+// stored as 6 flat columns rather than a Json array because the
+// page architecture is structurally fixed at exactly two cards;
+// flat columns are clearer admin UX than a Json the admin would
+// have to extend.
+model AdmissionTransferCredits {
+  id                  String   @id @default("singleton")
+  intro               String   @db.Text
+
+  // {heading, body}[] — body has HTML allowed (inline <strong>)
+  minimumGradeBullets Json
+
+  limitMaxLabel       String   @default("Maximum Transfer Limit")
+  limitMaxValue       String
+  limitMaxSubtitle    String
+  limitFeeLabel       String   @default("Credit Transfer Fee")
+  limitFeeValue       String
+  limitFeeSubtitle    String
+
+  documentsIntroText  String   @db.Text
+  documents           Json     // [{title, description}]
+
+  summaryKicker       String   @default("Quick Reference")
+  summaryHeading      String   @default("Summary of Key Constraints")
+  summaryRows         Json     // [{label, value}]
+
+  updatedAt           DateTime @updatedAt
+
+  @@map("admission_transfer_credits")
+}
+
+// Singleton — chrome around the WaiverCategory + Scholarship
+// multi-row content on /admission/waiver-scholarship.
+model WaiverScholarshipLanding {
+  id                 String   @id @default("singleton")
+  intro              String   @db.Text
+
+  part1Kicker        String   @default("Part 01")
+  part1Heading       String   @default("Tuition Fee Waivers")
+
+  summaryHeading     String   @default("Summary Table")
+  summarySubheading  String   @default("Quick reference for all waiver categories.")
+  summaryRows        Json                          // [{category, max, status}]
+  summaryFooterNote  String   @db.Text
+
+  part2Kicker        String   @default("Part 02")
+  part2Heading       String   @default("Merit Scholarships")
+  part2Intro         String   @db.Text
+
+  keyTakeawaysKicker String   @default("Key Takeaways")
+  keyTakeaways       Json                          // string[]
+
+  updatedAt          DateTime @updatedAt
+
+  @@map("waiver_scholarship_landing")
+}
+
+// Multi-row — waiver category cards on Part 01. Each row has 3-5
+// inline items as {heading, text}[] Json; optional note callout
+// at the bottom of the card (only "Staff & Dependent" uses it in
+// seeded data). Drag-reorderable.
+model WaiverCategory {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  iconName     String                              // Lucide name
+  title        String
+  items        Json                                // [{heading, text}]
+  note         String?  @db.Text
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("waiver_category")
+}
+
+// Multi-row — merit scholarship slab cards on Part 02. Flat
+// columns (no nested Json). isHighlight=true gets the "Best Value"
+// ribbon + primary-bg theme on the public card.
+model Scholarship {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String                              // "Slab 1"
+  credits      String                              // "10 Credits or Fewer"
+  base         String                              // "2%" / "Highest"
+  perfect      String                              // GPA 4.00 percentage
+  near         String                              // GPA 3.90–3.99 percentage
+  isHighlight  Boolean  @default(false)
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("scholarship")
 }
