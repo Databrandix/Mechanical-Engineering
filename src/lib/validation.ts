@@ -273,6 +273,8 @@ export const uploadKindSchema = z.enum([
   'admission-notice-file',
   'prospectus-cover',
   'prospectus-pdf',
+  // Phase 10
+  'contact-hero',
 ]);
 
 export const uploadSignSchema = z.object({
@@ -958,3 +960,44 @@ export const contactSubmissionCreateSchema = z.object({
 export const contactSubmissionStatusUpdateSchema = z.object({
   status: contactStatusEnum,
 });
+
+// ─────────────────────────────────────────────────────────────────
+//  Phase 10 — ContactPageContent singleton + CampusLocation multi-row
+//    Final hardcoded-content close-out from the /contact page.
+// ─────────────────────────────────────────────────────────────────
+
+const quickContactCardSchema = z.object({
+  iconName:       z.string().min(1).max(80),
+  title:          z.string().min(1).max(120),
+  primaryValue:   z.string().min(1).max(300),
+  primaryHref:    z.string().max(500).optional().or(z.literal('')).transform((v) => (v && v.length > 0 ? v : null)),
+  secondaryValue: z.string().max(300).optional().or(z.literal('')).transform((v) => (v && v.length > 0 ? v : null)),
+  secondaryHref:  z.string().max(500).optional().or(z.literal('')).transform((v) => (v && v.length > 0 ? v : null)),
+  hint:           z.string().max(200).optional().or(z.literal('')).transform((v) => (v && v.length > 0 ? v : null)),
+});
+
+export const contactPageContentUpdateSchema = z.object({
+  heroTitle:           z.string().min(1).max(200),
+  heroOverline:        optionalNullableString,
+  heroImageUrl:        z.string().min(1),
+  heroImagePublicId:   nullableString,
+  heroImagePosition:   optionalNullableString,
+  introBody:           z.string().min(1),
+  quickContactHeading: z.string().min(1).max(200),
+  formHeading:         z.string().min(1).max(200),
+  formSubheading:      z.string().min(1),
+  campusesHeading:     z.string().min(1).max(200),
+  responseTimeNote:    z.string().min(1).max(500),
+  quickContactCards:   z.array(quickContactCardSchema).default([]),
+});
+
+export const campusLocationCreateSchema = z.object({
+  slug:    z.string().min(1).max(160).regex(slugRegex, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  name:    z.string().min(1).max(200),
+  tag:     optionalNullableString,
+  address: z.string().min(1),
+  phone:   optionalNullableString,
+  email:   z.string().email().max(320),
+});
+
+export const campusLocationUpdateSchema = campusLocationCreateSchema;

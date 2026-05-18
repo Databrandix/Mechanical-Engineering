@@ -29,7 +29,9 @@ type Kind =
   | 'admission-notice-hero'
   | 'admission-notice-file'
   | 'prospectus-cover'
-  | 'prospectus-pdf';
+  | 'prospectus-pdf'
+  // Phase 10
+  | 'contact-hero';
 
 export type UploadMeta = {
   fileType: 'image' | 'pdf';

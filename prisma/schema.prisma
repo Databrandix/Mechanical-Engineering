@@ -1108,6 +1108,69 @@ model Scholarship {
 //    explicit admin action (GDPR-friendly posture for personal data).
 // ─────────────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────────────
+//  Phase 10 — Contact page content + Campus Locations
+//    Closes out the last hardcoded-content gap from Phase 8c
+//    declaration. Contact form backend was Phase 9; this is the
+//    page chrome + 4 quick-contact cards + 3 campus location cards.
+// ─────────────────────────────────────────────────────────────────
+
+model ContactPageContent {
+  id                  String   @id @default("singleton")
+
+  // Hero (PageShell)
+  heroTitle           String              // "Contact Us"
+  heroOverline        String?             // "Get in Touch"
+  heroImageUrl        String
+  heroImagePublicId   String?
+  heroImagePosition   String?             // "center 30%"
+
+  // Intro paragraph (HTML allowed, single block — page only has one)
+  introBody           String   @db.Text
+
+  // Section headings (defaults match the original hardcoded copy)
+  quickContactHeading String   @default("Quick Contact Information")
+  formHeading         String   @default("Send Us a Message")
+  formSubheading      String   @db.Text   // "Have a question or suggestion?..."
+  campusesHeading     String   @default("Campus Locations")
+
+  // Form-side response-time hint (rendered above the submit button)
+  responseTimeNote    String              // "We typically respond within 1-2 business days."
+
+  // quickContactCards — Json [{ iconName, title, primaryValue,
+  //   primaryHref?, secondaryValue?, secondaryHref?, hint? }]
+  // 4 cards in seeded data (Phone / Email / Website / Facebook).
+  // iconName resolved against a curated Lucide IconMap on the public
+  // side with a sensible fallback (same pattern as Phase 7
+  // TransportLanding.instructions). Editable via a Json textarea
+  // in the admin form — chair Decision (Phase 10 mini): no new
+  // structured editor for low-churn content.
+  quickContactCards   Json
+
+  updatedAt           DateTime @updatedAt
+
+  @@map("contact_page_content")
+}
+
+// Multi-row — campus location cards on /contact. 3 rows seeded
+// (Permanent / Green Road / Mohakhali). tag + phone are optional
+// (Permanent Campus has neither in the seed source). Drag-reorderable.
+model CampusLocation {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String                              // "Permanent Campus"
+  tag          String?                             // "City Campus-1"
+  address      String   @db.Text
+  phone        String?
+  email        String
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("campus_location")
+}
+
 model ContactSubmission {
   id            String   @id @default(cuid())
   name          String

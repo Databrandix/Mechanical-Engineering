@@ -5,7 +5,11 @@ import { Send, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 
 type FormState = 'idle' | 'submitting' | 'submitted' | 'error';
 
-export default function ContactForm() {
+export default function ContactForm({
+  responseTimeNote = 'We typically respond within 1–2 business days.',
+}: {
+  responseTimeNote?: string;
+}) {
   const [state, setState] = useState<FormState>('idle');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -193,7 +197,7 @@ export default function ContactForm() {
 
       <div className="mt-7 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4">
         <p className="text-[12px] text-gray-500">
-          We typically respond within 1&ndash;2 business days.
+          {responseTimeNote}
         </p>
         <button
           type="submit"

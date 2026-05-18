@@ -41,6 +41,8 @@ import {
   HeartHandshake,
   Trophy,
   Mail,
+  Contact,
+  Building,
 } from 'lucide-react';
 
 type SidebarUser = {
@@ -99,6 +101,11 @@ const CAMPUS_SERVICES_NAV: NavItem[] = [
   { href: '/admin/transport-landing', label: 'Transport Landing', icon: MapIcon },
 ];
 
+const CONTACT_PAGE_NAV: NavItem[] = [
+  { href: '/admin/contact-page',       label: 'Page Content',     icon: Info },
+  { href: '/admin/campus-locations',   label: 'Campus Locations', icon: Building },
+];
+
 const ADMISSION_NAV: NavItem[] = [
   { href: '/admin/admission-notices',          label: 'Admission Notices',     icon: Scroll },
   { href: '/admin/prospectus-entries',         label: 'Prospectus',            icon: FileText },
@@ -132,6 +139,8 @@ export default function Sidebar({
   const [campusServicesOpen, setCampusServicesOpen] = useState<boolean>(campusServicesActive);
   const admissionActive = ADMISSION_NAV.some((n) => pathname?.startsWith(n.href));
   const [admissionOpen, setAdmissionOpen] = useState<boolean>(admissionActive);
+  const contactPageActive = CONTACT_PAGE_NAV.some((n) => pathname?.startsWith(n.href));
+  const [contactPageOpen, setContactPageOpen] = useState<boolean>(contactPageActive);
 
   async function handleLogout() {
     try {
@@ -334,6 +343,35 @@ export default function Sidebar({
         {admissionOpen && (
           <div className="pl-6 space-y-1">
             {ADMISSION_NAV.map(({ href, label }) => (
+              <Link key={href} href={href} className={linkClass(!!isActive(href))}>
+                <span className="text-[10px] leading-none">●</span>
+                {label}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* Contact Page — Phase 10 collapsible group (page content +
+            campus location cards). Clustered with Contact Submissions
+            below, but a separate group so the unread badge can stay
+            top-level (collapsed groups hide the badge). */}
+        <button
+          type="button"
+          onClick={() => setContactPageOpen((v) => !v)}
+          aria-expanded={contactPageOpen}
+          className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            contactPageActive ? 'text-accent' : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <span className="flex items-center gap-3">
+            <Contact size={16} />
+            Contact Page
+          </span>
+          <ChevronDown size={14} className={`transition-transform ${contactPageOpen ? 'rotate-180' : ''}`} />
+        </button>
+        {contactPageOpen && (
+          <div className="pl-6 space-y-1">
+            {CONTACT_PAGE_NAV.map(({ href, label }) => (
               <Link key={href} href={href} className={linkClass(!!isActive(href))}>
                 <span className="text-[10px] leading-none">●</span>
                 {label}
