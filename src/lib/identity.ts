@@ -426,3 +426,18 @@ export const getWaiverCategories = cache(async () => {
 export const getScholarships = cache(async () => {
   return prisma.scholarship.findMany({ orderBy: { displayOrder: 'asc' } });
 });
+
+// ─────────────────────────────────────────────────────────────────
+//  Phase 10 — Contact page content + Campus Locations
+//    Closes out the last hardcoded content on /contact. Phase 9
+//    wired the form backend; Phase 10 makes the page chrome +
+//    quick contact cards + campus locations CMS-editable.
+// ─────────────────────────────────────────────────────────────────
+
+export const getContactPageContent = cache(async () => {
+  return prisma.contactPageContent.findUnique({ where: { id: 'singleton' } });
+});
+
+export const getCampusLocations = cache(async () => {
+  return prisma.campusLocation.findMany({ orderBy: { displayOrder: 'asc' } });
+});

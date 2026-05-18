@@ -33,6 +33,8 @@ import {
   HeartHandshake,
   Trophy,
   Mail,
+  Contact,
+  Building,
 } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
@@ -58,6 +60,7 @@ export default async function DashboardHome() {
     admissionTransferCreditsConfigured, waiverScholarshipLandingConfigured,
     waiverCategoryCount, scholarshipCount,
     newSubmissionCount, totalSubmissionCount,
+    contactPageContentConfigured, campusLocationCount,
     adminUsersCount, previousSession,
   ] = await Promise.all([
     prisma.program.count(),
@@ -86,6 +89,8 @@ export default async function DashboardHome() {
     prisma.scholarship.count(),
     prisma.contactSubmission.count({ where: { status: 'new' } }),
     prisma.contactSubmission.count(),
+    prisma.contactPageContent.count(),
+    prisma.campusLocation.count(),
     isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
     prisma.session.findFirst({
       where: {
@@ -148,6 +153,10 @@ export default async function DashboardHome() {
           <StatCard label="Scholarships (Slabs)" value={scholarshipCount} />
           <StatCard label="New Contact Submissions" value={newSubmissionCount} />
           <StatCard label="Total Contact Submissions" value={totalSubmissionCount} />
+          <StatCard label="Contact Page Content"
+                    value={contactPageContentConfigured ? 'Configured' : 'Not configured'}
+                    stringValue />
+          <StatCard label="Campus Locations" value={campusLocationCount} />
           {isSuperAdmin && (
             <StatCard label="Total Admin Users" value={adminUsersCount!} />
           )}
@@ -365,6 +374,18 @@ export default async function DashboardHome() {
             icon={Mail}
             title="Contact Submissions"
             desc="Form submissions from /contact — read, archive, delete"
+          />
+          <ActionCard
+            href="/admin/contact-page"
+            icon={Contact}
+            title="Contact Page Content"
+            desc="Hero, intro, section headings, quick contact cards for /contact"
+          />
+          <ActionCard
+            href="/admin/campus-locations"
+            icon={Building}
+            title="Manage Campus Locations"
+            desc="Campus address cards rendered on /contact"
           />
           {isSuperAdmin && (
             <ActionCard

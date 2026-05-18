@@ -1697,6 +1697,106 @@ async function seedScholarships() {
   console.log(`✓ Scholarship seeded (${slabs.length} rows)`);
 }
 
+// ─────────────────────────────────────────────────────────────────
+//  Phase 10 — Contact page content + Campus Locations
+// ─────────────────────────────────────────────────────────────────
+
+async function seedContactPageContent() {
+  const quickContactCards = [
+    {
+      iconName: 'Phone',
+      title: 'Phone',
+      primaryValue: '+880 2 41010352',
+      primaryHref: 'tel:+880241010352',
+      hint: 'Sat–Fri, 8 AM – 8 PM',
+    },
+    {
+      iconName: 'Mail',
+      title: 'E-mail',
+      primaryValue: 'admission.info@su.edu.bd',
+      primaryHref: 'mailto:admission.info@su.edu.bd',
+      secondaryValue: 'registrar@su.edu.bd',
+      secondaryHref: 'mailto:registrar@su.edu.bd',
+    },
+    {
+      iconName: 'Globe',
+      title: 'Website',
+      primaryValue: 'www.su.edu.bd',
+      primaryHref: 'https://www.su.edu.bd',
+    },
+    {
+      iconName: 'Facebook',
+      title: 'Facebook',
+      primaryValue: 'Sonargaon University',
+      primaryHref: 'https://www.facebook.com/SonargaonUniversity',
+    },
+  ];
+
+  const data = {
+    heroTitle: 'Contact Us',
+    heroOverline: 'Get in Touch',
+    heroImageUrl: '/assets/contact-hero.webp',
+    heroImagePublicId: null,
+    heroImagePosition: 'center 30%',
+    introBody:
+      'We are here to assist you. Whether you have questions about admissions, academic programs, or campus facilities, feel free to reach out to us through any of the following channels.',
+    quickContactHeading: 'Quick Contact Information',
+    formHeading: 'Send Us a Message',
+    formSubheading: "Have a question or suggestion? Fill out the form and we'll get back to you.",
+    campusesHeading: 'Campus Locations',
+    responseTimeNote: 'We typically respond within 1–2 business days.',
+    quickContactCards: quickContactCards as unknown as Prisma.InputJsonValue,
+  };
+
+  await prisma.contactPageContent.upsert({
+    where: { id: 'singleton' },
+    update: {},
+    create: { id: 'singleton', ...data },
+  });
+  console.log('✓ ContactPageContent seeded (singleton)');
+}
+
+async function seedCampusLocations() {
+  const campuses = [
+    {
+      slug: 'permanent',
+      name: 'Permanent Campus',
+      tag: null,
+      address: 'Ward No–75, Dasher Kandi, Khilgaon, Dhaka-1219',
+      phone: null,
+      email: 'info@su.edu.bd',
+      displayOrder: 0,
+    },
+    {
+      slug: 'green-road',
+      name: 'Green Road Campus',
+      tag: 'City Campus-1',
+      address: '147/I, Green Road, Panthapath, Dhaka-1215',
+      phone: '+880241010352',
+      email: 'registrar@su.edu.bd',
+      displayOrder: 1,
+    },
+    {
+      slug: 'mohakhali',
+      name: 'Mohakhali Campus',
+      tag: 'City Campus-2',
+      address: 'GP Ja-146, Wireless Gate, Mohakhali, Dhaka-1212',
+      phone: '+880241020135',
+      email: 'info@su.edu.bd',
+      displayOrder: 2,
+    },
+  ];
+
+  for (const c of campuses) {
+    await prisma.campusLocation.upsert({
+      where: { slug: c.slug },
+      create: c,
+      update: c,
+    });
+  }
+  console.log(`✓ CampusLocation seeded (${campuses.length} rows)`);
+}
+
 async function main() {
   console.log('Seeding database…\n');
   await seedDepartmentIdentity();
@@ -1757,6 +1857,10 @@ async function main() {
   await seedWaiverScholarshipLanding();
   await seedWaiverCategories();
   await seedScholarships();
+
+  console.log('\nPhase 10 contact page content…');
+  await seedContactPageContent();
+  await seedCampusLocations();
 
   console.log('\nDone.');
 }

@@ -61,6 +61,8 @@ const KIND_TO_SUBFOLDER: Record<string, string> = {
   'admission-notice-file': 'admission/notices',
   'prospectus-cover':      'admission/prospectus/covers',
   'prospectus-pdf':        'admission/prospectus/pdfs',
+  // Phase 10 — contact page hero image.
+  'contact-hero':          'contact/hero',
 };
 
 function folderFor(kind: string): string {
