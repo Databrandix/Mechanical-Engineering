@@ -32,6 +32,8 @@ import {
   Bus,
   Map as MapIcon,
   Library,
+  FileText,
+  Scroll,
 } from 'lucide-react';
 
 type SidebarUser = {
@@ -90,6 +92,11 @@ const CAMPUS_SERVICES_NAV: NavItem[] = [
   { href: '/admin/transport-landing', label: 'Transport Landing', icon: MapIcon },
 ];
 
+const ADMISSION_NAV: NavItem[] = [
+  { href: '/admin/admission-notices',   label: 'Admission Notices', icon: Scroll },
+  { href: '/admin/prospectus-entries',  label: 'Prospectus',        icon: FileText },
+];
+
 export default function Sidebar({ user }: { user: SidebarUser }) {
   const pathname = usePathname();
   const isSuperAdmin = user.role === 'super_admin';
@@ -104,6 +111,8 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
   const [studentSocietyOpen, setStudentSocietyOpen] = useState<boolean>(studentSocietyActive);
   const campusServicesActive = CAMPUS_SERVICES_NAV.some((n) => pathname?.startsWith(n.href));
   const [campusServicesOpen, setCampusServicesOpen] = useState<boolean>(campusServicesActive);
+  const admissionActive = ADMISSION_NAV.some((n) => pathname?.startsWith(n.href));
+  const [admissionOpen, setAdmissionOpen] = useState<boolean>(admissionActive);
 
   async function handleLogout() {
     try {
@@ -280,6 +289,32 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
         {campusServicesOpen && (
           <div className="pl-6 space-y-1">
             {CAMPUS_SERVICES_NAV.map(({ href, label }) => (
+              <Link key={href} href={href} className={linkClass(!!isActive(href))}>
+                <span className="text-[10px] leading-none">●</span>
+                {label}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* Admission — collapsible group (Phase 8a, will host 8b + 8c) */}
+        <button
+          type="button"
+          onClick={() => setAdmissionOpen((v) => !v)}
+          aria-expanded={admissionOpen}
+          className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            admissionActive ? 'text-accent' : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <span className="flex items-center gap-3">
+            <Scroll size={16} />
+            Admission
+          </span>
+          <ChevronDown size={14} className={`transition-transform ${admissionOpen ? 'rotate-180' : ''}`} />
+        </button>
+        {admissionOpen && (
+          <div className="pl-6 space-y-1">
+            {ADMISSION_NAV.map(({ href, label }) => (
               <Link key={href} href={href} className={linkClass(!!isActive(href))}>
                 <span className="text-[10px] leading-none">●</span>
                 {label}

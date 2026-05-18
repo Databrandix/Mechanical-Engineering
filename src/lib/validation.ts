@@ -264,6 +264,11 @@ export const uploadKindSchema = z.enum([
   'visitor-photo',
   'syllabus-cover',
   'syllabus-pdf',
+  // Phase 8a
+  'admission-notice-hero',
+  'admission-notice-file',
+  'prospectus-cover',
+  'prospectus-pdf',
 ]);
 
 export const uploadSignSchema = z.object({
@@ -705,3 +710,62 @@ export const transportLandingUpdateSchema = z.object({
   bannerBody:    z.string().min(1),
   instructions:  transportInstructionsSchema,
 });
+
+// ─────────────────────────────────────────────────────────────────
+//  Phase 8a — Admission CMS Part 1 (Notices + Prospectus)
+// ─────────────────────────────────────────────────────────────────
+
+// ─── AdmissionNotice ────────────────────────────────────────────
+//
+// bodyParagraphs + ccList are Json string[] columns (HTML allowed for
+// bodyParagraphs via dangerouslySetInnerHTML, plain text for ccList).
+// Reuse paragraphsArraySchema (defined above near News).
+//
+const ccListSchema = z.array(z.string().min(1)).default([]);
+
+export const admissionNoticeCreateSchema = z.object({
+  slug:                 z.string().min(1).max(160).regex(slugRegexHub, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  title:                z.string().min(1).max(500),
+  refNo:                z.string().min(1).max(200),
+  subject:              z.string().min(1).max(500),
+  publishedAt:          z.coerce.date(),
+  displayDate:          optionalNullableString,
+  headerOverline:       z.string().min(1).max(200),
+  bodyParagraphs:       paragraphsArraySchema,
+  signatoryPreamble:    optionalNullableString,
+  signatoryName:        z.string().min(1).max(200),
+  signatoryDesignation: z.string().min(1).max(200),
+  ccLabel:              z.string().min(1).max(300),
+  ccList:               ccListSchema,
+  heroImageUrl:         optionalNullableString,
+  heroImagePublicId:    optionalNullableString,
+  fileUrl:              optionalNullableString,
+  filePublicId:         optionalNullableString,
+  fileName:             optionalNullableString,
+  isActive:             z.boolean().default(true),
+});
+
+export const admissionNoticeUpdateSchema = admissionNoticeCreateSchema;
+
+// ─── ProspectusEntry ────────────────────────────────────────────
+//
+// Mirrors syllabusCreateSchema shape exactly except no `summary` (the
+// /admission/prospectus page renders no description per row — just
+// level pill + shortTitle + department + download button).
+//
+export const prospectusLevelEnum = z.enum(['Undergraduate', 'Postgraduate']);
+
+export const prospectusEntryCreateSchema = z.object({
+  slug:          z.string().min(1).max(160).regex(slugRegexHub, 'Slug must be lowercase letters, numbers, and hyphens only'),
+  title:         z.string().min(1).max(500),
+  shortTitle:    z.string().min(1).max(300),
+  department:    z.string().min(1).max(300),
+  level:         prospectusLevelEnum,
+  coverUrl:      z.string().min(1),
+  coverPublicId: optionalNullableString,
+  pdfUrl:        optionalNullableString,
+  pdfPublicId:   optionalNullableString,
+  pdfFileName:   optionalNullableString,
+});
+
+export const prospectusEntryUpdateSchema = prospectusEntryCreateSchema;

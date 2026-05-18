@@ -89,6 +89,8 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     researchPaperRows,
     busRouteRows,
     syllabusRows,
+    admissionNoticeRows,
+    prospectusEntryRows,
   ] = await Promise.all([
     prisma.faculty.findMany({
       select: { slug: true, name: true, designation: true, secondaryTitle: true },
@@ -134,6 +136,18 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     }),
     prisma.syllabus.findMany({
       select: { slug: true, title: true, shortTitle: true, summary: true, pdfUrl: true },
+    }),
+    // Phase 8a — only the latest active notice; older / inactive ones
+    // are not currently rendered anywhere public (Decision B1 — no
+    // archive detail page in 8a), so they don't belong in search.
+    prisma.admissionNotice.findMany({
+      where: { isActive: true },
+      orderBy: { publishedAt: 'desc' },
+      take: 1,
+      select: { subject: true, refNo: true, displayDate: true, slug: true },
+    }),
+    prisma.prospectusEntry.findMany({
+      select: { title: true, shortTitle: true, department: true, level: true, slug: true },
     }),
   ]);
 
@@ -260,6 +274,25 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     type: 'Syllabus',
   }));
 
+  // Admission Notice (Phase 8a — DB). Only the latest active row is
+  // surfaced; clicking goes to /admission/notice which renders the
+  // same row.
+  const admissionNoticeItems: SearchItem[] = admissionNoticeRows.map((n) => ({
+    title: n.subject,
+    description: [n.refNo, n.displayDate].filter(Boolean).join(' · '),
+    href: '/admission/notice',
+    type: 'AdmissionNotice',
+  }));
+
+  // Prospectus entries (Phase 8a — DB). All rows surface; they all
+  // share the /admission/prospectus list page.
+  const prospectusItems: SearchItem[] = prospectusEntryRows.map((p) => ({
+    title: p.title,
+    description: `${p.department} · ${p.level}`,
+    href: '/admission/prospectus',
+    type: 'Prospectus',
+  }));
+
   return [
     ...staticPages,
     ...facultyItems,
@@ -277,6 +310,8 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     ...researchItems,
     ...transportItems,
     ...syllabusItems,
+    ...admissionNoticeItems,
+    ...prospectusItems,
   ];
 });
 

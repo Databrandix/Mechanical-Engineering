@@ -847,3 +847,78 @@ model TransportLanding {
 
   @@map("transport_landing")
 }
+
+// ─────────────────────────────────────────────────────────────────
+//  Phase 8a — Admission CMS Part 1 (Notices + Prospectus)
+// ─────────────────────────────────────────────────────────────────
+
+// Formal Registrar letterhead documents. Multi-row;
+// /admission/notice renders the latest isActive=true row ordered by
+// publishedAt DESC. No public archive route in Phase 8a (Decision
+// B1) — admin toggles isActive to swap the visible notice.
+model AdmissionNotice {
+  id                    String   @id @default(cuid())
+  slug                  String   @unique
+  title                 String
+  refNo                 String
+  subject               String
+  publishedAt           DateTime
+  displayDate           String?
+
+  headerOverline        String   @default("Office of the Registrar")
+
+  // Json string[] of HTML-safe paragraphs (inline <strong>/<em>
+  // allowed via dangerouslySetInnerHTML, author-trust caveat from
+  // Phase 7 TransportLanding pattern).
+  bodyParagraphs        Json
+
+  signatoryPreamble     String?
+  signatoryName         String
+  signatoryDesignation  String
+
+  ccLabel               String   @default("Copy for Kind Information (not according to seniority)")
+  ccList                Json
+
+  heroImageUrl          String?
+  heroImagePublicId     String?
+
+  fileUrl               String?
+  filePublicId          String?
+  fileName              String?
+
+  isActive              Boolean  @default(true)
+  displayOrder          Int
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([publishedAt])
+  @@index([isActive, publishedAt])
+  @@map("admission_notice")
+}
+
+// One row per program prospectus PDF. Mirrors Phase 7 Syllabus
+// shape 1:1 — separate tables (Decision D) because a program may
+// have both a syllabus and a prospectus, so a shared slug would
+// collide. /admission/prospectus surfaces all rows with a UG/PG
+// filter (client-side, same as the original hardcoded page).
+model ProspectusEntry {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  shortTitle    String
+  department    String
+  // level — 'Undergraduate' | 'Postgraduate'. Zod-validated.
+  level         String
+  coverUrl      String
+  coverPublicId String?
+  pdfUrl        String?
+  pdfPublicId   String?
+  pdfFileName   String?
+  displayOrder  Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@index([level])
+  @@map("prospectus_entry")
+}

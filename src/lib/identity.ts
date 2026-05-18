@@ -362,3 +362,21 @@ export const getSyllabi = cache(async () => {
 export const getTransportLanding = cache(async () => {
   return prisma.transportLanding.findUnique({ where: { id: 'singleton' } });
 });
+
+// ─────────────────────────────────────────────────────────────────
+//  Admission CMS Part 1 — Phase 8a
+//    /admission/notice renders the single latest active notice
+//    (Decision B1 — no archive route in 8a).
+//    /admission/prospectus renders all entries with a UG/PG filter.
+// ─────────────────────────────────────────────────────────────────
+
+export const getActiveAdmissionNotice = cache(async () => {
+  return prisma.admissionNotice.findFirst({
+    where: { isActive: true },
+    orderBy: { publishedAt: 'desc' },
+  });
+});
+
+export const getProspectusEntries = cache(async () => {
+  return prisma.prospectusEntry.findMany({ orderBy: { displayOrder: 'asc' } });
+});

@@ -53,6 +53,14 @@ const KIND_TO_SUBFOLDER: Record<string, string> = {
   'visitor-photo':         'visitors',
   'syllabus-cover':        'syllabus/covers',
   'syllabus-pdf':          'syllabus/pdfs',
+  // Phase 8a — Admission CMS Part 1. 'admission-notice-file' and
+  // 'prospectus-pdf' both reuse the /auto/upload endpoint (image or
+  // PDF auto-detected); the admin forms pass accept='application/pdf'
+  // (or 'image/*,application/pdf') on ImageUploader.
+  'admission-notice-hero': 'admission/notices',
+  'admission-notice-file': 'admission/notices',
+  'prospectus-cover':      'admission/prospectus/covers',
+  'prospectus-pdf':        'admission/prospectus/pdfs',
 };
 
 function folderFor(kind: string): string {
