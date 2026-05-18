@@ -154,6 +154,11 @@ model Program {
   cta             String?
   ctaHref         String?
 
+  // Phase 8b — back-relation for ProgramFeeStructure (1:1, optional).
+  // Program admin form stays focused on academic metadata (per
+  // constraint #12); fee structure lives at /admin/program-fee-structures.
+  feeStructure    ProgramFeeStructure?
+
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -921,4 +926,61 @@ model ProspectusEntry {
   @@index([displayOrder])
   @@index([level])
   @@map("prospectus_entry")
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  Phase 8b — Admission CMS Part 2 (Requirements + Tuition Fees)
+// ─────────────────────────────────────────────────────────────────
+
+// Singleton — university-wide admission policy. Discovery showed
+// /admission/requirements has NO per-program differentiation, so
+// this is deliberately NOT linked to Program. If per-program overlay
+// emerges later (e.g., MSc needs GRE), add a ProgramRequirement
+// child table — additive.
+model AdmissionRequirements {
+  id                         String   @id @default("singleton")
+  intro                      String   @db.Text
+
+  undergraduateRequirements  Json     // string[]
+  additionalNotes            Json     // string[]
+
+  diplomaRequirements        Json     // string[]
+  combinedGpaBody            String   @db.Text   // HTML-allowed (inline <strong>)
+  diplomaQuickCriteria       Json     // [{label, value}]
+
+  updatedAt                  DateTime @updatedAt
+
+  @@map("admission_requirements")
+}
+
+// One row per Program. Json columns hold the deeply nested overview/
+// shifts/policies trees. Admin edits via JSON textarea (no new
+// component per constraint #4); Zod validates shape on submit.
+// onDelete: Cascade so deleting a Program tears down its fee
+// structure cleanly. Future 1:N escape: drop @unique on programId,
+// add intakeYear field.
+model ProgramFeeStructure {
+  id              String   @id @default(cuid())
+  programId       String   @unique
+  program         Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  introOverline   String                  // e.g., "B.Sc. in Mechanical Engineering (ME)"
+  introHeading    String   @default("Tuition Fee Structure")
+  introBody       String   @db.Text
+
+  // [{iconName, label, value}] — 4 cards (Total Credits, etc.)
+  overviewStats   Json
+  // [{iconName, name, shiftLabel, description,
+  //   groups: [{background, tiers: [{gpa, perCredit, total}]}]}]
+  // 3-level nesting; admin paste/edit as JSON.
+  shifts          Json
+  // [{iconName, title, text}] — 3 policy cards
+  policies        Json
+
+  displayOrder    Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("program_fee_structure")
 }
