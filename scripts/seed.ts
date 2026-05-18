@@ -1299,6 +1299,178 @@ async function seedAdmissionNotice() {
   console.log('✓ AdmissionNotice seeded (1 row)');
 }
 
+// ─────────────────────────────────────────────────────────────────
+//  Phase 8b — Admission CMS Part 2 (Requirements + Tuition Fees)
+// ─────────────────────────────────────────────────────────────────
+
+async function seedAdmissionRequirements() {
+  const intro =
+    'Sonargaon University welcomes applications from students who meet the eligibility criteria below. Different programs have specific entry requirements — please review the section that applies to you.';
+
+  const undergraduateRequirements: string[] = [
+    'Minimum GPA of 2.5 (or second division) in SSC and HSC examinations (or their equivalent), or GCE/IGCSE "O" Level in four subjects.',
+    '"A" Level in two subjects with minimum GPA of 2.50 in each exam (using scale of A=5, B=4, C=3, D=2, E=1), or average 450 marks in GED with five subjects.',
+    'Minimum GPA of 2.0 in SSC and HSC examinations individually for Fashion Design and Technology.',
+    'Equivalent performance under other educational systems (e.g. American High School Diploma, IB, etc.) is also accepted.',
+    'A combined SAT score of 1100 is also accepted in lieu of the Admission Test for High School Graduates in any system.',
+    'For admission to engineering programs, students must have studied Physics, Chemistry, and Mathematics in HSC / A-Level.',
+    'The University also accepts non-degree admissions, usually for exchange students.',
+    'Transfer of credits from comparable educational institutions may be considered after admission.',
+  ];
+
+  const additionalNotes: string[] = [
+    'Students who have passed the HSC Examination under the mark-based grading system are considered for admission and scholarship at SU based on a conversion scale approved by the SU Admission Committee.',
+    'Any confusion relating to a degree or diploma obtained from home or abroad — for admission to undergraduate / graduate programs or for other purposes — shall be referred to and resolved by the Degree Equivalence Committee of SU.',
+  ];
+
+  const diplomaRequirements: string[] = [
+    'Three or four years Diploma in Engineering from Bangladesh Technical Education Board (BTEB) with a CGPA of 2.5 out of 4.00, OR',
+    'A Diploma recognised by BTEB with a CGPA of 2.5 out of 4.00 in any engineering discipline from any recognised institute.',
+  ];
+
+  const combinedGpaBody =
+    'Combined GPA of <strong class="text-primary">5.0 in SSC &amp; HSC</strong> with a minimum of 2.5 in each, OR a total GPA of <strong class="text-primary">6.00*</strong> with a minimum GPA of 2.00 in either SSC or HSC.';
+
+  const diplomaQuickCriteria: { label: string; value: string }[] = [
+    { label: 'SSC',     value: 'Minimum GPA 2.5' },
+    { label: 'Diploma', value: 'Minimum GPA 2.5' },
+  ];
+
+  const data = {
+    intro,
+    undergraduateRequirements: undergraduateRequirements as unknown as Prisma.InputJsonValue,
+    additionalNotes:           additionalNotes           as unknown as Prisma.InputJsonValue,
+    diplomaRequirements:       diplomaRequirements       as unknown as Prisma.InputJsonValue,
+    combinedGpaBody,
+    diplomaQuickCriteria:      diplomaQuickCriteria      as unknown as Prisma.InputJsonValue,
+  };
+
+  await prisma.admissionRequirements.upsert({
+    where:  { id: 'singleton' },
+    create: { id: 'singleton', ...data },
+    update: data,
+  });
+  console.log('✓ AdmissionRequirements seeded (singleton)');
+}
+
+async function seedProgramFeeStructures() {
+  // Lookup B.Sc. ME by degreeCode (seeded as 'BSc-ME' by seedPrograms).
+  const program = await prisma.program.findUnique({ where: { degreeCode: 'BSc-ME' } });
+  if (!program) {
+    console.log('⚠ Program BSc-ME not found — skipping ProgramFeeStructure seed');
+    return;
+  }
+
+  const overviewStats = [
+    { iconName: 'GraduationCap', label: 'Total Credits',        value: '160' },
+    { iconName: 'Calendar',      label: 'Semester System',      value: 'Tri-Semester' },
+    { iconName: 'CreditCard',    label: 'Admission Fee',        value: 'BDT 12,500' },
+    { iconName: 'Wallet',        label: 'Total Semester Fees',  value: 'BDT 96,000' },
+  ];
+
+  const shifts = [
+    {
+      iconName: 'Sun',
+      name: 'SUN',
+      shiftLabel: 'Morning Shift',
+      description: 'Primarily for students from an SSC + HSC background.',
+      groups: [
+        {
+          background: 'SSC + HSC',
+          tiers: [
+            { gpa: '5.00 – 8.99', perCredit: 975, total: 264500 },
+            { gpa: '9.00 – 9.99', perCredit: 897, total: 252020 },
+            { gpa: '10.00',       perCredit: 741, total: 227060 },
+          ],
+        },
+      ],
+    },
+    {
+      iconName: 'Moon',
+      name: 'MOON',
+      shiftLabel: 'Evening Shift',
+      description: 'Available for both SSC + HSC and Diploma students.',
+      groups: [
+        {
+          background: 'SSC + HSC',
+          tiers: [
+            { gpa: '5.00 – 7.99', perCredit: 1613, total: 342580 },
+            { gpa: '8.00 – 9.00', perCredit: 1523, total: 328180 },
+            { gpa: '10.00',       perCredit: 1434, total: 313940 },
+          ],
+        },
+        {
+          background: 'Diploma',
+          tiers: [
+            { gpa: '5.00 – 7.99', perCredit: 1410, total: 310772 },
+            { gpa: '8.00 – 9.00', perCredit: 1332, total: 297812 },
+          ],
+        },
+      ],
+    },
+    {
+      iconName: 'Star',
+      name: 'STAR',
+      shiftLabel: 'Friday Shift',
+      description: 'Available for both SSC + HSC and Diploma students.',
+      groups: [
+        {
+          background: 'SSC + HSC',
+          tiers: [
+            { gpa: '5.00 – 7.99', perCredit: 940, total: 234900 },
+            { gpa: '8.00 – 9.00', perCredit: 846, total: 219860 },
+            { gpa: '10.00',       perCredit: 705, total: 197300 },
+          ],
+        },
+        {
+          background: 'Diploma',
+          tiers: [
+            { gpa: '5.00 – 7.99', perCredit: 808, total: 213860 },
+            { gpa: '8.00 – 9.00', perCredit: 723, total: 200324 },
+          ],
+        },
+      ],
+    },
+  ];
+
+  const policies = [
+    {
+      iconName: 'Award',
+      title: 'Golden A+ Waiver',
+      text: 'Students with a Golden A+ in both SSC and HSC receive a 100% Tuition Fee Waiver.',
+    },
+    {
+      iconName: 'Percent',
+      title: 'Payment Discounts',
+      text: '10% waiver on tuition fees if the full 1st semester fee is paid at admission. 15% waiver on tuition fees if the full program fee is paid at admission.',
+    },
+    {
+      iconName: 'Receipt',
+      title: 'Additional Fees',
+      text: 'A BDT 7,500 fee is charged for the Provisional Certificate (PVC) in the final semester.',
+    },
+  ];
+
+  const data = {
+    programId:     program.id,
+    introOverline: 'B.Sc. in Mechanical Engineering (ME)',
+    introHeading:  'Tuition Fee Structure',
+    introBody:
+      'Cost per credit and the total program cost vary based on your academic background (SSC + HSC or Diploma) and the shift you choose. Use the breakdown below to find the fees that apply to you.',
+    overviewStats: overviewStats as unknown as Prisma.InputJsonValue,
+    shifts:        shifts        as unknown as Prisma.InputJsonValue,
+    policies:      policies      as unknown as Prisma.InputJsonValue,
+    displayOrder:  0,
+  };
+
+  await prisma.programFeeStructure.upsert({
+    where:  { programId: program.id },
+    create: data,
+    update: data,
+  });
+  console.log(`✓ ProgramFeeStructure seeded (1 row — ${program.degreeCode})`);
+}
+
 async function seedProspectusEntries() {
   const rows = [
     {
@@ -1375,6 +1547,10 @@ async function main() {
   console.log('\nPhase 8a admission CMS part 1…');
   await seedAdmissionNotice();
   await seedProspectusEntries();
+
+  console.log('\nPhase 8b admission CMS part 2…');
+  await seedAdmissionRequirements();
+  await seedProgramFeeStructures();
 
   console.log('\nDone.');
 }

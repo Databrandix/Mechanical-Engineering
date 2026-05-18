@@ -23,6 +23,7 @@ const TYPE_BADGE_COLOR: Record<SearchItem['type'], string> = {
   Syllabus: 'bg-lime-100 text-lime-700',
   AdmissionNotice: 'bg-yellow-100 text-yellow-800',
   Prospectus: 'bg-sky-100 text-sky-700',
+  Fees: 'bg-green-100 text-green-800',
 };
 
 interface SearchOverlayProps {

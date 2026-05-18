@@ -380,3 +380,26 @@ export const getActiveAdmissionNotice = cache(async () => {
 export const getProspectusEntries = cache(async () => {
   return prisma.prospectusEntry.findMany({ orderBy: { displayOrder: 'asc' } });
 });
+
+// ─────────────────────────────────────────────────────────────────
+//  Admission CMS Part 2 — Phase 8b
+//    /admission/requirements reads the singleton.
+//    /admission/tuition-fees reads ProgramFeeStructure[] with Program
+//    info attached (degreeCode used for stable per-program section
+//    keys when multiple programs are added later).
+// ─────────────────────────────────────────────────────────────────
+
+export const getAdmissionRequirements = cache(async () => {
+  return prisma.admissionRequirements.findUnique({ where: { id: 'singleton' } });
+});
+
+export const getProgramFeeStructures = cache(async () => {
+  return prisma.programFeeStructure.findMany({
+    orderBy: { displayOrder: 'asc' },
+    include: {
+      program: {
+        select: { id: true, programName: true, degreeCode: true },
+      },
+    },
+  });
+});

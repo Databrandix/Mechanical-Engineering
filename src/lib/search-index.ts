@@ -91,6 +91,7 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     syllabusRows,
     admissionNoticeRows,
     prospectusEntryRows,
+    feeStructureRows,
   ] = await Promise.all([
     prisma.faculty.findMany({
       select: { slug: true, name: true, designation: true, secondaryTitle: true },
@@ -148,6 +149,13 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     }),
     prisma.prospectusEntry.findMany({
       select: { title: true, shortTitle: true, department: true, level: true, slug: true },
+    }),
+    // Phase 8b — ProgramFeeStructure search entries. AdmissionRequirements
+    // is a singleton already covered by the static "Admission Requirements"
+    // page entry, so it's not indexed twice.
+    prisma.programFeeStructure.findMany({
+      orderBy: { displayOrder: 'asc' },
+      select: { introOverline: true },
     }),
   ]);
 
@@ -293,6 +301,17 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     type: 'Prospectus',
   }));
 
+  // ProgramFeeStructure (Phase 8b — DB). Per-program fee entries.
+  // introOverline carries the user-facing program label (e.g.
+  // "B.Sc. in Mechanical Engineering (ME)"). All entries link to
+  // /admission/tuition-fees — programs render stacked there.
+  const feeItems: SearchItem[] = feeStructureRows.map((f) => ({
+    title: f.introOverline,
+    description: 'Tuition fee structure — per-credit + total + waiver policies',
+    href: '/admission/tuition-fees',
+    type: 'Fees',
+  }));
+
   return [
     ...staticPages,
     ...facultyItems,
@@ -312,6 +331,7 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     ...syllabusItems,
     ...admissionNoticeItems,
     ...prospectusItems,
+    ...feeItems,
   ];
 });
 

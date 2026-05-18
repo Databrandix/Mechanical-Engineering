@@ -30,7 +30,9 @@ export interface SearchItem {
     | 'Syllabus'
     // Phase 8a
     | 'AdmissionNotice'
-    | 'Prospectus';
+    | 'Prospectus'
+    // Phase 8b
+    | 'Fees';
 }
 
 // Pure scorer — runs client-side. Items come in as a prop from the
