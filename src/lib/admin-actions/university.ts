@@ -55,6 +55,8 @@ export async function updateUniversityAction(
     mapEmbedUrl:   emptyToNull(formData.get('mapEmbedUrl')),
     logoUrl:       getStr(formData, 'logoUrl'),
     logoPublicId:  emptyToNull(formData.get('logoPublicId')),
+    // Phase 9 — contact form recipient. Empty input → null.
+    contactSubmissionEmail: emptyToNull(formData.get('contactSubmissionEmail')),
   };
 
   const parsed = universityUpdateSchema.safeParse(raw);

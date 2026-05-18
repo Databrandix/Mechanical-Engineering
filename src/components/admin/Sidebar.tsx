@@ -40,6 +40,7 @@ import {
   Layers,
   HeartHandshake,
   Trophy,
+  Mail,
 } from 'lucide-react';
 
 type SidebarUser = {
@@ -109,7 +110,13 @@ const ADMISSION_NAV: NavItem[] = [
   { href: '/admin/scholarships',               label: 'Scholarships',          icon: Trophy },
 ];
 
-export default function Sidebar({ user }: { user: SidebarUser }) {
+export default function Sidebar({
+  user,
+  newSubmissionCount,
+}: {
+  user: SidebarUser;
+  newSubmissionCount: number;
+}) {
   const pathname = usePathname();
   const isSuperAdmin = user.role === 'super_admin';
   // Auto-open the About Pages group when the active route is inside it.
@@ -334,6 +341,23 @@ export default function Sidebar({ user }: { user: SidebarUser }) {
             ))}
           </div>
         )}
+
+        {/* Contact Submissions — Phase 9 top-level (operational; the
+            badge surfaces unread submissions without forcing a click). */}
+        <Link
+          href="/admin/contact-submissions"
+          className={`${linkClass(!!pathname?.startsWith('/admin/contact-submissions'))} justify-between`}
+        >
+          <span className="flex items-center gap-3">
+            <Mail size={16} />
+            Contact Submissions
+          </span>
+          {newSubmissionCount > 0 && (
+            <span className="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 text-[10px] font-bold rounded-full bg-accent text-white">
+              {newSubmissionCount}
+            </span>
+          )}
+        </Link>
 
         {isSuperAdmin && (
           <Link

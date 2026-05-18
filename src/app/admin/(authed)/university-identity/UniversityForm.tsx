@@ -82,6 +82,26 @@ export default function UniversityForm({ initial }: { initial: Initial }) {
         />
       </Card>
 
+      <Card title="Contact form">
+        <div>
+          <label htmlFor="contactSubmissionEmail"
+                 className="block text-sm font-medium text-gray-700 mb-1">
+            Email recipient
+          </label>
+          <input
+            id="contactSubmissionEmail"
+            name="contactSubmissionEmail"
+            type="email"
+            defaultValue={initial?.contactSubmissionEmail ?? ''}
+            placeholder="e.g. contact@su.edu.bd"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent"
+          />
+          <p className="mt-1.5 text-xs text-gray-500">
+            Submissions from <code className="font-mono">/contact</code> will email here. Leave blank to disable email delivery — submissions still get logged in the database, visible at <code className="font-mono">/admin/contact-submissions</code>.
+          </p>
+        </div>
+      </Card>
+
       {state.ok === false && (
         <div role="alert"
              className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">

@@ -131,6 +131,11 @@ model UniversityIdentity {
   mapEmbedUrl   String?  @db.Text
   logoUrl       String
   logoPublicId  String?
+
+  // Phase 9 — contact form recipient. Null = email delivery
+  // disabled (DB-only mode). Admin sets in /admin/university-identity.
+  contactSubmissionEmail String?
+
   updatedAt     DateTime @updatedAt
 
   @@map("university_identity")
@@ -1090,4 +1095,45 @@ model Scholarship {
 
   @@index([displayOrder])
   @@map("scholarship")
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  Phase 9 — Contact form backend (Path B: email + DB log)
+//    First demand-driven phase post-CMS-complete. ContactSubmission
+//    is the persistent audit log. Email recipient lives on the
+//    UniversityIdentity singleton (contactSubmissionEmail). When
+//    that field is null the submission still stores; the email
+//    dispatch is gracefully skipped and emailSentAt stays null.
+//    status flow: 'new' → 'read' → 'archived'. Hard-delete on
+//    explicit admin action (GDPR-friendly posture for personal data).
+// ─────────────────────────────────────────────────────────────────
+
+model ContactSubmission {
+  id            String   @id @default(cuid())
+  name          String
+  email         String
+  phone         String?
+  subject       String?
+  message       String   @db.Text
+  // status — 'new' | 'read' | 'archived'. Zod-validated against the
+  // closed set; stored as String for forward flexibility (same
+  // pattern as Phase 6 News.category).
+  status        String   @default("new")
+  submittedAt   DateTime @default(now())
+  // ipAddress — first hop from x-forwarded-for (Vercel sets this);
+  // userAgent — raw header. Both nullable: behind a misconfigured
+  // proxy or curl without UA, they may be missing.
+  ipAddress     String?
+  userAgent     String?  @db.Text
+  // emailSentAt — null = email skipped (no recipient configured)
+  // OR email failed (see emailError). emailError populated only on
+  // Resend SDK error; null on success or skipped-no-recipient.
+  emailSentAt   DateTime?
+  emailError    String?  @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status, submittedAt])
+  @@index([submittedAt])
+  @@map("contact_submission")
 }
