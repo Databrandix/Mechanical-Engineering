@@ -102,7 +102,7 @@ export default function FacultyForm({ initial, currentDean, currentHead }: Props
           defaultValue={initial?.designation ?? ''}
           placeholder="e.g. Lecturer, Associate Professor"
         />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <TextField
             label="Secondary title" name="secondaryTitle"
             defaultValue={initial?.secondaryTitle ?? ''}
@@ -140,7 +140,7 @@ export default function FacultyForm({ initial, currentDean, currentHead }: Props
       </Card>
 
       <Card title="Contact">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <TextField
             label="Email" name="email" type="email"
             defaultValue={initial?.email ?? ''}
@@ -226,7 +226,7 @@ export default function FacultyForm({ initial, currentDean, currentHead }: Props
             <ParagraphsEditor initialValue={initial?.messageParagraphs ?? []} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <TextField
               label="Title line 1" name="messageTitleLine1"
               defaultValue={initial?.messageTitleLine1 ?? ''}

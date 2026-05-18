@@ -29,7 +29,7 @@ export default function DepartmentForm({ initial }: { initial: Initial }) {
       <Card title="Naming">
         <TextField label="Department name" name="name"
                    defaultValue={initial?.name ?? ''} required />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <TextField label="Short code" name="shortCode"
                      defaultValue={initial?.shortCode ?? ''} required />
           <TextField label="Breadcrumb label" name="breadcrumbLabel"
@@ -41,7 +41,7 @@ export default function DepartmentForm({ initial }: { initial: Initial }) {
 
       {/* ─── Brand colors ─── */}
       <Card title="Brand colors">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <ColorField label="Primary"
                       name="primaryColor"
                       defaultValue={initial?.primaryColor ?? '#2B3175'} />

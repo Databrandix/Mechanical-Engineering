@@ -44,7 +44,7 @@ export default function UniversityForm({ initial }: { initial: Initial }) {
       </Card>
 
       <Card title="Social URLs">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <TextField label="Facebook"  name="facebookUrl"  defaultValue={initial?.facebookUrl  ?? ''} type="url" />
           <TextField label="Instagram" name="instagramUrl" defaultValue={initial?.instagramUrl ?? ''} type="url" />
           <TextField label="YouTube"   name="youtubeUrl"   defaultValue={initial?.youtubeUrl   ?? ''} type="url" />
@@ -57,7 +57,7 @@ export default function UniversityForm({ initial }: { initial: Initial }) {
       </Card>
 
       <Card title="External services">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <TextField label="ERP"     name="erpUrl"     defaultValue={initial?.erpUrl     ?? ''} type="url" />
           <TextField label="Apply"   name="applyUrl"   defaultValue={initial?.applyUrl   ?? ''} type="url" />
           <TextField label="Library" name="libraryUrl" defaultValue={initial?.libraryUrl ?? ''} type="url" />

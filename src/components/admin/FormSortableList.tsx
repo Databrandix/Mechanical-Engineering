@@ -99,7 +99,7 @@ function FormSortableItem({ id, children }: { id: string; children: React.ReactN
         type="button"
         {...attributes}
         {...listeners}
-        className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing p-1 mt-2 shrink-0 focus:outline-none focus:ring-2 focus:ring-accent/40 rounded"
+        className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing p-2 mt-1 lg:p-1 lg:mt-2 shrink-0 focus:outline-none focus:ring-2 focus:ring-accent/40 rounded touch-none"
         aria-label="Drag to reorder"
       >
         <GripVertical size={16} />

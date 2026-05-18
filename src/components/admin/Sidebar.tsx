@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 import {
   LogOut,
+  Menu,
+  X,
   LayoutDashboard,
   Building2,
   University,
@@ -120,9 +122,13 @@ const ADMISSION_NAV: NavItem[] = [
 export default function Sidebar({
   user,
   newSubmissionCount,
+  logoUrl,
+  logoAlt,
 }: {
   user: SidebarUser;
   newSubmissionCount: number;
+  logoUrl: string;
+  logoAlt: string;
 }) {
   const pathname = usePathname();
   const isSuperAdmin = user.role === 'super_admin';
@@ -141,6 +147,41 @@ export default function Sidebar({
   const [admissionOpen, setAdmissionOpen] = useState<boolean>(admissionActive);
   const contactPageActive = CONTACT_PAGE_NAV.some((n) => pathname?.startsWith(n.href));
   const [contactPageOpen, setContactPageOpen] = useState<boolean>(contactPageActive);
+
+  // Phase 11 — mobile/tablet drawer state. Persistent sidebar on
+  // desktop (≥lg); off-canvas drawer with backdrop on smaller
+  // viewports. Drawer state intentionally ignored at lg+ (the
+  // sidebar is `lg:translate-x-0` regardless of `drawerOpen`).
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+
+  // Close the drawer whenever the route changes — admin click-throughs
+  // shouldn't require manual close on each navigation.
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [pathname]);
+
+  // Body scroll-lock while the drawer is open. Mirror the Phase 3
+  // public Navbar pattern. Only effective at <lg viewports since the
+  // drawer is the only thing that visibly opens there.
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [drawerOpen]);
+
+  // Escape closes the drawer too — keyboard parity with the close
+  // button + backdrop click.
+  useEffect(() => {
+    if (!drawerOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setDrawerOpen(false);
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [drawerOpen]);
 
   async function handleLogout() {
     try {
@@ -168,8 +209,43 @@ export default function Sidebar({
     href === '/admin' ? pathname === '/admin' : pathname?.startsWith(href);
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-      <div className="px-6 py-5 border-b border-gray-100">
+    <>
+      {/* Hamburger — visible only at <lg. Sits at z-[70] so it stays
+          above both backdrop (z-55) and drawer (z-60). Toggles the
+          drawer; the icon flips to X while open so the user has a
+          consistent close affordance in the same visual slot. */}
+      <button
+        type="button"
+        onClick={() => setDrawerOpen((v) => !v)}
+        aria-label={drawerOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={drawerOpen}
+        className="lg:hidden fixed top-3 left-3 z-[70] p-2 bg-white border border-gray-200 rounded-lg text-primary shadow-sm hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-accent/40"
+      >
+        {drawerOpen ? <X size={18} /> : <Menu size={18} />}
+      </button>
+
+      {/* Backdrop — Phase 3 public Navbar pattern. Click closes. */}
+      <button
+        type="button"
+        aria-label="Close menu"
+        onClick={() => setDrawerOpen(false)}
+        className={`lg:hidden fixed inset-0 bg-black/40 z-[55] transition-opacity duration-200 ${
+          drawerOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+      />
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-[60] w-72 bg-white border-r border-gray-200 flex flex-col transition-transform duration-200 ease-out ${
+          drawerOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:w-64 lg:z-auto lg:transition-none`}
+      >
+      <div className="px-6 pt-14 pb-5 border-b border-gray-100 lg:pt-5">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={logoUrl}
+          alt={logoAlt}
+          className="h-10 w-auto mb-3 object-contain"
+        />
         <div className="text-[10px] font-semibold tracking-widest uppercase text-gray-400">
           ME Admin
         </div>
@@ -435,7 +511,8 @@ export default function Sidebar({
           Logout
         </button>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }
 

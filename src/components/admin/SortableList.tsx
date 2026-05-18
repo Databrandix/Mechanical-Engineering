@@ -106,7 +106,7 @@ function SortableItem({
         type="button"
         {...attributes}
         {...listeners}
-        className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing p-1 -ml-1 mr-3 focus:outline-none focus:ring-2 focus:ring-accent/40 rounded"
+        className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing p-2 -ml-1 mr-2 lg:p-1 lg:mr-3 focus:outline-none focus:ring-2 focus:ring-accent/40 rounded touch-none"
         aria-label="Drag to reorder"
       >
         <GripVertical size={18} />
