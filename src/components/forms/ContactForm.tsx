@@ -1,9 +1,9 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
-import { Send, CheckCircle2, Loader2 } from 'lucide-react';
+import { Send, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 
-type FormState = 'idle' | 'submitting' | 'submitted';
+type FormState = 'idle' | 'submitting' | 'submitted' | 'error';
 
 export default function ContactForm() {
   const [state, setState] = useState<FormState>('idle');
@@ -12,6 +12,12 @@ export default function ContactForm() {
   const [phone, setPhone] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  // Honeypot — never typed by real users. Bots that auto-fill all
+  // inputs will populate this, which the server uses to silently
+  // discard the submission. Wired to state so the value flows into
+  // the fetch JSON body even though no human ever sees the field.
+  const [website, setWebsite] = useState('');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const reset = () => {
     setName('');
@@ -19,15 +25,46 @@ export default function ContactForm() {
     setPhone('');
     setSubject('');
     setMessage('');
+    setWebsite('');
+    setErrorMsg(null);
     setState('idle');
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setState('submitting');
-    // Simulated submission — backend not wired yet.
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    setState('submitted');
+    setErrorMsg(null);
+    try {
+      const res = await fetch('/api/contact/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, subject, message, website }),
+      });
+      if (res.ok) {
+        setState('submitted');
+        return;
+      }
+      let serverMessage = 'Something went wrong. Please try again.';
+      try {
+        const data = await res.json();
+        if (typeof data?.error === 'string' && data.error.length > 0) {
+          serverMessage = data.error;
+        }
+      } catch {
+        // non-JSON response — keep generic message
+      }
+      if (res.status === 429) {
+        setErrorMsg(serverMessage);
+      } else if (res.status === 400) {
+        setErrorMsg(`We couldn't accept this message: ${serverMessage}`);
+      } else {
+        setErrorMsg(serverMessage);
+      }
+      setState('error');
+    } catch {
+      setErrorMsg('Network error — please check your connection and try again.');
+      setState('error');
+    }
   };
 
   if (state === 'submitted') {
@@ -40,7 +77,7 @@ export default function ContactForm() {
           Thanks for reaching out!
         </h3>
         <p className="text-gray-600 text-[15px] leading-relaxed max-w-md mx-auto mb-6">
-          Your message has been received locally. Email delivery is being set up — for now please also reach us at{' '}
+          We&rsquo;ve received your message and will respond within 1&ndash;2 business days. If it&rsquo;s urgent, you can also reach us at{' '}
           <a href="mailto:info@su.edu.bd" className="text-accent font-semibold hover:underline">
             info@su.edu.bd
           </a>
@@ -64,6 +101,23 @@ export default function ContactForm() {
       onSubmit={handleSubmit}
       className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8 lg:p-10"
     >
+      {/* Honeypot — visually hidden, off the tab order, no assistive
+          tech focus. Real users can't see or reach it; bots filling
+          every input will populate it and get silently dropped on
+          the server. */}
+      <div aria-hidden="true" style={honeypotWrapStyle}>
+        <label htmlFor="website-url">Website (leave empty)</label>
+        <input
+          id="website-url"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
+
       <div className="grid sm:grid-cols-2 gap-5">
         <Field label="Full name" required>
           <input
@@ -127,9 +181,19 @@ export default function ContactForm() {
         </Field>
       </div>
 
+      {state === 'error' && errorMsg && (
+        <div
+          role="alert"
+          className="mt-5 flex items-start gap-2 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700"
+        >
+          <AlertCircle size={16} className="shrink-0 mt-0.5" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+
       <div className="mt-7 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4">
         <p className="text-[12px] text-gray-500">
-          We typically respond within 1–2 business days.
+          We typically respond within 1&ndash;2 business days.
         </p>
         <button
           type="submit"
@@ -156,6 +220,14 @@ export default function ContactForm() {
 const inputClass =
   'w-full px-4 py-2.5 rounded-md border border-gray-200 bg-white text-[14px] text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition disabled:bg-gray-50 disabled:text-gray-500';
 
+const honeypotWrapStyle: React.CSSProperties = {
+  position: 'absolute',
+  left: '-9999px',
+  width: '1px',
+  height: '1px',
+  overflow: 'hidden',
+};
+
 function Field({
   label,
   required,
@@ -178,4 +250,3 @@ function Field({
     </label>
   );
 }
-
