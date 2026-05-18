@@ -1497,6 +1497,202 @@ async function seedProspectusEntries() {
   console.log(`✓ ProspectusEntry seeded (${rows.length} row${rows.length === 1 ? '' : 's'})`);
 }
 
+// ─────────────────────────────────────────────────────────────────
+//  Phase 8c — Admission CMS Part 3 (Transfer Credits + Waiver/Scholarship)
+// ─────────────────────────────────────────────────────────────────
+
+async function seedAdmissionTransferCredits() {
+  const minimumGradeBullets = [
+    {
+      heading: 'Standard Credit Transfer',
+      body: "a minimum grade of <strong>'B'</strong> is required for a course to be accepted for transfer.",
+    },
+    {
+      heading: 'Internal Migration',
+      body: "a minimum grade of <strong>'D'</strong> is accepted for students migrating or changing departments within the university.",
+    },
+  ];
+
+  const documents = [
+    {
+      title: 'Formal Application',
+      description:
+        'A prescribed application for "Credit Transfer Student(s)" addressed to the Registrar of SU.',
+    },
+    {
+      title: 'Secondary Academic Records',
+      description: 'Official copies of the SSC Transcript and the HSC or Diploma Transcript.',
+    },
+    {
+      title: 'Higher Education Records',
+      description:
+        'Official transcripts from all previously attended universities — including all courses regardless of whether credit was earned (i.e. "Fail" or "Incomplete" grades).',
+    },
+    {
+      title: 'Course Syllabi',
+      description:
+        'The syllabus for every course under consideration for transfer — technical and non-technical, departmental and non-departmental.',
+    },
+  ];
+
+  const summaryRows = [
+    { label: 'Maximum Credits Accepted', value: '50% of program total' },
+    { label: 'Transfer Fee',             value: 'BDT 20,000' },
+    { label: 'Standard Minimum Grade',   value: "'B'" },
+    { label: 'Internal Migration Grade', value: "'D'" },
+  ];
+
+  const data = {
+    intro:
+      'Sonargaon University accepts credit transfers from other recognised institutions, as well as internal migrations between departments. Review the policy and required documents below before you apply.',
+    minimumGradeBullets: minimumGradeBullets as unknown as Prisma.InputJsonValue,
+    limitMaxLabel:    'Maximum Transfer Limit',
+    limitMaxValue:    '50%',
+    limitMaxSubtitle: "of the program's total credits",
+    limitFeeLabel:    'Credit Transfer Fee',
+    limitFeeValue:    'BDT 20,000',
+    limitFeeSubtitle: 'one-time charge',
+    documentsIntroText: 'Submit the following documents along with your application:',
+    documents:          documents as unknown as Prisma.InputJsonValue,
+    summaryKicker:  'Quick Reference',
+    summaryHeading: 'Summary of Key Constraints',
+    summaryRows:    summaryRows as unknown as Prisma.InputJsonValue,
+  };
+
+  await prisma.admissionTransferCredits.upsert({
+    where:  { id: 'singleton' },
+    create: { id: 'singleton', ...data },
+    update: data,
+  });
+  console.log('✓ AdmissionTransferCredits seeded (singleton)');
+}
+
+async function seedWaiverScholarshipLanding() {
+  const summaryRows = [
+    { category: 'Sibling / Spouse / Parent',      max: '10% per student', status: 'Active' },
+    { category: 'Female Students',                max: '10% – 50%',       status: 'Active' },
+    { category: 'Freedom Fighter Quota',          max: '100% (Tuition)',  status: 'Active' },
+    { category: 'Disability Quota',               max: '10%',             status: 'Active' },
+    { category: 'Group Waiver',                   max: '3% – 5%',         status: 'Active' },
+    { category: 'Tribal / Instructor Quotas',     max: '10%',             status: 'Active' },
+    { category: 'Special (Admission Fair)',       max: 'BDT 30,000',      status: 'Active' },
+  ];
+
+  const keyTakeaways = [
+    'Maximum benefit: to receive the highest possible scholarship (50%), a student must take at least 15 credits and maintain a perfect 4.00 GPA.',
+    'Incentive for higher load: even with the same GPA (e.g. 4.00), moving from Slab 1 to Slab 3 doubles the scholarship — from 25% to 50%.',
+  ];
+
+  const data = {
+    intro:
+      'Sonargaon University offers a range of tuition waivers and merit scholarships to make quality engineering education accessible. Eligibility depends on academic performance, demographic criteria, and family / institutional context.',
+    part1Kicker:        'Part 01',
+    part1Heading:       'Tuition Fee Waivers',
+    summaryHeading:     'Summary Table',
+    summarySubheading:  'Quick reference for all waiver categories.',
+    summaryRows:        summaryRows as unknown as Prisma.InputJsonValue,
+    summaryFooterNote:
+      'for the general Student Welfare Division (SWD) Waiver on tuition fees, students must submit an application to the SWD department after their admission is complete.',
+    part2Kicker:        'Part 02',
+    part2Heading:       'Merit Scholarships',
+    part2Intro:
+      'The university offers three distinct scholarship slabs based on the number of credits a student completes in a semester. The scholarship percentage increases as the credit load and GPA increase.',
+    keyTakeawaysKicker: 'Key Takeaways',
+    keyTakeaways:       keyTakeaways as unknown as Prisma.InputJsonValue,
+  };
+
+  await prisma.waiverScholarshipLanding.upsert({
+    where:  { id: 'singleton' },
+    create: { id: 'singleton', ...data },
+    update: data,
+  });
+  console.log('✓ WaiverScholarshipLanding seeded (singleton)');
+}
+
+async function seedWaiverCategories() {
+  const categories = [
+    {
+      slug: 'staff-dependent',
+      iconName: 'Users',
+      title: 'University Staff & Dependent Waivers',
+      items: [
+        { heading: 'SU Staff (Academic & Administrative)', text: 'If permitted by the Head of Department and the Syndicate, the staff member receives a waiver on the Admission Fee only.' },
+        { heading: 'Staff Dependents',                     text: '100% waiver of total fees / total package.' },
+        { heading: 'Staff Close Relatives',                text: 'Additional 10% waiver — limited to one student per semester and requires verification.' },
+      ],
+      note: 'Dependent waivers are cancelled if the staff member leaves SU permanently, but remain active if the staff member expires, suffers from a chronic disease, or is unable to work due to a major accident.',
+      displayOrder: 0,
+    },
+    {
+      slug: 'family-group',
+      iconName: 'HeartHandshake',
+      title: 'Family & Group Waivers',
+      items: [
+        { heading: 'Siblings / Spouse / Parent–Child',   text: '10% waiver per student once the final family member is admitted — 2 students: 20% total, 3 students: 30% total.' },
+        { heading: 'Group Waiver — General Programs',    text: '3% waiver for groups of 2–4 people; 5% waiver for groups of 5 or more.' },
+        { heading: 'Group Waiver — Specific Programs',   text: '5% waiver applies to groups of 2 or more students for Architecture, Naval Architecture, and Journalism.' },
+      ],
+      note: null,
+      displayOrder: 1,
+    },
+    {
+      slug: 'special-quotas',
+      iconName: 'Award',
+      title: 'Special Quotas & Demographic Waivers',
+      items: [
+        { heading: 'Freedom Fighter Quota', text: '100% waiver on tuition fees. If applicants exceed 3%, a lottery is held — limited to one student per family.' },
+        { heading: 'Female Students',       text: '10% to 50% waiver on tuition fees upon proper application.' },
+        { heading: 'Disability Quota',      text: '10% waiver — the university reserves the right to amend this for special cases.' },
+        { heading: 'Tribal Quota',          text: '10% waiver.' },
+        { heading: 'Instructor Quota',      text: '10% waiver.' },
+      ],
+      note: null,
+      displayOrder: 2,
+    },
+    {
+      slug: 'institutional-fair',
+      iconName: 'Building2',
+      title: 'Institutional & Fair Waivers',
+      items: [
+        { heading: 'SU Sister Concern Diploma Graduates (NIET, NPI, BIST)', text: 'Admission Fee: BDT 8,500 instead of the standard BDT 12,500 (BDT 4,000 waiver). Tuition fee includes a BDT 1,000 component.' },
+        { heading: 'Admission Fair (Special Waiver)',                        text: 'BDT 20,000 or BDT 30,000 waiver on tuition fees during fair events.' },
+      ],
+      note: null,
+      displayOrder: 3,
+    },
+  ];
+
+  for (const cat of categories) {
+    const data = {
+      ...cat,
+      items: cat.items as unknown as Prisma.InputJsonValue,
+    };
+    await prisma.waiverCategory.upsert({
+      where:  { slug: cat.slug },
+      create: data,
+      update: data,
+    });
+  }
+  console.log(`✓ WaiverCategory seeded (${categories.length} rows)`);
+}
+
+async function seedScholarships() {
+  const slabs = [
+    { slug: 'slab-1', name: 'Slab 1', credits: '10 Credits or Fewer',   base: '2%',      perfect: '25%', near: '10%', isHighlight: false, displayOrder: 0 },
+    { slug: 'slab-2', name: 'Slab 2', credits: '12 Credits or Fewer',   base: '5%',      perfect: '30%', near: '15%', isHighlight: false, displayOrder: 1 },
+    { slug: 'slab-3', name: 'Slab 3', credits: '15 Credits or More',    base: 'Highest', perfect: '50%', near: '20%', isHighlight: true,  displayOrder: 2 },
+  ];
+
+  for (const slab of slabs) {
+    await prisma.scholarship.upsert({
+      where:  { slug: slab.slug },
+      create: slab,
+      update: slab,
+    });
+  }
+  console.log(`✓ Scholarship seeded (${slabs.length} rows)`);
+}
+
 async function main() {
   console.log('Seeding database…\n');
   await seedDepartmentIdentity();
@@ -1551,6 +1747,12 @@ async function main() {
   console.log('\nPhase 8b admission CMS part 2…');
   await seedAdmissionRequirements();
   await seedProgramFeeStructures();
+
+  console.log('\nPhase 8c admission CMS part 3…');
+  await seedAdmissionTransferCredits();
+  await seedWaiverScholarshipLanding();
+  await seedWaiverCategories();
+  await seedScholarships();
 
   console.log('\nDone.');
 }
