@@ -83,6 +83,10 @@ async function seedUniversityIdentity() {
         'https://maps.google.com/maps?q=Sonargaon%20University%20Panthapath%20Dhaka&hl=en&z=15&output=embed',
       logoUrl: '/assets/footer-logo.webp',
       logoPublicId: null,
+      // Phase 9 — contact form recipient. Null = email delivery
+      // disabled. Admin sets in /admin/university-identity once
+      // Resend domain or sender is configured.
+      contactSubmissionEmail: null,
     },
   });
   console.log('✓ University identity seeded');

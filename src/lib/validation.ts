@@ -63,6 +63,10 @@ export const universityUpdateSchema = z.object({
   mapEmbedUrl:   z.string().nullable(),
   logoUrl:       z.string().min(1),
   logoPublicId:  nullableString,
+  // Phase 9 — contact form recipient. Empty string OR valid email.
+  // Empty/null = email delivery disabled; submissions still log in DB.
+  contactSubmissionEmail: z.string().email().or(z.literal('')).nullable().optional()
+    .transform((v) => (v && v.length > 0 ? v : null)),
 });
 
 // ─────────────────────────────────────────────────────────────────
@@ -929,3 +933,28 @@ export const scholarshipCreateSchema = z.object({
 });
 
 export const scholarshipUpdateSchema = scholarshipCreateSchema;
+
+// ─────────────────────────────────────────────────────────────────
+//  Phase 9 — ContactSubmission (public submit + admin status update)
+//    Public schema mirrors the ContactForm fields. Honeypot is read
+//    + rejected in the route handler before this schema runs, so
+//    no honeypot field appears here.
+// ─────────────────────────────────────────────────────────────────
+
+export const contactStatusEnum = z.enum(['new', 'read', 'archived']);
+
+const emptyToNullString = (max: number) =>
+  z.string().max(max).optional().or(z.literal(''))
+    .transform((v) => (v && v.trim().length > 0 ? v.trim() : null));
+
+export const contactSubmissionCreateSchema = z.object({
+  name:    z.string().trim().min(1).max(200),
+  email:   z.string().trim().email().max(320),
+  phone:   emptyToNullString(50),
+  subject: emptyToNullString(300),
+  message: z.string().trim().min(1).max(10000),
+});
+
+export const contactSubmissionStatusUpdateSchema = z.object({
+  status: contactStatusEnum,
+});
