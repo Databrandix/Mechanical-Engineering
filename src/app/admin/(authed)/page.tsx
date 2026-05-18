@@ -32,6 +32,7 @@ import {
   Layers,
   HeartHandshake,
   Trophy,
+  Mail,
 } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
@@ -56,6 +57,7 @@ export default async function DashboardHome() {
     admissionRequirementsConfigured, programFeeStructureCount,
     admissionTransferCreditsConfigured, waiverScholarshipLandingConfigured,
     waiverCategoryCount, scholarshipCount,
+    newSubmissionCount, totalSubmissionCount,
     adminUsersCount, previousSession,
   ] = await Promise.all([
     prisma.program.count(),
@@ -82,6 +84,8 @@ export default async function DashboardHome() {
     prisma.waiverScholarshipLanding.count(),
     prisma.waiverCategory.count(),
     prisma.scholarship.count(),
+    prisma.contactSubmission.count({ where: { status: 'new' } }),
+    prisma.contactSubmission.count(),
     isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
     prisma.session.findFirst({
       where: {
@@ -142,6 +146,8 @@ export default async function DashboardHome() {
                     stringValue />
           <StatCard label="Waiver Categories" value={waiverCategoryCount} />
           <StatCard label="Scholarships (Slabs)" value={scholarshipCount} />
+          <StatCard label="New Contact Submissions" value={newSubmissionCount} />
+          <StatCard label="Total Contact Submissions" value={totalSubmissionCount} />
           {isSuperAdmin && (
             <StatCard label="Total Admin Users" value={adminUsersCount!} />
           )}
@@ -353,6 +359,12 @@ export default async function DashboardHome() {
             icon={Trophy}
             title="Manage Scholarships"
             desc="Merit scholarship slab cards (Part 02)"
+          />
+          <ActionCard
+            href="/admin/contact-submissions"
+            icon={Mail}
+            title="Contact Submissions"
+            desc="Form submissions from /contact — read, archive, delete"
           />
           {isSuperAdmin && (
             <ActionCard
