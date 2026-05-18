@@ -769,3 +769,71 @@ export const prospectusEntryCreateSchema = z.object({
 });
 
 export const prospectusEntryUpdateSchema = prospectusEntryCreateSchema;
+
+// ─────────────────────────────────────────────────────────────────
+//  Phase 8b — Admission CMS Part 2 (Requirements + Tuition Fees)
+// ─────────────────────────────────────────────────────────────────
+
+// ─── AdmissionRequirements (singleton) ─────────────────────────
+const quickCriterionSchema = z.object({
+  label: z.string().min(1).max(80),
+  value: z.string().min(1).max(200),
+});
+
+export const admissionRequirementsUpdateSchema = z.object({
+  intro:                     z.string().min(1),
+  undergraduateRequirements: paragraphsArraySchema,
+  additionalNotes:           paragraphsArraySchema,
+  diplomaRequirements:       paragraphsArraySchema,
+  combinedGpaBody:           z.string().min(1),
+  diplomaQuickCriteria:      z.array(quickCriterionSchema).default([]),
+});
+
+// ─── ProgramFeeStructure (1:1 with Program) ────────────────────
+//
+// Three Json columns with strict shape validation. The admin form's
+// JSON textareas pipe through JSON.parse → these schemas → Prisma.
+// If admin pastes malformed JSON, action returns the Zod error path.
+//
+const overviewStatSchema = z.object({
+  iconName: z.string().min(1),
+  label:    z.string().min(1),
+  value:    z.string().min(1),
+});
+
+const feeTierSchema = z.object({
+  gpa:       z.string().min(1),
+  perCredit: z.number(),
+  total:     z.number(),
+});
+
+const feeGroupSchema = z.object({
+  background: z.string().min(1),
+  tiers:      z.array(feeTierSchema).default([]),
+});
+
+const feeShiftSchema = z.object({
+  iconName:    z.string().min(1),
+  name:        z.string().min(1),
+  shiftLabel:  z.string().min(1),
+  description: z.string().min(1),
+  groups:      z.array(feeGroupSchema).default([]),
+});
+
+const feePolicySchema = z.object({
+  iconName: z.string().min(1),
+  title:    z.string().min(1),
+  text:     z.string().min(1),
+});
+
+export const programFeeStructureCreateSchema = z.object({
+  programId:     z.string().min(1),
+  introOverline: z.string().min(1).max(300),
+  introHeading:  z.string().min(1).max(300),
+  introBody:     z.string().min(1),
+  overviewStats: z.array(overviewStatSchema).default([]),
+  shifts:        z.array(feeShiftSchema).default([]),
+  policies:      z.array(feePolicySchema).default([]),
+});
+
+export const programFeeStructureUpdateSchema = programFeeStructureCreateSchema;

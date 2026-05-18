@@ -26,6 +26,8 @@ import {
   UsersRound,
   Scroll,
   FileText,
+  ClipboardList,
+  CircleDollarSign,
 } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
@@ -47,6 +49,7 @@ export default async function DashboardHome() {
     alumniCount, clubCount, faqCount, visitorCount,
     researchPaperCount, busRouteCount, syllabusCount,
     admissionNoticeCount, prospectusEntryCount,
+    admissionRequirementsConfigured, programFeeStructureCount,
     adminUsersCount, previousSession,
   ] = await Promise.all([
     prisma.program.count(),
@@ -67,6 +70,8 @@ export default async function DashboardHome() {
     prisma.syllabus.count(),
     prisma.admissionNotice.count(),
     prisma.prospectusEntry.count(),
+    prisma.admissionRequirements.count(),
+    prisma.programFeeStructure.count(),
     isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
     prisma.session.findFirst({
       where: {
@@ -115,6 +120,10 @@ export default async function DashboardHome() {
           <StatCard label="Syllabi" value={syllabusCount} />
           <StatCard label="Admission Notices" value={admissionNoticeCount} />
           <StatCard label="Prospectus Entries" value={prospectusEntryCount} />
+          <StatCard label="Admission Requirements"
+                    value={admissionRequirementsConfigured ? 'Configured' : 'Not configured'}
+                    stringValue />
+          <StatCard label="Program Fee Structures" value={programFeeStructureCount} />
           {isSuperAdmin && (
             <StatCard label="Total Admin Users" value={adminUsersCount!} />
           )}
@@ -290,6 +299,18 @@ export default async function DashboardHome() {
             icon={FileText}
             title="Manage Prospectus"
             desc="Program prospectus PDFs for /admission/prospectus"
+          />
+          <ActionCard
+            href="/admin/admission-requirements"
+            icon={ClipboardList}
+            title="Admission Requirements"
+            desc="University-wide eligibility policy for /admission/requirements"
+          />
+          <ActionCard
+            href="/admin/program-fee-structures"
+            icon={CircleDollarSign}
+            title="Program Fee Structures"
+            desc="Per-program tuition fee tables for /admission/tuition-fees"
           />
           {isSuperAdmin && (
             <ActionCard
