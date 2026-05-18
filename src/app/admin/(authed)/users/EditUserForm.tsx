@@ -50,7 +50,7 @@ export default function EditUserForm({ initial, isSelf }: Props) {
 
       <fieldset>
         <legend className="block text-sm font-medium text-gray-700 mb-2">Role</legend>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 has-[:checked]:border-accent has-[:checked]:bg-accent/5 transition-colors">
             <input type="radio" name="role" value="admin"
                    defaultChecked={initial.role === 'admin'}

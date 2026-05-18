@@ -34,7 +34,7 @@ export default function ProgramForm({ initial }: { initial: Program | null }) {
       <Card title="Details">
         <TextField label="Program name" name="programName" required
                    defaultValue={initial?.programName ?? ''} />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <TextField label="Degree code" name="degreeCode" required
                      defaultValue={initial?.degreeCode ?? ''} />
           <TextField label="Duration" name="duration" required
@@ -46,7 +46,7 @@ export default function ProgramForm({ initial }: { initial: Program | null }) {
         <TextAreaField label="Specializations (one per line, optional)"
                        name="specializations" rows={4}
                        defaultValue={(initial?.specializations ?? []).join('\n')} />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <TextField label="CTA text (optional)" name="cta"
                      defaultValue={initial?.cta ?? ''}
                      placeholder="e.g. View More" />
