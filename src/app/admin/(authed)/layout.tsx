@@ -45,7 +45,7 @@ export default async function AuthedAdminLayout({
         logoUrl={dept.logoUrl}
         logoAlt={`${uni.name} logo`}
       />
-      <main className="flex-1 min-w-0 p-4 sm:p-6 md:p-8 lg:p-10 max-w-6xl pt-16 lg:pt-10">
+      <main className="flex-1 min-w-0 p-4 sm:p-6 md:p-8 lg:p-10 max-w-screen-2xl pt-16 lg:pt-10">
         {children}
       </main>
     </div>

@@ -120,7 +120,7 @@ export default async function DashboardHome() {
         <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">
           At a glance
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
           <StatCard label="Total Programs" value={programsCount} />
           <StatCard label="Total Research Areas" value={researchAreasCount} />
           <StatCard label="Total Faculty" value={facultyCount} />
@@ -136,7 +136,7 @@ export default async function DashboardHome() {
           <StatCard label="Visitors" value={visitorCount} />
           <StatCard label="Research Papers" value={researchPaperCount} />
           <StatCard label="Bus Routes" value={busRouteCount} />
-          <StatCard label="Syllabi" value={syllabusCount} />
+          <StatCard label="Syllabus" value={syllabusCount} />
           <StatCard label="Admission Notices" value={admissionNoticeCount} />
           <StatCard label="Prospectus Entries" value={prospectusEntryCount} />
           <StatCard label="Admission Requirements"
