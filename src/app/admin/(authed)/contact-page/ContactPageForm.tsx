@@ -4,6 +4,7 @@ import { useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
 import type { ContactPageContent } from '@prisma/client';
 import ImageUploader from '@/components/admin/ImageUploader';
+import HeroImagePositionSlider from '@/components/admin/HeroImagePositionSlider';
 import QuickContactCardsEditor from '@/components/admin/QuickContactCardsEditor';
 import {
   updateContactPageContentAction,
@@ -34,9 +35,10 @@ export default function ContactPageForm({ initial }: { initial: ContactPageConte
                        label="Hero image"
                        initialUrl={initial?.heroImageUrl}
                        initialPublicId={initial?.heroImagePublicId} />
-        <TextField label="Hero image position (CSS object-position)" name="heroImagePosition"
-                   defaultValue={initial?.heroImagePosition ?? ''}
-                   placeholder="center 30%" />
+        <HeroImagePositionSlider
+          name="heroImageVerticalPercent"
+          initialValue={initial?.heroImageVerticalPercent}
+        />
       </Card>
 
       <Card title="Intro">

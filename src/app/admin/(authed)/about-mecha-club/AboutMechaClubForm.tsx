@@ -4,6 +4,7 @@ import { useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
 import type { AboutMechaClub } from '@prisma/client';
 import ImageUploader from '@/components/admin/ImageUploader';
+import HeroImagePositionSlider from '@/components/admin/HeroImagePositionSlider';
 import StatsEditor from '@/components/admin/StatsEditor';
 import ActivitiesEditor from '@/components/admin/ActivitiesEditor';
 import {
@@ -44,9 +45,10 @@ export default function AboutMechaClubForm({ initial }: { initial: AboutMechaClu
                        label="Hero image"
                        initialUrl={initial?.heroImageUrl}
                        initialPublicId={initial?.heroImagePublicId} />
-        <TextField label="Hero image position" name="heroImagePosition"
-                   defaultValue={initial?.heroImagePosition ?? ''}
-                   placeholder="center 45%" />
+        <HeroImagePositionSlider
+          name="heroImageVerticalPercent"
+          initialValue={initial?.heroImageVerticalPercent}
+        />
       </Card>
 
       <Card title="Intro section">

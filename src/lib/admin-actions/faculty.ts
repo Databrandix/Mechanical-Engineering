@@ -87,9 +87,9 @@ function extractFromFormData(formData: FormData) {
     messagePhotoPublicId:     emptyToNull(formData.get('messagePhotoPublicId')),
     messageTitleLine1:        emptyToNull(formData.get('messageTitleLine1')),
     messageTitleLine2:        emptyToNull(formData.get('messageTitleLine2')),
-    messageHeroImageUrl:      emptyToNull(formData.get('messageHeroImageUrl')),
-    messageHeroImagePublicId: emptyToNull(formData.get('messageHeroImagePublicId')),
-    messageHeroImagePosition: emptyToNull(formData.get('messageHeroImagePosition')),
+    messageHeroImageUrl:             emptyToNull(formData.get('messageHeroImageUrl')),
+    messageHeroImagePublicId:        emptyToNull(formData.get('messageHeroImagePublicId')),
+    messageHeroImageVerticalPercent: formData.get('messageHeroImageVerticalPercent') ?? undefined,
   };
 }
 
@@ -129,9 +129,9 @@ function buildFacultyData(parsed: ReturnType<typeof facultyCreateSchema.parse>) 
     messagePhotoPublicId:  parsed.messagePhotoPublicId ?? null,
     messageTitleLine1:     parsed.messageTitleLine1 ?? null,
     messageTitleLine2:     parsed.messageTitleLine2 ?? null,
-    messageHeroImageUrl:   parsed.messageHeroImageUrl ?? null,
-    messageHeroImagePublicId: parsed.messageHeroImagePublicId ?? null,
-    messageHeroImagePosition: parsed.messageHeroImagePosition ?? null,
+    messageHeroImageUrl:             parsed.messageHeroImageUrl ?? null,
+    messageHeroImagePublicId:        parsed.messageHeroImagePublicId ?? null,
+    messageHeroImageVerticalPercent: parsed.messageHeroImageVerticalPercent,
   };
 }
 

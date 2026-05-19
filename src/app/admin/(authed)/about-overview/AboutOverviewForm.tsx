@@ -4,6 +4,7 @@ import { useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
 import type { AboutOverview } from '@prisma/client';
 import ImageUploader from '@/components/admin/ImageUploader';
+import HeroImagePositionSlider from '@/components/admin/HeroImagePositionSlider';
 import ParagraphsEditor from '@/components/admin/ParagraphsEditor';
 import {
   updateAboutOverviewAction,
@@ -36,9 +37,10 @@ export default function AboutOverviewForm({ initial }: { initial: AboutOverview 
                        label="Hero image"
                        initialUrl={initial?.heroImageUrl}
                        initialPublicId={initial?.heroImagePublicId} />
-        <TextField label="Hero image position (CSS object-position)" name="heroImagePosition"
-                   defaultValue={initial?.heroImagePosition ?? ''}
-                   placeholder="center 3%" />
+        <HeroImagePositionSlider
+          name="heroImageVerticalPercent"
+          initialValue={initial?.heroImageVerticalPercent}
+        />
       </Card>
 
       <Card title="Paragraphs">

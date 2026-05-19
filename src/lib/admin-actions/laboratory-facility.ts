@@ -64,7 +64,7 @@ export async function updateLaboratoryFacilityLandingAction(
     heroOverline:      emptyToNull(formData.get('heroOverline')),
     heroImageUrl:      getStr(formData, 'heroImageUrl'),
     heroImagePublicId: emptyToNull(formData.get('heroImagePublicId')),
-    heroImagePosition: emptyToNull(formData.get('heroImagePosition')),
+    heroImageVerticalPercent: formData.get('heroImageVerticalPercent') ?? undefined,
     introBody:         getStr(formData, 'introBody'),
     featuresOverline:  emptyToNull(formData.get('featuresOverline')),
     featuresHeading:   getStr(formData, 'featuresHeading'),

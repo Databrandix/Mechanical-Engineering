@@ -22,7 +22,7 @@ export default async function MissionVisionPage() {
       title={row.heroTitle}
       overline={row.heroOverline ?? undefined}
       image={row.heroImageUrl}
-      imagePosition={row.heroImagePosition ?? 'center'}
+      imagePosition={`center ${row.heroImageVerticalPercent}%`}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

@@ -56,7 +56,7 @@ export default async function LaboratoryFacilityPage() {
       title={landing.heroTitle}
       overline={landing.heroOverline ?? undefined}
       image={landing.heroImageUrl}
-      imagePosition={landing.heroImagePosition ?? 'center'}
+      imagePosition={`center ${landing.heroImageVerticalPercent}%`}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

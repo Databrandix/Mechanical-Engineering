@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from 'react';
 import type { DepartmentIdentity } from '@prisma/client';
 import { toast } from 'sonner';
 import ImageUploader from '@/components/admin/ImageUploader';
+import HeroImagePositionSlider from '@/components/admin/HeroImagePositionSlider';
 import {
   updateDepartmentAction,
   type ActionResult,
@@ -76,6 +77,11 @@ export default function DepartmentForm({ initial }: { initial: Initial }) {
                          initialPublicId={initial?.heroImage1PublicId} />
           <TextField label="Alt text #1" name="heroImage1Alt"
                      defaultValue={initial?.heroImage1Alt ?? ''} />
+          <HeroImagePositionSlider
+            name="heroImage1VerticalPercent"
+            initialValue={initial?.heroImage1VerticalPercent}
+            label="Hero #1 vertical position"
+          />
         </div>
         <div className="space-y-3 pb-2 border-b border-gray-100">
           <ImageUploader kind="department-hero" name="heroImage2" aspectRatio="wide"
@@ -84,6 +90,11 @@ export default function DepartmentForm({ initial }: { initial: Initial }) {
                          initialPublicId={initial?.heroImage2PublicId} />
           <TextField label="Alt text #2" name="heroImage2Alt"
                      defaultValue={initial?.heroImage2Alt ?? ''} />
+          <HeroImagePositionSlider
+            name="heroImage2VerticalPercent"
+            initialValue={initial?.heroImage2VerticalPercent}
+            label="Hero #2 vertical position"
+          />
         </div>
         <div className="space-y-3">
           <ImageUploader kind="department-hero" name="heroImage3" aspectRatio="wide"
@@ -92,6 +103,11 @@ export default function DepartmentForm({ initial }: { initial: Initial }) {
                          initialPublicId={initial?.heroImage3PublicId} />
           <TextField label="Alt text #3" name="heroImage3Alt"
                      defaultValue={initial?.heroImage3Alt ?? ''} />
+          <HeroImagePositionSlider
+            name="heroImage3VerticalPercent"
+            initialValue={initial?.heroImage3VerticalPercent}
+            label="Hero #3 vertical position"
+          />
         </div>
       </Card>
 

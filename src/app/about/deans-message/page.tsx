@@ -26,7 +26,7 @@ export default async function DeansMessagePage() {
       title="Dean's Message"
       overline="About"
       image={dean.messageHeroImageUrl ?? FALLBACK_HERO}
-      imagePosition={dean.messageHeroImagePosition ?? 'center 3%'}
+      imagePosition={`center ${dean.messageHeroImageVerticalPercent}%`}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

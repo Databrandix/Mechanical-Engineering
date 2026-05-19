@@ -97,7 +97,7 @@ export const POST = withErrorHandling(async (request) => {
           messageTitleLine2:     parsed.messageTitleLine2 ?? null,
           messageHeroImageUrl:   parsed.messageHeroImageUrl ?? null,
           messageHeroImagePublicId: parsed.messageHeroImagePublicId ?? null,
-          messageHeroImagePosition: parsed.messageHeroImagePosition ?? null,
+          messageHeroImageVerticalPercent: parsed.messageHeroImageVerticalPercent,
         },
       });
     });

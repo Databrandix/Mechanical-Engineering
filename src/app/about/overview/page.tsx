@@ -22,7 +22,7 @@ export default async function OverviewPage() {
       subtitle={row.heroSubtitle ?? undefined}
       overline={row.heroOverline ?? undefined}
       image={row.heroImageUrl}
-      imagePosition={row.heroImagePosition ?? 'center'}
+      imagePosition={`center ${row.heroImageVerticalPercent}%`}
     >
       <Container>
         <div className="space-y-6 text-[16px] md:text-[17px] leading-[1.85] text-gray-800 text-justify">

@@ -5,6 +5,7 @@ import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import type { Faculty } from '@prisma/client';
 import ImageUploader from '@/components/admin/ImageUploader';
+import HeroImagePositionSlider from '@/components/admin/HeroImagePositionSlider';
 import PersonalInfoEditor from './PersonalInfoEditor';
 import SectionContentEditor from './SectionContentEditor';
 import ParagraphsEditor from '@/components/admin/ParagraphsEditor';
@@ -265,11 +266,9 @@ export default function FacultyForm({ initial, currentDean, currentHead }: Props
               initialPublicId={initial?.messageHeroImagePublicId}
             />
             <div className="mt-2">
-              <TextField
-                label="Hero image position (CSS object-position)"
-                name="messageHeroImagePosition"
-                defaultValue={initial?.messageHeroImagePosition ?? ''}
-                placeholder='e.g. "center top" or "center 3%"'
+              <HeroImagePositionSlider
+                name="messageHeroImageVerticalPercent"
+                initialValue={initial?.messageHeroImageVerticalPercent}
               />
             </div>
           </div>

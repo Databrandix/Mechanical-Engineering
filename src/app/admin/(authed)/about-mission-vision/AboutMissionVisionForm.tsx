@@ -4,6 +4,7 @@ import { useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
 import type { AboutMissionVision } from '@prisma/client';
 import ImageUploader from '@/components/admin/ImageUploader';
+import HeroImagePositionSlider from '@/components/admin/HeroImagePositionSlider';
 import {
   updateAboutMissionVisionAction,
   type ActionResult,
@@ -33,9 +34,10 @@ export default function AboutMissionVisionForm({ initial }: { initial: AboutMiss
                        label="Hero image"
                        initialUrl={initial?.heroImageUrl}
                        initialPublicId={initial?.heroImagePublicId} />
-        <TextField label="Hero image position" name="heroImagePosition"
-                   defaultValue={initial?.heroImagePosition ?? ''}
-                   placeholder="center 3%" />
+        <HeroImagePositionSlider
+          name="heroImageVerticalPercent"
+          initialValue={initial?.heroImageVerticalPercent}
+        />
       </Card>
 
       <Card title="Mission card">
