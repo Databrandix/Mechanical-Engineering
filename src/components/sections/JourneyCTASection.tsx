@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { motion } from 'motion/react';
 import Container from '../ui/Container';
 
@@ -35,14 +34,17 @@ export default function JourneyCTASection({
 }: Props) {
   return (
     <section className="relative">
-      {/* Hero image with overlays */}
+      {/* Hero image with overlays. Plain <img> instead of next/image —
+          next/image's fill mode injects its own object-position default
+          that overrides the inline style, breaking the admin's
+          vertical-position slider. Single-image render path so the
+          optimization trade-off is negligible. */}
       <div className="relative h-[420px] md:h-[480px] overflow-hidden">
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={heroImageUrl}
           alt=""
-          fill
-          sizes="100vw"
-          className="object-cover"
+          className="absolute inset-0 w-full h-full object-cover"
           style={{ objectPosition: heroImagePosition }}
         />
         {/* Left dark overlay for text readability */}
