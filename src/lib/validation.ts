@@ -23,15 +23,18 @@ export const departmentUpdateSchema = z.object({
   logoUrl:         z.string().min(1),
   logoPublicId:    nullableString,
   breadcrumbLabel: z.string().min(1).max(50),
-  heroImage1Url:   z.string().min(1),
-  heroImage1PublicId: nullableString,
-  heroImage1Alt:   optionalNullableString,
-  heroImage2Url:   z.string().min(1),
-  heroImage2PublicId: nullableString,
-  heroImage2Alt:   optionalNullableString,
-  heroImage3Url:   z.string().min(1),
-  heroImage3PublicId: nullableString,
-  heroImage3Alt:   optionalNullableString,
+  heroImage1Url:             z.string().min(1),
+  heroImage1PublicId:        nullableString,
+  heroImage1Alt:             optionalNullableString,
+  heroImage1VerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
+  heroImage2Url:             z.string().min(1),
+  heroImage2PublicId:        nullableString,
+  heroImage2Alt:             optionalNullableString,
+  heroImage2VerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
+  heroImage3Url:             z.string().min(1),
+  heroImage3PublicId:        nullableString,
+  heroImage3Alt:             optionalNullableString,
+  heroImage3VerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
 });
 
 // ─────────────────────────────────────────────────────────────────
@@ -230,9 +233,9 @@ export const facultyCreateSchema = z.object({
   messagePhotoPublicId:     optionalNullableString,
   messageTitleLine1:        z.string().nullable().optional(),
   messageTitleLine2:        z.string().nullable().optional(),
-  messageHeroImageUrl:      optionalNullableString,
-  messageHeroImagePublicId: optionalNullableString,
-  messageHeroImagePosition: z.string().nullable().optional(),
+  messageHeroImageUrl:             optionalNullableString,
+  messageHeroImagePublicId:        optionalNullableString,
+  messageHeroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
 });
 
 export const facultyUpdateSchema = facultyCreateSchema.partial();
@@ -337,7 +340,7 @@ export const aboutOverviewUpdateSchema = z.object({
   heroOverline:      optionalNullableString,
   heroImageUrl:      z.string().min(1),
   heroImagePublicId: optionalNullableString,
-  heroImagePosition: optionalNullableString,
+  heroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
   paragraphs:        z.array(z.string()).default([]),
 });
 
@@ -346,7 +349,7 @@ export const aboutMissionVisionUpdateSchema = z.object({
   heroOverline:      optionalNullableString,
   heroImageUrl:      z.string().min(1),
   heroImagePublicId: optionalNullableString,
-  heroImagePosition: optionalNullableString,
+  heroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
   missionOverline:   optionalNullableString,
   missionHeading:    z.string().min(1).max(300),
   missionBody:       z.string().min(1),
@@ -380,7 +383,7 @@ export const labFacilityLandingUpdateSchema = z.object({
   heroOverline:      optionalNullableString,
   heroImageUrl:      z.string().min(1),
   heroImagePublicId: optionalNullableString,
-  heroImagePosition: optionalNullableString,
+  heroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
   introBody:         z.string().min(1),
 });
 
@@ -413,7 +416,7 @@ export const laboratoryFacilityLandingUpdateSchema = z.object({
   heroOverline:      optionalNullableString,
   heroImageUrl:      z.string().min(1),
   heroImagePublicId: optionalNullableString,
-  heroImagePosition: optionalNullableString,
+  heroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
   introBody:         z.string().min(1),
   featuresOverline:  optionalNullableString,
   featuresHeading:   z.string().min(1).max(300),
@@ -437,7 +440,7 @@ export const aboutMechaClubUpdateSchema = z.object({
   heroOverline:             optionalNullableString,
   heroImageUrl:             z.string().min(1),
   heroImagePublicId:        optionalNullableString,
-  heroImagePosition:        optionalNullableString,
+  heroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
   introOverline:            optionalNullableString,
   introHeading:             z.string().min(1),
   introBody1:               z.string().min(1),
@@ -983,7 +986,7 @@ export const contactPageContentUpdateSchema = z.object({
   heroOverline:        optionalNullableString,
   heroImageUrl:        z.string().min(1),
   heroImagePublicId:   nullableString,
-  heroImagePosition:   optionalNullableString,
+  heroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
   introBody:           z.string().min(1),
   quickContactHeading: z.string().min(1).max(200),
   formHeading:         z.string().min(1).max(200),
@@ -1012,7 +1015,7 @@ export const campusLocationUpdateSchema = campusLocationCreateSchema;
 export const journeyCTAContentUpdateSchema = z.object({
   heroImageUrl:         z.string().min(1),
   heroImagePublicId:    nullableString,
-  heroImagePosition:    optionalNullableString,
+  heroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
   heading:              z.string().min(1).max(300),
   body:                 z.string().min(1),
   primaryCtaLabel:      z.string().min(1).max(100),
