@@ -1,8 +1,14 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { FileText, ImageOff, X } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  DEFAULT_IMAGE_QUALITY_PRESET,
+  IMAGE_QUALITY_PRESET_LABELS,
+  applyDeliveryTransformation,
+  type ImageQualityPreset,
+} from '@/lib/image-quality';
 
 type Kind =
   | 'department-logo'
@@ -96,7 +102,22 @@ export default function ImageUploader({
   );
   const [fileName, setFileName] = useState<string>(initialFileName ?? '');
   const [uploading, setUploading] = useState(false);
+  // Phase 14 — per-upload delivery quality preset. Default 'auto'
+  // (f_auto,q_auto:good) covers ~95% of photo uploads. Admins switch
+  // to 'original' for logos / diagrams / text-heavy images where
+  // compression artefacts matter. The preset chosen BEFORE upload
+  // gets baked into the secure_url before it's saved to the DB; the
+  // radio is interactive after upload too but only affects the NEXT
+  // upload (existing URL is locked).
+  const [quality, setQuality] = useState<ImageQualityPreset>(
+    DEFAULT_IMAGE_QUALITY_PRESET,
+  );
   const fileRef = useRef<HTMLInputElement>(null);
+  const qualityGroupId = useId();
+  // Hide the quality radio when the form is PDF-only — f_auto/q_auto
+  // have no useful effect on PDFs. Mixed image+pdf forms (e.g. Phase 6
+  // notice-file) keep the radio because images go through it.
+  const showQuality = accept !== 'application/pdf';
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -134,13 +155,22 @@ export default function ImageUploader({
       const nextFileType: 'image' | 'pdf' = format === 'pdf' ? 'pdf' : 'image';
       const nextFileName = String(upJson.original_filename ?? file.name ?? '');
 
-      setUrl(upJson.secure_url);
+      // Phase 14 — bake the delivery-quality transformation into the
+      // secure_url for images before persisting. PDFs and unrecognized
+      // URLs pass through unchanged (applyDeliveryTransformation
+      // returns the input as-is in those cases).
+      const deliveryUrl =
+        nextFileType === 'image'
+          ? applyDeliveryTransformation(upJson.secure_url, quality)
+          : upJson.secure_url;
+
+      setUrl(deliveryUrl);
       setPublicId(upJson.public_id);
       setFileType(nextFileType);
       setFileName(nextFileName);
       const w = typeof upJson.width === 'number' ? upJson.width : undefined;
       const h = typeof upJson.height === 'number' ? upJson.height : undefined;
-      onChange?.(upJson.secure_url, upJson.public_id, {
+      onChange?.(deliveryUrl, upJson.public_id, {
         fileType: nextFileType,
         fileName: nextFileName,
         width: w,
@@ -258,6 +288,41 @@ export default function ImageUploader({
           <span className="text-xs text-gray-500 animate-pulse">Uploading…</span>
         )}
       </div>
+      {showQuality && (
+        <fieldset
+          className="border border-gray-200 rounded-md p-2.5 mt-1"
+          disabled={uploading}
+        >
+          <legend className="px-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+            Delivery quality
+          </legend>
+          <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm">
+            {(['auto', 'original', 'auto_compact'] as const).map((preset) => (
+              <label
+                key={preset}
+                className="inline-flex items-center gap-1.5 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name={qualityGroupId}
+                  value={preset}
+                  checked={quality === preset}
+                  onChange={() => setQuality(preset)}
+                  className="accent-accent"
+                />
+                <span className="text-gray-700">
+                  {IMAGE_QUALITY_PRESET_LABELS[preset]}
+                </span>
+              </label>
+            ))}
+          </div>
+          <p className="mt-1.5 text-[11px] text-gray-500 leading-snug">
+            Auto-optimized: recommended for photos. Original: for logos,
+            diagrams, or text-heavy images. Maximum compression: smaller
+            files, lower quality. Choose <em>before</em> uploading.
+          </p>
+        </fieldset>
+      )}
       {!onChange && (
         <>
           <input type="hidden" name={`${name}Url`} value={url} />

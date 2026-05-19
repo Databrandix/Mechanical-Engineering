@@ -87,6 +87,14 @@ function folderFor(kind: string): string {
 //
 //  API_SECRET never leaves the server.
 //
+//  STORAGE INVARIANT (Phase 14): no `format` / transformation params
+//  are signed here, so Cloudinary stores the ORIGINAL bytes. The
+//  per-upload quality preference picked in ImageUploader is realised
+//  at delivery time by inserting a transformation segment into the
+//  returned secure_url before it lands in the DB — see
+//  src/lib/image-quality.ts. This means we can change delivery
+//  preferences later without losing the source.
+//
 export function signUploadParams(kind: string) {
   ensureConfigured();
   const timestamp = Math.round(Date.now() / 1000);
