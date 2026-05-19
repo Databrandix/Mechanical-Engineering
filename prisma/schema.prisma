@@ -1171,6 +1171,43 @@ model CampusLocation {
   @@map("campus_location")
 }
 
+// ─────────────────────────────────────────────────────────────────
+//  Phase 12 — JourneyCTASection content (between content + footer)
+//    Closes the last layout-level chrome gap missed by the Phase 10
+//    page-only audit. Hero image + heading + body + 2 CTA buttons,
+//    all DB-driven; seed mirrors the prior hardcoded values so first
+//    deploy is pixel-identical (admin can edit afterward).
+// ─────────────────────────────────────────────────────────────────
+
+model JourneyCTAContent {
+  id                   String   @id @default("singleton")
+
+  // Hero background image (Cloudinary-paired). heroImagePosition is
+  // a CSS object-position value; admin edits via a slider that emits
+  // `center {N}%` (0 = top of image visible, 100 = bottom).
+  heroImageUrl         String
+  heroImagePublicId    String?
+  heroImagePosition    String?
+
+  // Display copy. body is HTML-allowed (inline <strong>/<em>) under
+  // the Phase 4 J1 author-trusted pattern.
+  heading              String
+  body                 String   @db.Text
+
+  // Two CTAs (MainNavItem pattern — label + href + isExternal).
+  primaryCtaLabel      String
+  primaryCtaHref       String
+  primaryCtaExternal   Boolean  @default(true)
+
+  secondaryCtaLabel    String
+  secondaryCtaHref     String
+  secondaryCtaExternal Boolean  @default(false)
+
+  updatedAt            DateTime @updatedAt
+
+  @@map("journey_cta_content")
+}
+
 model ContactSubmission {
   id            String   @id @default(cuid())
   name          String

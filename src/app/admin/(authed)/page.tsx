@@ -35,6 +35,7 @@ import {
   Mail,
   Contact,
   Building,
+  Rocket,
 } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
@@ -61,6 +62,7 @@ export default async function DashboardHome() {
     waiverCategoryCount, scholarshipCount,
     newSubmissionCount, totalSubmissionCount,
     contactPageContentConfigured, campusLocationCount,
+    journeyCTAContentConfigured,
     adminUsersCount, previousSession,
   ] = await Promise.all([
     prisma.program.count(),
@@ -91,6 +93,7 @@ export default async function DashboardHome() {
     prisma.contactSubmission.count(),
     prisma.contactPageContent.count(),
     prisma.campusLocation.count(),
+    prisma.journeyCTAContent.count(),
     isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
     prisma.session.findFirst({
       where: {
@@ -120,7 +123,7 @@ export default async function DashboardHome() {
         <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">
           At a glance
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
           <StatCard label="Total Programs" value={programsCount} />
           <StatCard label="Total Research Areas" value={researchAreasCount} />
           <StatCard label="Total Faculty" value={facultyCount} />
@@ -136,7 +139,7 @@ export default async function DashboardHome() {
           <StatCard label="Visitors" value={visitorCount} />
           <StatCard label="Research Papers" value={researchPaperCount} />
           <StatCard label="Bus Routes" value={busRouteCount} />
-          <StatCard label="Syllabi" value={syllabusCount} />
+          <StatCard label="Syllabus" value={syllabusCount} />
           <StatCard label="Admission Notices" value={admissionNoticeCount} />
           <StatCard label="Prospectus Entries" value={prospectusEntryCount} />
           <StatCard label="Admission Requirements"
@@ -157,6 +160,9 @@ export default async function DashboardHome() {
                     value={contactPageContentConfigured ? 'Configured' : 'Not configured'}
                     stringValue />
           <StatCard label="Campus Locations" value={campusLocationCount} />
+          <StatCard label="Journey CTA"
+                    value={journeyCTAContentConfigured ? 'Configured' : 'Not configured'}
+                    stringValue />
           {isSuperAdmin && (
             <StatCard label="Total Admin Users" value={adminUsersCount!} />
           )}
@@ -386,6 +392,12 @@ export default async function DashboardHome() {
             icon={Building}
             title="Manage Campus Locations"
             desc="Campus address cards rendered on /contact"
+          />
+          <ActionCard
+            href="/admin/journey-cta"
+            icon={Rocket}
+            title="Journey CTA"
+            desc="Hero + heading + body + 2 CTA buttons above the footer"
           />
           {isSuperAdmin && (
             <ActionCard

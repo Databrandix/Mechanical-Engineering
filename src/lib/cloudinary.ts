@@ -63,6 +63,8 @@ const KIND_TO_SUBFOLDER: Record<string, string> = {
   'prospectus-pdf':        'admission/prospectus/pdfs',
   // Phase 10 — contact page hero image.
   'contact-hero':          'contact/hero',
+  // Phase 12 — journey CTA hero image (between content + footer chrome).
+  'journey-cta-hero':      'journey-cta/hero',
 };
 
 function folderFor(kind: string): string {

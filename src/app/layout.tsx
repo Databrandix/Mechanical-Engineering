@@ -7,6 +7,7 @@ import JourneyCTASection from '@/components/sections/JourneyCTASection';
 import {
   getDepartmentIdentity,
   getUniversityIdentity,
+  getJourneyCTAContent,
   getTopLinks,
   getQuickAccessItems,
   getMainNav,
@@ -97,13 +98,17 @@ export default async function RootLayout({
   // The search index aggregates 8 DB tables + 5 file-based arrays.
   // Skip the work on /admin/* where Navbar isn't rendered anyway.
   const [
-    dept, uni,
+    dept, uni, journeyCTA,
     topLinks, quickAccessItems, mainNav,
     usefulLinks, getInTouchLinks, quickLinks, legalLinks,
     searchItems,
   ] = await Promise.all([
     getDepartmentIdentity(),
     getUniversityIdentity(),
+    // Phase 12 — JourneyCTAContent singleton drives the section that
+    // sits between page content and the footer on every public page.
+    // Skipped on /admin/* like the other chrome fetches below.
+    isAdmin ? Promise.resolve(null) : getJourneyCTAContent(),
     getTopLinks(),
     getQuickAccessItems(),
     getMainNav(),
@@ -142,7 +147,20 @@ export default async function RootLayout({
           />
         )}
         <main className="flex-grow">{children}</main>
-        {!isAdmin && <JourneyCTASection />}
+        {!isAdmin && journeyCTA && (
+          <JourneyCTASection
+            heroImageUrl={journeyCTA.heroImageUrl}
+            heroImagePosition={journeyCTA.heroImagePosition ?? 'center 32%'}
+            heading={journeyCTA.heading}
+            body={journeyCTA.body}
+            primaryCtaLabel={journeyCTA.primaryCtaLabel}
+            primaryCtaHref={journeyCTA.primaryCtaHref}
+            primaryCtaExternal={journeyCTA.primaryCtaExternal}
+            secondaryCtaLabel={journeyCTA.secondaryCtaLabel}
+            secondaryCtaHref={journeyCTA.secondaryCtaHref}
+            secondaryCtaExternal={journeyCTA.secondaryCtaExternal}
+          />
+        )}
         {!isAdmin && (
           <Footer
             logoUrl={uni.logoUrl}

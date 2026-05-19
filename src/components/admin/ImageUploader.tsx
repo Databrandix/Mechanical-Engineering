@@ -31,7 +31,9 @@ type Kind =
   | 'prospectus-cover'
   | 'prospectus-pdf'
   // Phase 10
-  | 'contact-hero';
+  | 'contact-hero'
+  // Phase 12
+  | 'journey-cta-hero';
 
 export type UploadMeta = {
   fileType: 'image' | 'pdf';

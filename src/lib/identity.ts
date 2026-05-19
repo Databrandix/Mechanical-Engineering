@@ -441,3 +441,11 @@ export const getContactPageContent = cache(async () => {
 export const getCampusLocations = cache(async () => {
   return prisma.campusLocation.findMany({ orderBy: { displayOrder: 'asc' } });
 });
+
+// ─────────────────────────────────────────────────────────────────
+//  Phase 12 — JourneyCTAContent (between-content-and-footer chrome).
+// ─────────────────────────────────────────────────────────────────
+
+export const getJourneyCTAContent = cache(async () => {
+  return prisma.journeyCTAContent.findUnique({ where: { id: 'singleton' } });
+});
