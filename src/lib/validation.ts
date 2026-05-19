@@ -275,6 +275,8 @@ export const uploadKindSchema = z.enum([
   'prospectus-pdf',
   // Phase 10
   'contact-hero',
+  // Phase 12
+  'journey-cta-hero',
 ]);
 
 export const uploadSignSchema = z.object({
@@ -1001,3 +1003,22 @@ export const campusLocationCreateSchema = z.object({
 });
 
 export const campusLocationUpdateSchema = campusLocationCreateSchema;
+
+// ─────────────────────────────────────────────────────────────────
+//  Phase 12 — JourneyCTAContent singleton (chrome section between
+//    page content and the footer; previously hardcoded).
+// ─────────────────────────────────────────────────────────────────
+
+export const journeyCTAContentUpdateSchema = z.object({
+  heroImageUrl:         z.string().min(1),
+  heroImagePublicId:    nullableString,
+  heroImagePosition:    optionalNullableString,
+  heading:              z.string().min(1).max(300),
+  body:                 z.string().min(1),
+  primaryCtaLabel:      z.string().min(1).max(100),
+  primaryCtaHref:       z.string().min(1).max(500),
+  primaryCtaExternal:   z.boolean().optional().default(false),
+  secondaryCtaLabel:    z.string().min(1).max(100),
+  secondaryCtaHref:     z.string().min(1).max(500),
+  secondaryCtaExternal: z.boolean().optional().default(false),
+});

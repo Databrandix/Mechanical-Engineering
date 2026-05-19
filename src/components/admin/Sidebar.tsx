@@ -45,6 +45,7 @@ import {
   Mail,
   Contact,
   Building,
+  Rocket,
 } from 'lucide-react';
 
 type SidebarUser = {
@@ -69,6 +70,7 @@ const PRIMARY_NAV: NavItem[] = [
   { href: '/admin/faculty',             label: 'Faculty',             icon: UsersRound },
   { href: '/admin/nav',                 label: 'Navigation',          icon: Navigation },
   { href: '/admin/footer-links',        label: 'Footer Links',        icon: PanelBottom },
+  { href: '/admin/journey-cta',         label: 'Journey CTA',         icon: Rocket },
 ];
 
 const ABOUT_PAGES_NAV: NavItem[] = [

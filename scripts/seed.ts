@@ -1797,6 +1797,33 @@ async function seedCampusLocations() {
   console.log(`✓ CampusLocation seeded (${campuses.length} rows)`);
 }
 
+// ─────────────────────────────────────────────────────────────────
+//  Phase 12 — JourneyCTAContent (chrome section between content +
+//    footer). Seeded from the previously hardcoded JourneyCTASection.
+// ─────────────────────────────────────────────────────────────────
+
+async function seedJourneyCTAContent() {
+  await prisma.journeyCTAContent.upsert({
+    where: { id: 'singleton' },
+    update: {},
+    create: {
+      id: 'singleton',
+      heroImageUrl: '/assets/journey-cta.webp',
+      heroImagePublicId: null,
+      heroImagePosition: 'center 32%',
+      heading: 'Shape Your Future with Excellence',
+      body: 'Join a vibrant academic community where innovation, leadership, and lifelong learning shape your path to success.',
+      primaryCtaLabel: 'Apply Now',
+      primaryCtaHref: 'http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/create_smart_panel',
+      primaryCtaExternal: true,
+      secondaryCtaLabel: 'Request for Information',
+      secondaryCtaHref: '/contact',
+      secondaryCtaExternal: false,
+    },
+  });
+  console.log('✓ JourneyCTAContent seeded (singleton)');
+}
+
 async function main() {
   console.log('Seeding database…\n');
   await seedDepartmentIdentity();
@@ -1861,6 +1888,9 @@ async function main() {
   console.log('\nPhase 10 contact page content…');
   await seedContactPageContent();
   await seedCampusLocations();
+
+  console.log('\nPhase 12 journey CTA…');
+  await seedJourneyCTAContent();
 
   console.log('\nDone.');
 }
