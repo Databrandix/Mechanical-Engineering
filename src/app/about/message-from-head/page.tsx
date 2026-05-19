@@ -35,7 +35,7 @@ export default async function MessageFromHeadPage() {
       title="Message from Head"
       overline="About"
       image={head.messageHeroImageUrl ?? FALLBACK_HERO}
-      imagePosition={head.messageHeroImagePosition ?? 'center top'}
+      imagePosition={`center ${head.messageHeroImageVerticalPercent}%`}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

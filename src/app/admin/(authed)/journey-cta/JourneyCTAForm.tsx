@@ -1,9 +1,10 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
 import type { JourneyCTAContent } from '@prisma/client';
 import ImageUploader from '@/components/admin/ImageUploader';
+import HeroImagePositionSlider from '@/components/admin/HeroImagePositionSlider';
 import {
   updateJourneyCTAContentAction,
   type ActionResult,
@@ -11,28 +12,10 @@ import {
 
 type State = ActionResult | { ok: null };
 
-// Convert a stored CSS object-position string ("center 32%") to the
-// 0-100 number the vertical-position slider uses. Defensive parse —
-// anything we can't read falls back to 50 (visual center).
-function parsePositionPercent(value: string | null | undefined): number {
-  if (!value) return 50;
-  const match = value.match(/(\d+)\s*%/);
-  if (!match) return 50;
-  const n = Number(match[1]);
-  if (!Number.isFinite(n)) return 50;
-  return Math.max(0, Math.min(100, Math.round(n)));
-}
-
 export default function JourneyCTAForm({ initial }: { initial: JourneyCTAContent | null }) {
   const [state, formAction, pending] = useActionState<State, FormData>(
     updateJourneyCTAContentAction,
     { ok: null },
-  );
-
-  // Vertical position slider — 0 = top edge visible, 100 = bottom
-  // edge visible. Persisted to DB as `center {N}%`.
-  const [verticalPercent, setVerticalPercent] = useState<number>(
-    parsePositionPercent(initial?.heroImagePosition),
   );
 
   useEffect(() => {
@@ -52,48 +35,10 @@ export default function JourneyCTAForm({ initial }: { initial: JourneyCTAContent
           initialPublicId={initial?.heroImagePublicId}
         />
 
-        <div>
-          <label htmlFor="heroVerticalPercent"
-                 className="block text-sm font-medium text-gray-700 mb-1">
-            Image vertical position
-          </label>
-          <div className="flex items-center gap-3">
-            <input
-              id="heroVerticalPercent"
-              type="range"
-              min={0}
-              max={100}
-              step={1}
-              value={verticalPercent}
-              onChange={(e) => setVerticalPercent(Number(e.target.value))}
-              className="flex-1 accent-accent cursor-pointer"
-            />
-            <input
-              type="number"
-              min={0}
-              max={100}
-              step={1}
-              value={verticalPercent}
-              onChange={(e) => {
-                const n = Number(e.target.value);
-                if (Number.isFinite(n)) setVerticalPercent(Math.max(0, Math.min(100, Math.round(n))));
-              }}
-              className="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center"
-              aria-label="Vertical position percent"
-            />
-            <span className="text-xs text-gray-500">%</span>
-          </div>
-          <p className="mt-1.5 text-xs text-gray-500">
-            Drag the slider to move the image up or down within the banner. 0 = top edge of the image visible, 100 = bottom edge visible. Try different values to frame the people / subject correctly.
-          </p>
-          {/* Hidden input serializes the slider value to the CSS form
-              the public renderer + DB use. */}
-          <input
-            type="hidden"
-            name="heroImagePosition"
-            value={`center ${verticalPercent}%`}
-          />
-        </div>
+        <HeroImagePositionSlider
+          name="heroImageVerticalPercent"
+          initialValue={initial?.heroImageVerticalPercent}
+        />
       </Card>
 
       <Card title="Content">

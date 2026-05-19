@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import {useEffect, useState} from 'react';
 import {motion} from 'motion/react';
 import Container from '../ui/Container';
@@ -18,13 +17,23 @@ const FALLBACK_ALTS = [
 type HeroSectionProps = {
   imageUrls: readonly string[];
   imageAlts: readonly (string | null)[];
+  // Phase 13 — per-image vertical position Int 0-100 from
+  // DepartmentIdentity.heroImage{1,2,3}VerticalPercent. Same length
+  // as imageUrls; defaults to 50 per slot if a value is missing.
+  imageVerticalPercents: readonly number[];
   breadcrumbLabel: string;
 };
 
-export default function HeroSection({ imageUrls, imageAlts, breadcrumbLabel }: HeroSectionProps) {
+export default function HeroSection({
+  imageUrls,
+  imageAlts,
+  imageVerticalPercents,
+  breadcrumbLabel,
+}: HeroSectionProps) {
   const heroImages = imageUrls.map((src, i) => ({
     src,
     alt: imageAlts[i] ?? FALLBACK_ALTS[i] ?? `Sonargaon University Mechanical Engineering — slide ${i + 1}`,
+    verticalPercent: imageVerticalPercents[i] ?? 50,
   }));
   const [activeImage, setActiveImage] = useState(0);
 
@@ -50,15 +59,20 @@ export default function HeroSection({ imageUrls, imageAlts, breadcrumbLabel }: H
               transition={isActive ? { duration: 6, ease: 'easeOut' } : { duration: 0 }}
               className={`absolute inset-0 transition-opacity duration-1000 ${isActive ? 'opacity-100' : 'opacity-0'}`}
             >
-              <Image
+              {/* Plain <img> so the inline objectPosition survives —
+                  next/image fill mode injects its own default that
+                  overrides style props (see memory:
+                  project_next_image_fill_object_position). Loss of
+                  srcset/optimization is acceptable: three large hero
+                  images on the homepage are a single render path. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={image.src}
                 alt={image.alt}
-                fill
-                sizes="100vw"
-                priority={index === 0}
                 loading={index === 0 ? 'eager' : 'lazy'}
                 fetchPriority={index === 0 ? 'high' : 'low'}
-                className="object-cover"
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ objectPosition: `center ${image.verticalPercent}%` }}
                 referrerPolicy={image.src.startsWith('http') ? 'no-referrer' : undefined}
               />
             </motion.div>

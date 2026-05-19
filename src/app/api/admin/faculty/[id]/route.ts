@@ -67,7 +67,7 @@ export const PUT = withErrorHandling(async (request, context: RouteContext) => {
   if (data.messageTitleLine2     !== undefined) update.messageTitleLine2     = data.messageTitleLine2 ?? null;
   if (data.messageHeroImageUrl   !== undefined) update.messageHeroImageUrl   = data.messageHeroImageUrl ?? null;
   if (data.messageHeroImagePublicId !== undefined) update.messageHeroImagePublicId = data.messageHeroImagePublicId ?? null;
-  if (data.messageHeroImagePosition !== undefined) update.messageHeroImagePosition = data.messageHeroImagePosition ?? null;
+  if (data.messageHeroImageVerticalPercent !== undefined) update.messageHeroImageVerticalPercent = data.messageHeroImageVerticalPercent;
 
   try {
     const faculty = await prisma.$transaction(async (tx) => {

@@ -93,16 +93,19 @@ model DepartmentIdentity {
   logoUrl            String
   logoPublicId       String?
   breadcrumbLabel    String
-  heroImage1Url      String
-  heroImage1PublicId String?
-  heroImage1Alt      String?
-  heroImage2Url      String
-  heroImage2PublicId String?
-  heroImage2Alt      String?
-  heroImage3Url      String
-  heroImage3PublicId String?
-  heroImage3Alt      String?
-  updatedAt          DateTime @updatedAt
+  heroImage1Url             String
+  heroImage1PublicId        String?
+  heroImage1Alt             String?
+  heroImage1VerticalPercent Int      @default(50)
+  heroImage2Url             String
+  heroImage2PublicId        String?
+  heroImage2Alt             String?
+  heroImage2VerticalPercent Int      @default(50)
+  heroImage3Url             String
+  heroImage3PublicId        String?
+  heroImage3Alt             String?
+  heroImage3VerticalPercent Int      @default(50)
+  updatedAt                 DateTime @updatedAt
 
   @@map("department_identity")
 }
@@ -248,9 +251,9 @@ model Faculty {
   messagePhotoPublicId      String?
   messageTitleLine1         String?
   messageTitleLine2         String?
-  messageHeroImageUrl       String?
-  messageHeroImagePublicId  String?
-  messageHeroImagePosition  String?
+  messageHeroImageUrl              String?
+  messageHeroImagePublicId         String?
+  messageHeroImageVerticalPercent  Int     @default(50)
 
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
@@ -407,14 +410,14 @@ model FooterLegalLink {
 // ════════════════════════════════════════════════════════════════
 
 model AboutOverview {
-  id                String   @id @default("singleton")
+  id                       String   @id @default("singleton")
   // Hero (PageShell)
-  heroTitle         String
-  heroSubtitle      String?
-  heroOverline      String?
-  heroImageUrl      String
-  heroImagePublicId String?
-  heroImagePosition String?
+  heroTitle                String
+  heroSubtitle             String?
+  heroOverline             String?
+  heroImageUrl             String
+  heroImagePublicId        String?
+  heroImageVerticalPercent Int      @default(50)
   // Body — variable-length list of paragraph bodies (HTML allowed)
   paragraphs        String[]
   updatedAt         DateTime @updatedAt
@@ -423,13 +426,13 @@ model AboutOverview {
 }
 
 model AboutMissionVision {
-  id                String   @id @default("singleton")
+  id                       String   @id @default("singleton")
   // Hero
-  heroTitle         String
-  heroOverline      String?
-  heroImageUrl      String
-  heroImagePublicId String?
-  heroImagePosition String?
+  heroTitle                String
+  heroOverline             String?
+  heroImageUrl             String
+  heroImagePublicId        String?
+  heroImageVerticalPercent Int      @default(50)
   // Mission card
   missionOverline   String?
   missionHeading    String
@@ -450,7 +453,7 @@ model AboutMechaClub {
   heroOverline             String?
   heroImageUrl             String
   heroImagePublicId        String?
-  heroImagePosition        String?
+  heroImageVerticalPercent Int      @default(50)
   // Intro section
   introOverline            String?
   // introHeading allows inline HTML (e.g. <span class="text-gradient">)
@@ -495,13 +498,13 @@ model AboutMechaClub {
 // ─── System 1 — /about/lab-facility (slug-based detail) ───────
 
 model LabFacilityLanding {
-  id                String   @id @default("singleton")
+  id                       String   @id @default("singleton")
   // Hero (PageShell)
-  heroTitle         String              // "Lab Facilities"
-  heroOverline      String?             // "About"
-  heroImageUrl      String
-  heroImagePublicId String?
-  heroImagePosition String?             // "center 25%"
+  heroTitle                String              // "Lab Facilities"
+  heroOverline             String?             // "About"
+  heroImageUrl             String
+  heroImagePublicId        String?
+  heroImageVerticalPercent Int      @default(50)  // 0 = top, 100 = bottom
   // Intro paragraph (HTML allowed, same convention as Phase 4 AboutOverview)
   introBody         String   @db.Text
   updatedAt         DateTime @updatedAt
@@ -535,13 +538,13 @@ model Lab {
 // ─── System 2 — /about/laboratory-facility (grid + features) ──
 
 model LaboratoryFacilityLanding {
-  id                String   @id @default("singleton")
+  id                       String   @id @default("singleton")
   // Hero
-  heroTitle         String              // "Laboratory Facility"
-  heroOverline      String?             // "About"
-  heroImageUrl      String
-  heroImagePublicId String?
-  heroImagePosition String?
+  heroTitle                String              // "Laboratory Facility"
+  heroOverline             String?             // "About"
+  heroImageUrl             String
+  heroImagePublicId        String?
+  heroImageVerticalPercent Int      @default(50)
   // Intro
   introBody         String   @db.Text
   // "Why Our Labs Matter" — features section on the landing
@@ -1119,11 +1122,11 @@ model ContactPageContent {
   id                  String   @id @default("singleton")
 
   // Hero (PageShell)
-  heroTitle           String              // "Contact Us"
-  heroOverline        String?             // "Get in Touch"
-  heroImageUrl        String
-  heroImagePublicId   String?
-  heroImagePosition   String?             // "center 30%"
+  heroTitle                String              // "Contact Us"
+  heroOverline             String?             // "Get in Touch"
+  heroImageUrl             String
+  heroImagePublicId        String?
+  heroImageVerticalPercent Int      @default(50)
 
   // Intro paragraph (HTML allowed, single block — page only has one)
   introBody           String   @db.Text
@@ -1182,12 +1185,13 @@ model CampusLocation {
 model JourneyCTAContent {
   id                   String   @id @default("singleton")
 
-  // Hero background image (Cloudinary-paired). heroImagePosition is
-  // a CSS object-position value; admin edits via a slider that emits
-  // `center {N}%` (0 = top of image visible, 100 = bottom).
-  heroImageUrl         String
-  heroImagePublicId    String?
-  heroImagePosition    String?
+  // Hero background image (Cloudinary-paired). Vertical percent is
+  // 0 = top edge visible, 100 = bottom edge visible; renderer emits
+  // `center {N}%` as the CSS object-position value. Phase 13
+  // standardized from String to Int across all hero-bearing entities.
+  heroImageUrl             String
+  heroImagePublicId        String?
+  heroImageVerticalPercent Int      @default(50)
 
   // Display copy. body is HTML-allowed (inline <strong>/<em>) under
   // the Phase 4 J1 author-trusted pattern.

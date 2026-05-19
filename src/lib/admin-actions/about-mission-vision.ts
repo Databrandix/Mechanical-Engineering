@@ -30,7 +30,7 @@ export async function updateAboutMissionVisionAction(
     heroOverline:      emptyToNull(formData.get('heroOverline')),
     heroImageUrl:      getStr(formData, 'heroImageUrl'),
     heroImagePublicId: emptyToNull(formData.get('heroImagePublicId')),
-    heroImagePosition: emptyToNull(formData.get('heroImagePosition')),
+    heroImageVerticalPercent: formData.get('heroImageVerticalPercent') ?? undefined,
     missionOverline:   emptyToNull(formData.get('missionOverline')),
     missionHeading:    getStr(formData, 'missionHeading'),
     missionBody:       getStr(formData, 'missionBody'),

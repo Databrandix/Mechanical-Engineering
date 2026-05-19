@@ -30,7 +30,7 @@ export async function updateJourneyCTAContentAction(
   const raw = {
     heroImageUrl:         getStr(formData, 'heroImageUrl'),
     heroImagePublicId:    emptyToNull(formData.get('heroImagePublicId')),
-    heroImagePosition:    emptyToNull(formData.get('heroImagePosition')),
+    heroImageVerticalPercent: formData.get('heroImageVerticalPercent') ?? undefined,
     heading:              getStr(formData, 'heading'),
     body:                 getStr(formData, 'body'),
     primaryCtaLabel:      getStr(formData, 'primaryCtaLabel'),

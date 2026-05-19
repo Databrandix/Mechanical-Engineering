@@ -233,7 +233,7 @@ async function seedFaculty() {
           messageTitleLine1: 'Dean',
           messageTitleLine2: 'Faculty of Science & Engineering',
           messageHeroImageUrl: '/assets/mission-vision-hero.webp',
-          messageHeroImagePosition: 'center 3%',
+          messageHeroImageVerticalPercent: 3,
         }
       : isHead
         ? {
@@ -247,7 +247,7 @@ async function seedFaculty() {
             messageTitleLine1: 'Head of the Department',
             messageTitleLine2: 'Department of Mechanical Engineering',
             messageHeroImageUrl: '/assets/message-from-head-hero.webp',
-            messageHeroImagePosition: 'center top',
+            messageHeroImageVerticalPercent: 0,
           }
         : {};
 
@@ -553,7 +553,7 @@ async function seedAboutOverview() {
       heroOverline:      null,
       heroImageUrl:      '/assets/mission-vision-hero.webp',
       heroImagePublicId: null,
-      heroImagePosition: 'center 3%',
+      heroImageVerticalPercent: 3,
       paragraphs: [
         'At the heart of innovation and excellence, the Department of Mechanical Engineering is committed to shaping future leaders in the field. Explore the dynamic world of mechanical engineering, where creativity meets technology, and where ideas transform into groundbreaking solutions.',
         'At the Department of Mechanical Engineering, we strive to shape the future of engineering by providing cutting-edge education and research opportunities. With a focus on interdisciplinary collaboration and real-world applications, our department prepares students to tackle complex challenges and contribute to the advancement of technology and society.',
@@ -575,7 +575,7 @@ async function seedAboutMissionVision() {
       heroOverline:      'About',
       heroImageUrl:      '/assets/mission-vision-hero.webp',
       heroImagePublicId: null,
-      heroImagePosition: 'center 3%',
+      heroImageVerticalPercent: 3,
 
       missionOverline: 'Our Purpose',
       missionHeading:  'Mission',
@@ -601,7 +601,7 @@ async function seedAboutMechaClub() {
       heroOverline:      'About',
       heroImageUrl:      '/assets/mecha-hero.webp',
       heroImagePublicId: null,
-      heroImagePosition: 'center 45%',
+      heroImageVerticalPercent: 45,
 
       introOverline: 'Where Engineering Meets Community',
       // Inline HTML preserved — gradient on "Mechanical Engineers"
@@ -710,7 +710,7 @@ async function seedLabFacilityLanding() {
       heroOverline:      'About',
       heroImageUrl:      '/assets/lab-hero.webp',
       heroImagePublicId: null,
-      heroImagePosition: 'center 25%',
+      heroImageVerticalPercent: 25,
       introBody:
         'The Department of Mechanical Engineering provides international-standard education through a combination of theory and hands-on practical sessions. Our specialised laboratories are equipped with modern machinery and tools to prepare students for the global engineering market.',
     },
@@ -758,7 +758,7 @@ async function seedLaboratoryFacilityLanding() {
       heroOverline:      'About',
       heroImageUrl:      '/assets/lab-hero.webp',
       heroImagePublicId: null,
-      heroImagePosition: 'center 25%',
+      heroImageVerticalPercent: 25,
       introBody:
         'The Department of Mechanical Engineering at Sonargaon University is committed to excellence in hands-on technical education. Our laboratories serve as the hub for innovation, where students apply complex thermodynamic, fluidic, and structural theories to real-world engineering challenges.',
       featuresOverline: 'What Sets Us Apart',
@@ -1737,7 +1737,7 @@ async function seedContactPageContent() {
     heroOverline: 'Get in Touch',
     heroImageUrl: '/assets/contact-hero.webp',
     heroImagePublicId: null,
-    heroImagePosition: 'center 30%',
+    heroImageVerticalPercent: 30,
     introBody:
       'We are here to assist you. Whether you have questions about admissions, academic programs, or campus facilities, feel free to reach out to us through any of the following channels.',
     quickContactHeading: 'Quick Contact Information',
@@ -1810,7 +1810,7 @@ async function seedJourneyCTAContent() {
       id: 'singleton',
       heroImageUrl: '/assets/journey-cta.webp',
       heroImagePublicId: null,
-      heroImagePosition: 'center 32%',
+      heroImageVerticalPercent: 32,
       heading: 'Shape Your Future with Excellence',
       body: 'Join a vibrant academic community where innovation, leadership, and lifelong learning shape your path to success.',
       primaryCtaLabel: 'Apply Now',

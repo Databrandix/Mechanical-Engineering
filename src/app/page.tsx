@@ -59,6 +59,11 @@ export default async function HomePage() {
       <HeroSection
         imageUrls={[dept.heroImage1Url, dept.heroImage2Url, dept.heroImage3Url]}
         imageAlts={[dept.heroImage1Alt, dept.heroImage2Alt, dept.heroImage3Alt]}
+        imageVerticalPercents={[
+          dept.heroImage1VerticalPercent,
+          dept.heroImage2VerticalPercent,
+          dept.heroImage3VerticalPercent,
+        ]}
         breadcrumbLabel={dept.breadcrumbLabel}
       />
       <OverviewSection />

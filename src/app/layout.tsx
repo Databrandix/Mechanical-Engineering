@@ -150,7 +150,7 @@ export default async function RootLayout({
         {!isAdmin && journeyCTA && (
           <JourneyCTASection
             heroImageUrl={journeyCTA.heroImageUrl}
-            heroImagePosition={journeyCTA.heroImagePosition ?? 'center 32%'}
+            heroImagePosition={`center ${journeyCTA.heroImageVerticalPercent}%`}
             heading={journeyCTA.heading}
             body={journeyCTA.body}
             primaryCtaLabel={journeyCTA.primaryCtaLabel}
