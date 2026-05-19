@@ -4,6 +4,8 @@ import { Poppins, Montserrat, Hind_Siliguri } from 'next/font/google';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import JourneyCTASection from '@/components/sections/JourneyCTASection';
+import InitialSplash from '@/components/common/InitialSplash';
+import PublicNavigationOverlay from '@/components/common/PublicNavigationOverlay';
 import {
   getDepartmentIdentity,
   getUniversityIdentity,
@@ -92,8 +94,8 @@ export default async function RootLayout({
   // eliminates the SSR/client-hydration-mismatch class of bug that
   // a client-side usePathname guard could not reliably solve.
   const headersList = await headers();
-  const isAdmin =
-    headersList.get('x-pathname')?.startsWith('/admin') ?? false;
+  const pathname = headersList.get('x-pathname') ?? '/';
+  const isAdmin = pathname.startsWith('/admin');
 
   // The search index aggregates 8 DB tables + 5 file-based arrays.
   // Skip the work on /admin/* where Navbar isn't rendered anyway.
@@ -136,6 +138,15 @@ export default async function RootLayout({
       style={brandVars}
     >
       <body className="min-h-screen flex flex-col selection:bg-accent/30">
+        {/* Phase 15 — Tier 2 first-visit splash. Server-side condition
+            keeps the client component out of the /admin/* React tree
+            entirely; sessionStorage flag keeps it from showing twice
+            in the same tab. */}
+        {!isAdmin && <InitialSplash />}
+        {/* Phase 15 addendum — per-navigation overlay so the preloader
+            shows on EVERY public page transition, not just on slow
+            Suspense fetches. Same server-side admin guard. */}
+        {!isAdmin && <PublicNavigationOverlay />}
         {!isAdmin && (
           <Navbar
             logoUrl={dept.logoUrl}
@@ -146,7 +157,19 @@ export default async function RootLayout({
             searchItems={searchItems}
           />
         )}
-        <main className="flex-grow">{children}</main>
+        {/* Phase 15 — Tier 3 page transition. The wrapper is keyed by
+            pathname so React remounts it on every public navigation,
+            re-triggering the 250ms fade-in. Admin children render
+            raw with no transition wrapper. */}
+        <main className="flex-grow">
+          {isAdmin ? (
+            children
+          ) : (
+            <div key={pathname} className="page-fade-in">
+              {children}
+            </div>
+          )}
+        </main>
         {!isAdmin && journeyCTA && (
           <JourneyCTASection
             heroImageUrl={journeyCTA.heroImageUrl}

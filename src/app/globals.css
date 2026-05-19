@@ -57,4 +57,28 @@ html {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  /* Phase 15 — Tier 3 page transition. Applied to a per-pathname
+     keyed wrapper around public route children in the root layout,
+     so each public navigation triggers a fresh 250ms opacity fade-in.
+     Admin children render outside this wrapper. */
+  @keyframes page-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .page-fade-in {
+    animation: page-fade-in 250ms ease-out;
+  }
+
+  /* Phase 15 — BrandedLoader dot ellipsis. Classic 4-dot spinner
+     pattern: dot 1 grows in at the first slot, dots 2/3 slide
+     leftward one slot, dot 4 shrinks out at the last slot. Looped
+     seamlessly via cubic-bezier easing.
+     Geometry: container 80x16, dot 12x12, slot pitch 24px. */
+  @keyframes lds-ellipsis-grow   { 0% { transform: scale(0); }    100% { transform: scale(1); } }
+  @keyframes lds-ellipsis-shrink { 0% { transform: scale(1); }    100% { transform: scale(0); } }
+  @keyframes lds-ellipsis-slide  { 0% { transform: translateX(0); } 100% { transform: translateX(24px); } }
+  .ellipsis-grow   { animation: lds-ellipsis-grow   0.7s infinite cubic-bezier(0, 1, 1, 0); }
+  .ellipsis-shrink { animation: lds-ellipsis-shrink 0.7s infinite cubic-bezier(0, 1, 1, 0); }
+  .ellipsis-slide  { animation: lds-ellipsis-slide  0.7s infinite cubic-bezier(0, 1, 1, 0); }
 }
