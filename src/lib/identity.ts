@@ -449,3 +449,12 @@ export const getCampusLocations = cache(async () => {
 export const getJourneyCTAContent = cache(async () => {
   return prisma.journeyCTAContent.findUnique({ where: { id: 'singleton' } });
 });
+
+// Phase 17 — LegalPagesContent singleton. One row, two public pages
+// (/privacy-policy and /terms-and-conditions). React.cache so both
+// renderers share one DB hit when rendered in the same request
+// (they aren't, but the same fetcher is also used by the admin form
+// page and the dashboard "configured" check).
+export const getLegalPagesContent = cache(async () => {
+  return prisma.legalPagesContent.findUnique({ where: { id: 'singleton' } });
+});

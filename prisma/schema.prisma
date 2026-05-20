@@ -1212,6 +1212,44 @@ model JourneyCTAContent {
   @@map("journey_cta_content")
 }
 
+// ─────────────────────────────────────────────────────────────────
+//  Phase 17 — Legal pages (Privacy Policy + Terms & Conditions)
+//    Single combined singleton so both pages share one admin form +
+//    one migration. Two public routes (/privacy-policy and
+//    /terms-and-conditions) read this row and pick their own half.
+//    body fields store HTML (inline + headings + lists allowed)
+//    rendered via dangerouslySetInnerHTML with a .legal-body CSS
+//    scope — Phase 4 J1 author-trust pattern, audience is the chair.
+// ─────────────────────────────────────────────────────────────────
+
+model LegalPagesContent {
+  id                              String   @id @default("singleton")
+
+  // Privacy Policy (PageShell hero + structured sections)
+  privacyHeroTitle                String   @default("Privacy Policy")
+  privacyHeroOverline             String?  @default("Legal")
+  privacyHeroImageUrl             String
+  privacyHeroImagePublicId        String?
+  privacyHeroImageVerticalPercent Int      @default(50)
+  // sections — Json [{ heading?: string | null, paragraphs: string[] }]
+  // Each section is an optional heading + flat paragraph list. Admin
+  // edits via SectionsEditor (no raw HTML markup); inline emphasis
+  // characters are escaped, so the chair only writes prose.
+  privacySections                 Json
+
+  // Terms & Conditions (PageShell hero + structured sections)
+  termsHeroTitle                  String   @default("Terms & Conditions")
+  termsHeroOverline               String?  @default("Legal")
+  termsHeroImageUrl               String
+  termsHeroImagePublicId          String?
+  termsHeroImageVerticalPercent   Int      @default(50)
+  termsSections                   Json
+
+  updatedAt                       DateTime @updatedAt
+
+  @@map("legal_pages_content")
+}
+
 model ContactSubmission {
   id            String   @id @default(cuid())
   name          String
