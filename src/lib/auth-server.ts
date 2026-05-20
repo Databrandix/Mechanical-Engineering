@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -21,9 +22,15 @@ export class ApiError extends Error {
 //  Session helpers
 // ─────────────────────────────────────────────────────────────────
 
-export async function getSession() {
+// Phase 16 — React.cache dedupes the session lookup within a single
+// render pass. Admin layout (authed) + every server component on the
+// page that calls requireUser/getSession used to trigger one full
+// Session+User DB roundtrip apiece; cross-region Vercel(iad1) ↔ Neon
+// (ap-southeast-1) makes each lookup ~270ms. One render = one query
+// after this change.
+export const getSession = cache(async () => {
   return auth.api.getSession({ headers: await headers() });
-}
+});
 
 export async function requireUser() {
   const session = await getSession();
