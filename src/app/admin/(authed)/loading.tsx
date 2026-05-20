@@ -9,7 +9,7 @@
 // the public BrandedLoader from leaking into the admin shell).
 export default function AuthedAdminLoading() {
   return (
-    <div className="flex items-center justify-center py-32">
+    <div className="flex items-center justify-center min-h-[70vh]">
       <div
         role="status"
         aria-live="polite"
