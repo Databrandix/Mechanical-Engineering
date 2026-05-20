@@ -1,24 +1,6 @@
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 import { Poppins, Montserrat, Hind_Siliguri } from 'next/font/google';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import JourneyCTASection from '@/components/sections/JourneyCTASection';
-import InitialSplash from '@/components/common/InitialSplash';
-import PublicNavigationOverlay from '@/components/common/PublicNavigationOverlay';
-import {
-  getDepartmentIdentity,
-  getUniversityIdentity,
-  getJourneyCTAContent,
-  getTopLinks,
-  getQuickAccessItems,
-  getMainNav,
-  getFooterUsefulLinks,
-  getFooterGetInTouchLinks,
-  getFooterQuickLinks,
-  getFooterLegalLinks,
-} from '@/lib/identity';
-import { getSearchIndex } from '@/lib/search-index';
+import { getDepartmentIdentity } from '@/lib/identity';
 import './globals.css';
 
 const poppins = Poppins({
@@ -82,49 +64,21 @@ export const metadata: Metadata = {
   },
 };
 
+// Phase 18 — minimal root layout. The previous root layout pulled in
+// the admin-vs-public chrome conditional via `headers()` to read
+// x-pathname, which forced every public route into dynamic rendering
+// and blocked ISR. Chrome rendering now lives in the (public)/ and
+// admin/ route group layouts; this root layout only sets up the
+// HTML shell, fonts, and the DB-driven brand-color CSS vars on
+// <html>. getDepartmentIdentity is React.cache-wrapped and a plain
+// DB query, so it does NOT force dynamic rendering — the resulting
+// brand vars are baked into the ISR cache for public routes.
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Public site chrome (Navbar / JourneyCTA / Footer) is hidden on
-  // /admin/*. The decision is made SERVER-SIDE here from the
-  // x-pathname header set by middleware.ts — keeps the chrome
-  // components out of the React tree entirely on admin routes and
-  // eliminates the SSR/client-hydration-mismatch class of bug that
-  // a client-side usePathname guard could not reliably solve.
-  const headersList = await headers();
-  const pathname = headersList.get('x-pathname') ?? '/';
-  const isAdmin = pathname.startsWith('/admin');
-
-  // The search index aggregates 8 DB tables + 5 file-based arrays.
-  // Skip the work on /admin/* where Navbar isn't rendered anyway.
-  const [
-    dept, uni, journeyCTA,
-    topLinks, quickAccessItems, mainNav,
-    usefulLinks, getInTouchLinks, quickLinks, legalLinks,
-    searchItems,
-  ] = await Promise.all([
-    getDepartmentIdentity(),
-    getUniversityIdentity(),
-    // Phase 12 — JourneyCTAContent singleton drives the section that
-    // sits between page content and the footer on every public page.
-    // Skipped on /admin/* like the other chrome fetches below.
-    isAdmin ? Promise.resolve(null) : getJourneyCTAContent(),
-    getTopLinks(),
-    getQuickAccessItems(),
-    getMainNav(),
-    getFooterUsefulLinks(),
-    getFooterGetInTouchLinks(),
-    getFooterQuickLinks(),
-    getFooterLegalLinks(),
-    isAdmin ? Promise.resolve([] as Awaited<ReturnType<typeof getSearchIndex>>) : getSearchIndex(),
-  ]);
-
-  // Inject DB-driven brand colors as CSS custom properties on <html>.
-  // Cascade overrides the @theme defaults in globals.css so every
-  // utility class (text-primary, bg-accent, bg-button-yellow) and the
-  // gradient classes below pick up the live values without rebuild.
+  const dept = await getDepartmentIdentity();
   const brandVars = {
     '--color-primary': dept.primaryColor,
     '--color-accent': dept.accentColor,
@@ -138,76 +92,7 @@ export default async function RootLayout({
       style={brandVars}
     >
       <body className="min-h-screen flex flex-col selection:bg-accent/30">
-        {/* Phase 15 — Tier 2 first-visit splash. Server-side condition
-            keeps the client component out of the /admin/* React tree
-            entirely; sessionStorage flag keeps it from showing twice
-            in the same tab. */}
-        {!isAdmin && <InitialSplash />}
-        {/* Phase 15 addendum — per-navigation overlay so the preloader
-            shows on EVERY public page transition, not just on slow
-            Suspense fetches. Same server-side admin guard. */}
-        {!isAdmin && <PublicNavigationOverlay />}
-        {!isAdmin && (
-          <Navbar
-            logoUrl={dept.logoUrl}
-            applyUrl={uni.applyUrl ?? ''}
-            topLinks={topLinks}
-            quickAccessItems={quickAccessItems}
-            mainNav={mainNav}
-            searchItems={searchItems}
-          />
-        )}
-        {/* Phase 15 — Tier 3 page transition. The wrapper is keyed by
-            pathname so React remounts it on every public navigation,
-            re-triggering the 250ms fade-in. Admin children render
-            raw with no transition wrapper. */}
-        <main className="flex-grow">
-          {isAdmin ? (
-            children
-          ) : (
-            <div key={pathname} className="page-fade-in">
-              {children}
-            </div>
-          )}
-        </main>
-        {!isAdmin && journeyCTA && (
-          <JourneyCTASection
-            heroImageUrl={journeyCTA.heroImageUrl}
-            heroImagePosition={`center ${journeyCTA.heroImageVerticalPercent}%`}
-            heading={journeyCTA.heading}
-            body={journeyCTA.body}
-            primaryCtaLabel={journeyCTA.primaryCtaLabel}
-            primaryCtaHref={journeyCTA.primaryCtaHref}
-            primaryCtaExternal={journeyCTA.primaryCtaExternal}
-            secondaryCtaLabel={journeyCTA.secondaryCtaLabel}
-            secondaryCtaHref={journeyCTA.secondaryCtaHref}
-            secondaryCtaExternal={journeyCTA.secondaryCtaExternal}
-          />
-        )}
-        {!isAdmin && (
-          <Footer
-            logoUrl={uni.logoUrl}
-            address={uni.address}
-            phones={uni.phones}
-            emails={uni.emails}
-            copyrightText={uni.copyrightText}
-            mapEmbedUrl={uni.mapEmbedUrl}
-            socials={{
-              facebookUrl:  uni.facebookUrl,
-              instagramUrl: uni.instagramUrl,
-              linkedinUrl:  uni.linkedinUrl,
-              youtubeUrl:   uni.youtubeUrl,
-              xUrl:         uni.xUrl,
-              threadsUrl:   uni.threadsUrl,
-              tiktokUrl:    uni.tiktokUrl,
-              whatsappUrl:  uni.whatsappUrl,
-            }}
-            usefulLinks={usefulLinks}
-            getInTouchLinks={getInTouchLinks}
-            quickLinks={quickLinks}
-            legalLinks={legalLinks}
-          />
-        )}
+        {children}
       </body>
     </html>
   );

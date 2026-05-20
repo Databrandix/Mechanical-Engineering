@@ -14,8 +14,25 @@ function stripEmailVerified<T>(data: T): T {
   return data;
 }
 
+// Phase 18 — augment DATABASE_URL with a higher connection_limit /
+// pool_timeout so Vercel's static-generation pass doesn't exhaust the
+// 3-connection pgbouncer default. Static pre-rendering 28+ public
+// pages in parallel, each calling 11 layout-level queries through
+// cross-region Vercel(iad1) ↔ Neon(ap-southeast-1) latency, was
+// running into PrismaClientKnownRequestError P2024 (pool timeout).
+// 15 connections + 20s timeout gives the build comfortable headroom;
+// the pgbouncer pooler endpoint can multiplex without issue.
+function augmentDatabaseUrl(): string | undefined {
+  const url = process.env.DATABASE_URL;
+  if (!url) return undefined;
+  const extra = 'connection_limit=15&pool_timeout=20';
+  return url.includes('?') ? `${url}&${extra}` : `${url}?${extra}`;
+}
+
 const basePrismaClient = () =>
-  new PrismaClient().$extends({
+  new PrismaClient({
+    datasources: { db: { url: augmentDatabaseUrl() ?? '' } },
+  }).$extends({
     name: 'strip-email-verified',
     query: {
       user: {
