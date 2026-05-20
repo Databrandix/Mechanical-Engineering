@@ -39,7 +39,9 @@ type Kind =
   // Phase 10
   | 'contact-hero'
   // Phase 12
-  | 'journey-cta-hero';
+  | 'journey-cta-hero'
+  // Phase 17
+  | 'legal-hero';
 
 export type UploadMeta = {
   fileType: 'image' | 'pdf';

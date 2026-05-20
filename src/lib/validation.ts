@@ -280,6 +280,8 @@ export const uploadKindSchema = z.enum([
   'contact-hero',
   // Phase 12
   'journey-cta-hero',
+  // Phase 17
+  'legal-hero',
 ]);
 
 export const uploadSignSchema = z.object({
@@ -487,6 +489,35 @@ const keyValueArraySchema = z.array(
 const paragraphsArraySchema = z.array(z.string().min(1)).default([]);
 
 // ─── News ────────────────────────────────────────────────────────
+
+// ─── LegalPagesContent — Phase 17 ────────────────────────────────
+// Combined singleton: one row drives /privacy-policy and
+// /terms-and-conditions. Bodies stored as structured sections —
+// each section is an optional heading + flat paragraphs list.
+// Admin edits via SectionsEditor (prose only, no HTML markup).
+export const legalSectionSchema = z.object({
+  heading: z.string().trim().nullable().optional(),
+  paragraphs: z
+    .array(z.string().trim().min(1))
+    .default([]),
+});
+export const legalSectionsSchema = z.array(legalSectionSchema).default([]);
+
+export const legalPagesUpdateSchema = z.object({
+  privacyHeroTitle:                z.string().min(1).max(200),
+  privacyHeroOverline:             optionalNullableString,
+  privacyHeroImageUrl:             z.string().min(1),
+  privacyHeroImagePublicId:        optionalNullableString,
+  privacyHeroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
+  privacySections:                 legalSectionsSchema,
+
+  termsHeroTitle:                  z.string().min(1).max(200),
+  termsHeroOverline:               optionalNullableString,
+  termsHeroImageUrl:               z.string().min(1),
+  termsHeroImagePublicId:          optionalNullableString,
+  termsHeroImageVerticalPercent:   z.coerce.number().int().min(0).max(100).default(50),
+  termsSections:                   legalSectionsSchema,
+});
 
 export const newsCategoryEnum = z.enum([
   'Academic',

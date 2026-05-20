@@ -36,6 +36,7 @@ import {
   Contact,
   Building,
   Rocket,
+  ShieldCheck,
 } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
@@ -63,6 +64,7 @@ export default async function DashboardHome() {
     newSubmissionCount, totalSubmissionCount,
     contactPageContentConfigured, campusLocationCount,
     journeyCTAContentConfigured,
+    legalPagesContentConfigured,
     adminUsersCount, previousSession,
   ] = await Promise.all([
     prisma.program.count(),
@@ -94,6 +96,7 @@ export default async function DashboardHome() {
     prisma.contactPageContent.count(),
     prisma.campusLocation.count(),
     prisma.journeyCTAContent.count(),
+    prisma.legalPagesContent.count(),
     isSuperAdmin ? prisma.user.count() : Promise.resolve(null),
     prisma.session.findFirst({
       where: {
@@ -162,6 +165,9 @@ export default async function DashboardHome() {
           <StatCard label="Campus Locations" value={campusLocationCount} />
           <StatCard label="Journey CTA"
                     value={journeyCTAContentConfigured ? 'Configured' : 'Not configured'}
+                    stringValue />
+          <StatCard label="Legal Pages"
+                    value={legalPagesContentConfigured ? 'Configured' : 'Not configured'}
                     stringValue />
           {isSuperAdmin && (
             <StatCard label="Total Admin Users" value={adminUsersCount!} />
@@ -398,6 +404,12 @@ export default async function DashboardHome() {
             icon={Rocket}
             title="Journey CTA"
             desc="Hero + heading + body + 2 CTA buttons above the footer"
+          />
+          <ActionCard
+            href="/admin/legal-pages"
+            icon={ShieldCheck}
+            title="Legal Pages"
+            desc="Privacy Policy + Terms & Conditions content (one form, two public pages)"
           />
           {isSuperAdmin && (
             <ActionCard

@@ -70,6 +70,36 @@ html {
     animation: page-fade-in 250ms ease-out;
   }
 
+  /* Phase 17 — Legal pages (Privacy Policy, Terms & Conditions).
+     Bodies are HTML rendered via dangerouslySetInnerHTML inside a
+     .legal-body scope; this block styles the common tags so the
+     chair only has to write minimal markup (h2 / p / strong / a /
+     ul / li). */
+  .legal-body h2 {
+    @apply text-2xl md:text-3xl font-display font-bold text-primary mt-10 mb-4 first:mt-0;
+  }
+  .legal-body p {
+    @apply text-[15px] md:text-[16px] leading-[1.85] text-gray-700 mb-4;
+  }
+  .legal-body strong {
+    @apply font-semibold text-gray-900;
+  }
+  .legal-body em {
+    @apply italic;
+  }
+  .legal-body a {
+    @apply text-accent underline underline-offset-2 hover:text-primary transition-colors;
+  }
+  .legal-body ul {
+    @apply list-disc pl-6 mb-4 space-y-1.5;
+  }
+  .legal-body ol {
+    @apply list-decimal pl-6 mb-4 space-y-1.5;
+  }
+  .legal-body li {
+    @apply text-[15px] md:text-[16px] leading-[1.7] text-gray-700;
+  }
+
   /* Phase 15 — BrandedLoader dot ellipsis. Classic 4-dot spinner
      pattern: dot 1 grows in at the first slot, dots 2/3 slide
      leftward one slot, dot 4 shrinks out at the last slot. Looped
