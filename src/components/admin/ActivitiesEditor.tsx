@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Plus, X, ArrowUp, ArrowDown } from 'lucide-react';
 import ImageUploader from './ImageUploader';
+import IconInputField from './IconInputField';
 
 type Activity = {
   iconName: string;
@@ -16,10 +17,6 @@ type Activity = {
 type Props = {
   name: string;
   initialValue: unknown;
-  /** Curated Lucide names the mecha-club page renders. The admin
-   *  form shows these as a datalist hint; the server accepts any
-   *  Lucide name (unknown ones fall back at render time). */
-  iconHints?: readonly string[];
 };
 
 function normalize(v: unknown): Activity[] {
@@ -36,7 +33,7 @@ function normalize(v: unknown): Activity[] {
     }));
 }
 
-export default function ActivitiesEditor({ name, initialValue, iconHints }: Props) {
+export default function ActivitiesEditor({ name, initialValue }: Props) {
   const [rows, setRows] = useState<Activity[]>(normalize(initialValue));
 
   function addRow() {
@@ -60,18 +57,10 @@ export default function ActivitiesEditor({ name, initialValue, iconHints }: Prop
   // Drop visually-empty rows on serialize (title is the load-bearing field)
   const cleaned = rows.filter((r) => r.title.trim());
 
-  const datalistId = `${name}-icon-hints`;
-
   return (
     <div className="space-y-3">
       {rows.length === 0 && (
         <p className="text-xs text-gray-500 italic">No activities yet.</p>
-      )}
-
-      {iconHints && (
-        <datalist id={datalistId}>
-          {iconHints.map((h) => <option key={h} value={h} />)}
-        </datalist>
       )}
 
       {rows.map((row, i) => (
@@ -110,13 +99,10 @@ export default function ActivitiesEditor({ name, initialValue, iconHints }: Prop
               <label className="block text-xs font-medium text-gray-600 mb-1">
                 Lucide icon name
               </label>
-              <input
-                type="text"
+              <IconInputField
+                compact
                 value={row.iconName}
-                onChange={(e) => updateRow(i, { iconName: e.target.value })}
-                list={iconHints ? datalistId : undefined}
-                placeholder="Factory, Laptop, Mic, …"
-                className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent bg-white"
+                onChange={(v) => updateRow(i, { iconName: v })}
               />
             </div>
             <div>

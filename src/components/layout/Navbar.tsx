@@ -1,29 +1,20 @@
 'use client';
 
-import {useState, useEffect, type ComponentType} from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import {
   Menu, X, Search, Facebook, Linkedin, Youtube,
-  GraduationCap, User, CheckCircle, ChevronDown, ChevronRight,
-  LayoutGrid, BookOpen, Image as ImageIcon, Users, Globe,
-  ClipboardList, Building2, Award, Compass, Archive,
-  type LucideProps,
+  User, ChevronDown, ChevronRight, LayoutGrid,
+  GraduationCap, CheckCircle,
 } from 'lucide-react';
 import Container from '../ui/Container';
 import SearchOverlay from './SearchOverlay';
+import { DynamicLucideIcon } from '../ui/DynamicLucideIcon';
 import type { SearchItem } from '@/lib/search';
 
-// Icon resolution for QuickAccessItem.iconName (admin types a Lucide
-// name; we look it up here). Unknown name falls back to a generic
-// Globe icon so the row still renders.
-const IconMap: Record<string, ComponentType<LucideProps>> = {
-  BookOpen, GraduationCap, Image: ImageIcon, Compass, Archive,
-  Users, Globe, ClipboardList, Building2, Award, CheckCircle,
-};
-
-function resolveIcon(name: string): ComponentType<LucideProps> {
-  return IconMap[name] ?? Globe;
-}
+// Phase 20 — QuickAccessItem.iconName now resolves against the full
+// Lucide library via the shared DynamicLucideIcon. Unknown names
+// fall back to HelpCircle inside the renderer.
 
 // ─────────────────────────────────────────────────────────────────
 //  DB-driven shapes — match the cache() selects in lib/identity.ts
@@ -235,7 +226,6 @@ export default function Navbar({
                 <div className="invisible absolute right-0 top-full z-50 mt-2 w-[320px] translate-y-2 rounded-xl border border-gray-100 bg-white p-3 opacity-0 shadow-premium transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                   <div className="grid grid-cols-3 gap-1">
                     {quickAccessItems.map((item) => {
-                      const Icon = resolveIcon(item.iconName);
                       const isLive = !!item.href && !item.isDisabled;
                       return (
                         <a
@@ -247,7 +237,7 @@ export default function Navbar({
                           }`}
                           aria-disabled={!isLive || undefined}
                         >
-                          <Icon size={22} className="text-primary" />
+                          <DynamicLucideIcon name={item.iconName} size={22} className="text-primary" />
                           <span className="text-[12px] font-medium text-gray-700 leading-tight">{item.name}</span>
                         </a>
                       );
@@ -404,7 +394,6 @@ export default function Navbar({
           <h4 className="text-[13px] font-bold text-primary mb-3">Services</h4>
           <div className="grid grid-cols-3 gap-2">
             {quickAccessItems.map((item) => {
-              const Icon = resolveIcon(item.iconName);
               const isLive = !!item.href && !item.isDisabled;
               return (
                 <a
@@ -417,7 +406,7 @@ export default function Navbar({
                   }`}
                   aria-disabled={!isLive || undefined}
                 >
-                  <Icon size={20} className="text-primary" />
+                  <DynamicLucideIcon name={item.iconName} size={20} className="text-primary" />
                   <span className="text-[10.5px] font-semibold text-gray-700 leading-tight">
                     {item.name}
                   </span>

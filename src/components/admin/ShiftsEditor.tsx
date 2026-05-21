@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import FormSortableList from './FormSortableList';
+import IconInputField from './IconInputField';
 
 // Structured editor for ProgramFeeStructure.shifts Json — three
 // levels of nesting:
@@ -263,8 +264,15 @@ function ShiftCard({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-        <Input label="Icon" value={shift.iconName}
-               onChange={(v) => onUpdate('iconName', v)} placeholder="Sun" />
+        <div>
+          <label className="block text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-0.5">Icon</label>
+          <IconInputField
+            compact
+            value={shift.iconName}
+            onChange={(v) => onUpdate('iconName', v)}
+            placeholder="Sun"
+          />
+        </div>
         <Input label="Name" value={shift.name}
                onChange={(v) => onUpdate('name', v)} placeholder="SUN" />
         <Input label="Shift label" value={shift.shiftLabel}

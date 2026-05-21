@@ -1,14 +1,8 @@
-import {
-  Flame, Droplets, Wrench, Hammer, PenTool, Zap,
-  ShieldCheck, Cog, FlaskConical, Atom, Microscope,
-  Lightbulb, Layers, Cpu, Activity, Award, Users, Sparkles,
-  type LucideProps,
-} from 'lucide-react';
-import type { ComponentType } from 'react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getLaboratoryFacilityLanding, getLaboratoryLabs } from '@/lib/identity';
 import { sanitizeHtml } from '@/lib/sanitize-html';
+import { DynamicLucideIcon } from '@/components/ui/DynamicLucideIcon';
 
 export const metadata = {
   title: 'Laboratory Facility — Department of Mechanical Engineering',
@@ -16,14 +10,8 @@ export const metadata = {
     'Hands-on laboratories of the Department of Mechanical Engineering at Sonargaon University — thermodynamics, fluid mechanics, machine shop, materials, CAD, and welding.',
 };
 
-// IconMap — curated Lucide set covering current seed + admin
-// datalist hints. Unknown name → FlaskConical fallback (same
-// defensive pattern as Phase 1 MajorResearchSection).
-const IconMap: Record<string, ComponentType<LucideProps>> = {
-  Flame, Droplets, Wrench, Hammer, PenTool, Zap,
-  ShieldCheck, Cog, FlaskConical, Atom, Microscope,
-  Lightbulb, Layers, Cpu, Activity, Award, Users, Sparkles,
-};
+// Phase 20 — lab.iconName + feature.iconName both resolve via
+// DynamicLucideIcon against the full Lucide library.
 
 type FeatureRow = { iconName: string; title: string; description: string };
 
@@ -73,7 +61,6 @@ export default async function LaboratoryFacilityPage() {
         {labs.length > 0 && (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-16 md:mb-20">
             {labs.map((lab, idx) => {
-              const Icon = IconMap[lab.iconName] ?? FlaskConical;
               const num = String(idx + 1).padStart(2, '0');
               return (
                 <article
@@ -87,7 +74,7 @@ export default async function LaboratoryFacilityPage() {
                     {/* Icon + number */}
                     <div className="flex items-center justify-between mb-5">
                       <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-md text-white group-hover:scale-110 transition-transform">
-                        <Icon size={22} strokeWidth={1.75} />
+                        <DynamicLucideIcon name={lab.iconName} size={22} strokeWidth={1.75} />
                       </div>
                       <span className="font-display text-3xl font-bold text-primary/15 leading-none">
                         {num}
@@ -144,11 +131,10 @@ export default async function LaboratoryFacilityPage() {
 
               <div className="grid gap-8 md:grid-cols-3">
                 {features.map((feature) => {
-                  const Icon = IconMap[feature.iconName] ?? FlaskConical;
                   return (
                     <div key={feature.title} className="text-center">
                       <div className="inline-flex w-16 h-16 rounded-2xl bg-button-yellow/15 border border-button-yellow/40 items-center justify-center shadow-lg mb-4">
-                        <Icon size={28} className="text-button-yellow" strokeWidth={1.5} />
+                        <DynamicLucideIcon name={feature.iconName} size={28} className="text-button-yellow" strokeWidth={1.5} />
                       </div>
                       <h3 className="font-display text-lg font-bold mb-2">{feature.title}</h3>
                       <p className="text-white/80 text-sm leading-relaxed">{feature.description}</p>

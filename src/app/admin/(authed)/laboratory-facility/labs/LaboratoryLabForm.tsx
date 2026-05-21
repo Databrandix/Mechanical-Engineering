@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import type { LaboratoryLab } from '@prisma/client';
 import {
@@ -9,22 +9,17 @@ import {
   updateLaboratoryLabAction,
   type ActionResult,
 } from '@/lib/admin-actions/laboratory-facility';
+import IconInputField from '@/components/admin/IconInputField';
 
 type State = ActionResult | { ok: null };
-
-// Curated Lucide names for the iconName datalist hint. Unknown
-// names fall back to FlaskConical at render time.
-const ICON_HINTS = [
-  'Flame', 'Droplets', 'Wrench', 'Hammer', 'PenTool', 'Zap',
-  'Cog', 'ShieldCheck', 'FlaskConical', 'Atom', 'Microscope',
-  'Lightbulb', 'Layers', 'Cpu', 'Activity',
-];
 
 export default function LaboratoryLabForm({ initial }: { initial: LaboratoryLab | null }) {
   const isEdit = !!initial;
   const action = isEdit
     ? updateLaboratoryLabAction.bind(null, initial!.id)
     : createLaboratoryLabAction;
+
+  const [iconName, setIconName] = useState<string>(initial?.iconName ?? '');
 
   const [state, formAction, pending] = useActionState<State, FormData>(action, { ok: null });
 
@@ -37,21 +32,15 @@ export default function LaboratoryLabForm({ initial }: { initial: LaboratoryLab 
     <form action={formAction} className="space-y-6">
       <Card title="Card content">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="iconName" className="block text-sm font-medium text-gray-700 mb-1">
-              Lucide icon name<span className="text-red-500 ml-0.5" aria-hidden="true">*</span>
-            </label>
-            <input
-              id="iconName" name="iconName" type="text" required
-              defaultValue={initial?.iconName ?? ''}
-              list="laboratory-lab-icon-hints"
-              placeholder="Flame, Droplets, Wrench, …"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent"
-            />
-            <datalist id="laboratory-lab-icon-hints">
-              {ICON_HINTS.map((h) => <option key={h} value={h} />)}
-            </datalist>
-          </div>
+          <IconInputField
+            name="iconName"
+            label="Lucide icon name"
+            required
+            value={iconName}
+            onChange={setIconName}
+            placeholder="Flame, Droplets, Wrench, …"
+            helperText="PascalCase name from lucide.dev/icons"
+          />
           <TextField label="Title" name="title" required
                      defaultValue={initial?.title ?? ''}
                      placeholder="Applied Thermodynamics & Heat Engine Laboratory" />

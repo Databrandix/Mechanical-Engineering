@@ -1,14 +1,11 @@
-import {
-  Phone, Mail, Globe, Facebook, MapPin, Building2, Clock, HelpCircle,
-  Instagram, Youtube, Linkedin, Twitter, MessageCircle, Send,
-} from 'lucide-react';
+import { Building2, Clock, Mail, MapPin, Phone } from 'lucide-react';
 import type { JsonValue } from '@prisma/client/runtime/library';
-import type { LucideIcon } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import ContactForm from '@/components/forms/ContactForm';
 import { getContactPageContent, getCampusLocations } from '@/lib/identity';
 import { sanitizeHtml } from '@/lib/sanitize-html';
+import { DynamicLucideIcon } from '@/components/ui/DynamicLucideIcon';
 
 export const metadata = {
   title: 'Contact Us — Sonargaon University',
@@ -16,13 +13,8 @@ export const metadata = {
     'Contact Sonargaon University — phone, email, website, Facebook, and campus addresses for Permanent, Green Road and Mohakhali campuses.',
 };
 
-// Lucide icon resolver for quickContactCards.iconName. Fallback is
-// HelpCircle so an unknown name in DB renders something rather than
-// crashing the page (same defensive pattern as Phase 7 TransportLanding).
-const ICON_MAP: Record<string, LucideIcon> = {
-  Phone, Mail, Globe, Facebook, MapPin, Building2, Clock, HelpCircle,
-  Instagram, Youtube, Linkedin, Twitter, MessageCircle, Send,
-};
+// Phase 20 — quickContactCards.iconName resolves via the shared
+// DynamicLucideIcon (any Lucide name; silent HelpCircle fallback).
 
 type QuickContactCard = {
   iconName: string;
@@ -106,14 +98,13 @@ export default async function ContactPage() {
 
             <div className={`mx-auto max-w-5xl grid gap-5 sm:grid-cols-2 ${cards.length >= 4 ? 'lg:grid-cols-4' : `lg:grid-cols-${cards.length}`}`}>
               {cards.map((c, i) => {
-                const Icon = ICON_MAP[c.iconName] ?? HelpCircle;
                 return (
                   <div
                     key={`${c.title}-${i}`}
                     className="rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-shadow p-6 flex flex-col items-center text-center"
                   >
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                      <Icon size={22} className="text-primary" />
+                      <DynamicLucideIcon name={c.iconName} size={22} className="text-primary" />
                     </div>
                     <h3 className="font-bold text-primary mb-2">{c.title}</h3>
                     {c.primaryHref ? (

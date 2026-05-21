@@ -11,12 +11,8 @@ import {
 
 type State = ActionResult | { ok: null };
 
-// Curated Lucide icon names for the instructions datalist — matches
-// the icons the public render's IconMap supports.
-const ICON_HINTS = [
-  'MapPin', 'Sparkles', 'Bus', 'Info', 'Clock', 'Phone',
-  'AlertCircle', 'CheckCircle', 'ShieldCheck',
-] as const;
+// Phase 20 — picker + fallback now live in the shared IconInputField
+// used by FeaturesEditor; the legacy curated hint list is gone.
 
 export default function TransportLandingForm({ initial }: { initial: TransportLanding | null }) {
   const [state, formAction, pending] = useActionState<State, FormData>(
@@ -52,7 +48,7 @@ export default function TransportLandingForm({ initial }: { initial: TransportLa
         <p className="text-xs text-gray-500 -mt-2">
           Each row is one bullet on the public page (icon + title + body).
         </p>
-        <FeaturesEditor name="instructions" initialValue={initialInstructions} iconHints={ICON_HINTS} />
+        <FeaturesEditor name="instructions" initialValue={initialInstructions} />
       </Card>
 
       {state.ok === false && (

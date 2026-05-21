@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import FormSortableList from './FormSortableList';
+import IconInputField from './IconInputField';
 
 // Structured editor for ProgramFeeStructure.policies Json:
 //   [{ iconName, title, text }]  — the 3 policy cards below the
@@ -64,13 +65,18 @@ export default function PoliciesEditor({ name, initialValue }: Props) {
         onReorder={reorder}
         renderItem={(r) => (
           <div className="bg-white border border-gray-200 rounded-lg p-3 space-y-2">
-            <div className="grid grid-cols-1 md:grid-cols-[180px_1fr_auto] gap-2 items-start">
-              <Input
-                label="Icon"
-                value={r.iconName}
-                onChange={(v) => update(r.id, 'iconName', v)}
-                placeholder="Award"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-[220px_1fr_auto] gap-2 items-start">
+              <div>
+                <label className="block text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-0.5">
+                  Icon
+                </label>
+                <IconInputField
+                  compact
+                  value={r.iconName}
+                  onChange={(v) => update(r.id, 'iconName', v)}
+                  placeholder="Award"
+                />
+              </div>
               <Input
                 label="Title"
                 value={r.title}
