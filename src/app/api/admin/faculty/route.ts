@@ -77,6 +77,7 @@ export const POST = withErrorHandling(async (request) => {
           email:          parsed.email && parsed.email !== '' ? parsed.email : null,
           phone:          parsed.phone ?? null,
           suId:           parsed.suId ?? null,
+          officeAddress:  parsed.officeAddress ?? null,
           personalInfo:          asJson(parsed.personalInfo),
           academicQualification: asJson(parsed.academicQualification),
           trainingExperience:    asJson(parsed.trainingExperience),

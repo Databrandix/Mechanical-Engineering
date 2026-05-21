@@ -47,6 +47,7 @@ export const PUT = withErrorHandling(async (request, context: RouteContext) => {
   if (data.email          !== undefined) update.email          = data.email && data.email !== '' ? data.email : null;
   if (data.phone          !== undefined) update.phone          = data.phone ?? null;
   if (data.suId           !== undefined) update.suId           = data.suId ?? null;
+  if (data.officeAddress  !== undefined) update.officeAddress  = data.officeAddress ?? null;
   if (data.personalInfo          !== undefined) update.personalInfo          = asJson(data.personalInfo);
   if (data.academicQualification !== undefined) update.academicQualification = asJson(data.academicQualification);
   if (data.trainingExperience    !== undefined) update.trainingExperience    = asJson(data.trainingExperience);

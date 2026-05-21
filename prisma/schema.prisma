@@ -224,6 +224,12 @@ model Faculty {
   email           String?
   phone           String?
   suId            String?
+  // Per-faculty office address. Nullable: when null the public
+  // faculty page falls back to UniversityIdentity.address (the
+  // shared institutional address). Lets a member with a different
+  // campus / off-site office override the default without forcing
+  // every faculty row to re-enter the central address.
+  officeAddress   String?     @db.Text
 
   // Variable-shape label/value list — `{label, value}[]`
   personalInfo    Json?
