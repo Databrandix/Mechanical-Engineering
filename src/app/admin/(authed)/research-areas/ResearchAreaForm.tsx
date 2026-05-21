@@ -5,6 +5,7 @@ import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import type { ResearchArea } from '@prisma/client';
 import ImageUploader from '@/components/admin/ImageUploader';
+import IconInputField from '@/components/admin/IconInputField';
 import {
   createResearchAreaAction,
   updateResearchAreaAction,
@@ -28,6 +29,8 @@ export default function ResearchAreaForm({
   const [iconMode, setIconMode] = useState<IconMode>(
     initial?.iconPublicId ? 'upload' : 'lucide',
   );
+
+  const [iconName, setIconName] = useState<string>(initial?.iconName ?? '');
 
   // Featured toggle controls whether the conditional featured-card
   // fields render. Save logic (server) always reads these fields —
@@ -93,12 +96,14 @@ export default function ResearchAreaForm({
         </fieldset>
 
         {iconMode === 'lucide' ? (
-          <TextField
+          <IconInputField
             label="Lucide icon name"
             name="iconName"
             required
-            defaultValue={initial?.iconName ?? ''}
+            value={iconName}
+            onChange={setIconName}
             placeholder="e.g. Flame, Cpu, Bot, Waves"
+            helperText="PascalCase name from lucide.dev/icons"
           />
         ) : (
           <ImageUploader

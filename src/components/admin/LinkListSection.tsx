@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Pencil, Trash2, Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import SortableList from './SortableList';
+import IconInputField from './IconInputField';
 
 export type LinkRowShape = {
   id: string;
@@ -27,12 +28,16 @@ type Props<T extends LinkRowShape> = {
   updateAction: (id: string, fd: FormData) => Promise<ActionResult>;
   deleteAction: (id: string) => Promise<ActionResult>;
   reorderAction: (ids: string[]) => Promise<ActionResult>;
-  /** Optional extra field — used by QuickAccess for `iconName`. */
+  /** Optional extra field — used by QuickAccess for `iconName`.
+   *  `kind: 'icon'` swaps the plain text input for the Phase 20
+   *  IconInputField with live preview + picker.
+   */
   extraField?: {
     name: string;
     label: string;
     placeholder?: string;
     valueOf: (item: T) => string;
+    kind?: 'text' | 'icon';
   };
 };
 
@@ -216,6 +221,9 @@ function RowForm<T extends LinkRowShape>({
   onCancel: () => void;
 }) {
   const [pending, startTransition] = useTransition();
+  const [extraValue, setExtraValue] = useState<string>(
+    extraField && initial ? extraField.valueOf(initial) : '',
+  );
   async function handle(fd: FormData) {
     startTransition(async () => {
       await onSubmit(fd);
@@ -246,12 +254,24 @@ function RowForm<T extends LinkRowShape>({
       {extraField && (
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">{extraField.label} *</label>
-          <input
-            type="text" name={extraField.name} required
-            defaultValue={initial ? extraField.valueOf(initial) : ''}
-            placeholder={extraField.placeholder}
-            className="w-full px-2.5 py-1.5 text-sm font-mono border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
-          />
+          {extraField.kind === 'icon' ? (
+            <IconInputField
+              compact
+              name={extraField.name}
+              required
+              value={extraValue}
+              onChange={setExtraValue}
+              placeholder={extraField.placeholder}
+            />
+          ) : (
+            <input
+              type="text" name={extraField.name} required
+              value={extraValue}
+              onChange={(e) => setExtraValue(e.target.value)}
+              placeholder={extraField.placeholder}
+              className="w-full px-2.5 py-1.5 text-sm font-mono border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+            />
+          )}
         </div>
       )}
 

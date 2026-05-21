@@ -92,6 +92,15 @@ export const auth = betterAuth({
 
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL,
+
+  // Dev-only: allow local ports beyond the configured BETTER_AUTH_URL
+  // so developers can switch the Next.js dev port without hitting
+  // Better Auth's Origin check. Production stays strict — `baseURL`
+  // alone gates origins.
+  trustedOrigins:
+    process.env.NODE_ENV === 'production'
+      ? undefined
+      : ['http://localhost:3000', 'http://localhost:3001'],
 });
 
 export type AuthSession = typeof auth.$Infer.Session;

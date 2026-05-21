@@ -44,6 +44,7 @@ export default function NavAdmin({
           label: 'Lucide icon name',
           placeholder: 'BookOpen, GraduationCap, Globe…',
           valueOf: (item) => item.iconName,
+          kind: 'icon',
         }}
       />
 

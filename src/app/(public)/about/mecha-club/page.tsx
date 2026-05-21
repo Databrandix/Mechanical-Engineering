@@ -1,17 +1,10 @@
 import Image from 'next/image';
-import {
-  // Seed icon names
-  Factory, Laptop, Mic, Lightbulb, Sparkles, Award,
-  // Curated extras the admin form's datalist hints exposes
-  Network, Users, Wrench, Zap, Cog, BookOpen, GraduationCap, Trophy, Rocket, Flame,
-  ArrowRight,
-  type LucideProps,
-} from 'lucide-react';
-import type { ComponentType } from 'react';
+import { ArrowRight, Network, Users } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getAboutMechaClub } from '@/lib/identity';
 import { sanitizeHtml } from '@/lib/sanitize-html';
+import { DynamicLucideIcon } from '@/components/ui/DynamicLucideIcon';
 
 export const metadata = {
   title: 'Mecha Club — Department of Mechanical Engineering',
@@ -19,12 +12,9 @@ export const metadata = {
     'SU Mechanical Engineering Club (Mecha Club) — building industry-ready engineers through field visits, workshops, seminars, project showcases and an active alumni network.',
 };
 
-// Resolution: iconName → Lucide component. Unknown name → Sparkles
-// fallback (same defensive pattern as Phase 1 MajorResearchSection).
-const IconMap: Record<string, ComponentType<LucideProps>> = {
-  Factory, Laptop, Mic, Lightbulb, Sparkles, Award,
-  Network, Users, Wrench, Zap, Cog, BookOpen, GraduationCap, Trophy, Rocket, Flame,
-};
+// Phase 20 — activities[].iconName resolves via DynamicLucideIcon
+// against the full Lucide library; silent HelpCircle fallback on
+// unknown names.
 
 type StatsRow = { value: string; label: string };
 type ActivityRow = {
@@ -149,7 +139,6 @@ export default async function MechaClubPage() {
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {activities.map((activity) => {
-                const Icon = IconMap[activity.iconName] ?? Sparkles;
                 return (
                   <article
                     key={activity.title}
@@ -165,7 +154,7 @@ export default async function MechaClubPage() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent" />
                       <div className="absolute top-4 left-4 w-11 h-11 rounded-lg bg-white/95 backdrop-blur flex items-center justify-center shadow-md">
-                        <Icon size={20} className="text-accent" strokeWidth={1.75} />
+                        <DynamicLucideIcon name={activity.iconName} size={20} className="text-accent" strokeWidth={1.75} />
                       </div>
                       {activity.category && (
                         <span className="absolute bottom-4 left-4 text-[10px] font-bold tracking-[0.2em] uppercase text-white bg-accent/90 px-2.5 py-1 rounded-full">

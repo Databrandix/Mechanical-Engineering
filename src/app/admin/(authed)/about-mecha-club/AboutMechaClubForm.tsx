@@ -14,14 +14,9 @@ import {
 
 type State = ActionResult | { ok: null };
 
-// Curated Lucide icon names the public mecha-club page renders.
-// Admin can type any Lucide name; unknown names fall back to a
-// generic icon at render time (CP4.3).
-const ICON_HINTS = [
-  'Factory', 'Laptop', 'Mic', 'Lightbulb', 'Sparkles', 'Award',
-  'Users', 'Network', 'Wrench', 'Zap', 'Cog', 'BookOpen',
-  'GraduationCap', 'Trophy', 'Rocket', 'Flame',
-];
+// Phase 20 — admins now pick from the full Lucide library via the
+// shared IconInputField inside ActivitiesEditor; the legacy curated
+// hint list is gone.
 
 export default function AboutMechaClubForm({ initial }: { initial: AboutMechaClub | null }) {
   const [state, formAction, pending] = useActionState<State, FormData>(
@@ -86,8 +81,7 @@ export default function AboutMechaClubForm({ initial }: { initial: AboutMechaClu
                    defaultValue={initial?.activitiesHeading ?? ''}
                    placeholder="Core Activities & Initiatives" />
         <ActivitiesEditor name="activities"
-                          initialValue={initial?.activities}
-                          iconHints={ICON_HINTS} />
+                          initialValue={initial?.activities} />
       </Card>
 
       <Card title="Network section">

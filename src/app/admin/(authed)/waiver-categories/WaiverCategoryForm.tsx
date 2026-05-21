@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import type { WaiverCategory } from '@prisma/client';
 import HeadingBodyListEditor from '@/components/admin/HeadingBodyListEditor';
+import IconInputField from '@/components/admin/IconInputField';
 import {
   createWaiverCategoryAction,
   updateWaiverCategoryAction,
@@ -17,6 +18,7 @@ export default function WaiverCategoryForm({ initial }: { initial: WaiverCategor
   const isEdit = !!initial;
   const action = isEdit ? updateWaiverCategoryAction.bind(null, initial!.id) : createWaiverCategoryAction;
   const [state, formAction, pending] = useActionState<State, FormData>(action, { ok: null });
+  const [iconName, setIconName] = useState<string>(initial?.iconName ?? '');
 
   useEffect(() => {
     if (state.ok === true) toast.success(isEdit ? 'Waiver category saved' : 'Waiver category created');
@@ -29,8 +31,15 @@ export default function WaiverCategoryForm({ initial }: { initial: WaiverCategor
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <TextField label="Slug" name="slug" required monospace
                      defaultValue={initial?.slug ?? ''} placeholder="staff-dependent" />
-          <TextField label="Icon (Lucide name)" name="iconName" required
-                     defaultValue={initial?.iconName ?? ''} placeholder="Users · HeartHandshake · Award · Building2" />
+          <IconInputField
+            label="Icon (Lucide name)"
+            name="iconName"
+            required
+            value={iconName}
+            onChange={setIconName}
+            placeholder="Users, HeartHandshake, Award, …"
+            helperText="PascalCase name from lucide.dev/icons"
+          />
         </div>
         <TextField label="Title (card heading)" name="title" required
                    defaultValue={initial?.title ?? ''}

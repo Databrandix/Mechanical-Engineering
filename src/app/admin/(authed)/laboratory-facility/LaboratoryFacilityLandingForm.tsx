@@ -13,14 +13,8 @@ import {
 
 type State = ActionResult | { ok: null };
 
-// Curated Lucide names the public render's IconMap supports.
-// Admin may type any Lucide name; unknown → FlaskConical fallback
-// at render time (Phase 1 ResearchArea convention).
-const ICON_HINTS = [
-  'Cog', 'ShieldCheck', 'FlaskConical', 'Wrench', 'Zap', 'Flame',
-  'Droplets', 'Hammer', 'PenTool', 'Award', 'Lightbulb', 'Users',
-  'Sparkles', 'Microscope',
-];
+// Phase 20 — picker + fallback now live in the shared IconInputField
+// used by FeaturesEditor; the legacy curated hint list is gone.
 
 export default function LaboratoryFacilityLandingForm({
   initial,
@@ -68,7 +62,6 @@ export default function LaboratoryFacilityLandingForm({
         <FeaturesEditor
           name="features"
           initialValue={initial?.features}
-          iconHints={ICON_HINTS}
         />
       </Card>
 

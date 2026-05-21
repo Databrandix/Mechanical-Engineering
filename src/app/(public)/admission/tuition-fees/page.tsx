@@ -1,21 +1,8 @@
-import {
-  Award,
-  Calendar,
-  CreditCard,
-  GraduationCap,
-  Info,
-  Moon,
-  Percent,
-  Receipt,
-  Star,
-  Sun,
-  Wallet,
-  type LucideIcon,
-} from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getProgramFeeStructures } from '@/lib/identity';
 import { sanitizeHtml } from '@/lib/sanitize-html';
+import { DynamicLucideIcon } from '@/components/ui/DynamicLucideIcon';
 
 export const metadata = {
   title: 'Tuition Fees — Department of Mechanical Engineering',
@@ -23,25 +10,9 @@ export const metadata = {
     'Tuition fee structures by program at Sonargaon University Department of Mechanical Engineering.',
 };
 
-// Icons referenced by Json columns. Unknown names fall back to Info.
-// Keep this in sync with the editor placeholder text in
-// /admin/program-fee-structures/[programId] → ShiftsEditor (shifts),
-// PoliciesEditor (policies), OverviewStatsEditor (overview).
-const ICON_MAP: Record<string, LucideIcon> = {
-  // overview
-  GraduationCap, Calendar, CreditCard, Wallet,
-  // shifts
-  Sun, Moon, Star,
-  // policies
-  Award, Percent, Receipt,
-  // fallback (also default)
-  Info,
-};
-
-function iconFor(name: string | undefined): LucideIcon {
-  if (!name) return Info;
-  return ICON_MAP[name] ?? Info;
-}
+// Phase 20 — overview / shifts / policies all use DynamicLucideIcon
+// against the full Lucide library; silent HelpCircle fallback on
+// unknown names.
 
 // ─── Json column shapes (defensive coerce) ───────────────────────
 
@@ -166,14 +137,13 @@ export default async function TuitionFeesPage() {
                   <section className="mb-16 md:mb-20">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                       {overview.map((stat) => {
-                        const Icon = iconFor(stat.iconName);
                         return (
                           <div
                             key={`${stat.label}-${stat.value}`}
                             className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow text-center"
                           >
                             <div className="inline-flex w-11 h-11 rounded-lg bg-gradient-to-br from-primary to-accent text-white items-center justify-center mb-3 shadow-md">
-                              <Icon size={20} strokeWidth={1.75} />
+                              <DynamicLucideIcon name={stat.iconName} size={20} strokeWidth={1.75} />
                             </div>
                             <div className="text-[10px] font-bold tracking-wider uppercase text-gray-500 mb-1">
                               {stat.label}
@@ -203,7 +173,6 @@ export default async function TuitionFeesPage() {
 
                     <div className="space-y-8">
                       {shifts.map((shift) => {
-                        const ShiftIcon = iconFor(shift.iconName);
                         return (
                           <article
                             key={shift.name}
@@ -213,7 +182,7 @@ export default async function TuitionFeesPage() {
                             <div className="bg-gradient-to-r from-primary to-accent text-white px-6 md:px-8 py-5">
                               <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-lg bg-white/15 border border-white/25 flex items-center justify-center shrink-0">
-                                  <ShiftIcon size={22} className="text-button-yellow" strokeWidth={1.75} />
+                                  <DynamicLucideIcon name={shift.iconName} size={22} className="text-button-yellow" strokeWidth={1.75} />
                                 </div>
                                 <div>
                                   <div className="text-[11px] font-bold tracking-[0.25em] uppercase text-button-yellow">
@@ -298,14 +267,13 @@ export default async function TuitionFeesPage() {
 
                     <div className="grid gap-5 md:grid-cols-3">
                       {policies.map((policy) => {
-                        const PolicyIcon = iconFor(policy.iconName);
                         return (
                           <article
                             key={policy.title}
                             className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6"
                           >
                             <div className="inline-flex w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-accent text-white items-center justify-center mb-4 shadow-md">
-                              <PolicyIcon size={22} strokeWidth={1.75} />
+                              <DynamicLucideIcon name={policy.iconName} size={22} strokeWidth={1.75} />
                             </div>
                             <h3 className="font-display text-lg font-bold text-primary mb-2">{policy.title}</h3>
                             <p className="text-sm text-gray-700 leading-relaxed"

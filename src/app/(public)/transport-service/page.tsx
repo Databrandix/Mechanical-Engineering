@@ -1,22 +1,17 @@
-import type { ComponentType } from 'react';
 import {
-  Bus,
   Phone,
   Clock,
   ArrowDownRight,
   ArrowUpLeft,
-  MapPin,
-  Sparkles,
+  Bus,
   Info,
-  AlertCircle,
-  CheckCircle,
-  ShieldCheck,
-  type LucideProps,
+  Sparkles,
 } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getBusRoutes, getTransportLanding } from '@/lib/identity';
 import { sanitizeHtml } from '@/lib/sanitize-html';
+import { DynamicLucideIcon } from '@/components/ui/DynamicLucideIcon';
 
 export const metadata = {
   title: 'Transport Service — Sonargaon University',
@@ -24,12 +19,9 @@ export const metadata = {
     "Sonargaon University's free bus service routes, timings, and contact numbers covering major areas across Dhaka.",
 };
 
-// Curated set — matches the icons admin can pick in the
-// TransportLandingForm datalist. Unknown names fall back to Info.
-const InstructionIconMap: Record<string, ComponentType<LucideProps>> = {
-  MapPin, Sparkles, Bus, Info, Clock, Phone,
-  AlertCircle, CheckCircle, ShieldCheck,
-};
+// Phase 20 — instructions[].iconName resolves via DynamicLucideIcon
+// against the full Lucide library; silent HelpCircle fallback on
+// unknown names.
 
 type InstructionRow = { iconName: string; title: string; description: string };
 
@@ -202,10 +194,13 @@ export default async function TransportServicePage() {
 
             <ul className="space-y-5">
               {instructions.map((row, i) => {
-                const Icon = InstructionIconMap[row.iconName] ?? Info;
                 return (
                   <li key={i} className="flex items-start gap-3">
-                    <Icon size={18} className="shrink-0 mt-0.5 text-primary" />
+                    <DynamicLucideIcon
+                      name={row.iconName}
+                      size={18}
+                      className="shrink-0 mt-0.5 text-primary"
+                    />
                     <div>
                       <p className="font-bold text-[15px] text-primary mb-1">
                         {row.title}

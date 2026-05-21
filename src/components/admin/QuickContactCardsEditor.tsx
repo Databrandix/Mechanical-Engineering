@@ -1,38 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Plus, X, ChevronDown,
-  HelpCircle, AlertCircle,
-  Phone, Mail, Globe, Facebook, MapPin, Building2, Clock,
-  Instagram, Youtube, Linkedin, Twitter, MessageCircle, Send,
-  MessageSquare, Smartphone, AtSign, Link as LinkIcon,
-  type LucideIcon,
-} from 'lucide-react';
+import { Plus, X, ChevronDown } from 'lucide-react';
 import FormSortableList from './FormSortableList';
+import IconInputField from './IconInputField';
+import { DynamicLucideIcon, hasIcon } from '@/components/ui/DynamicLucideIcon';
 
 // Phase 10 structured editor for ContactPageContent.quickContactCards
 // Json column — { iconName, title, primaryValue, primaryHref?,
-// secondaryValue?, secondaryHref?, hint? }[]. Replaces the JSON
-// textarea — UX-equivalent to Phase 8b OverviewStatsEditor /
-// ShiftsEditor refactors per chair's "JSON textarea unusable for
-// non-tech admin" feedback.
+// secondaryValue?, secondaryHref?, hint? }[].
 //
-// Constraint #4 reinterpretation: structured editor permitted for a
-// genuinely new UX shape (this 7-field card-with-optional-sections
-// pattern has no existing editor match).
-
-// ICON_PREVIEW set mirrors the page-side ICON_MAP at
-// src/app/contact/page.tsx so the preview rendered here matches
-// what will render on /contact. Add an entry here AND on the public
-// page when introducing a new acceptable iconName.
-const ICON_PREVIEW: Record<string, LucideIcon> = {
-  Phone, Mail, Globe, Facebook, MapPin, Building2, Clock, HelpCircle,
-  Instagram, Youtube, Linkedin, Twitter, MessageCircle, Send,
-  // Editor-side extras commonly typed by admins (still render via
-  // HelpCircle fallback on the public page unless added there too).
-  MessageSquare, Smartphone, AtSign, LinkIcon,
-};
+// Phase 20 — picker / fallback / preview now delegate to the shared
+// IconInputField + DynamicLucideIcon. The page-side ICON_MAP that
+// this editor used to mirror is gone; admin can pick from any of
+// the 2,797 Lucide icons.
 
 type Card = {
   id: string;
@@ -157,14 +138,7 @@ function CardEditor({
   const [hintOpen, setHintOpen]           = useState<boolean>(hasHint);
 
   const trimmedIconName = card.iconName.trim();
-  // tsconfig has noUncheckedIndexedAccess off, so the indexed lookup
-  // would otherwise be typed as LucideIcon (non-optional). Explicit
-  // annotation keeps the existence check honest.
-  const knownIcon: LucideIcon | undefined = trimmedIconName in ICON_PREVIEW
-    ? ICON_PREVIEW[trimmedIconName]
-    : undefined;
-  const PreviewIcon = knownIcon ?? HelpCircle;
-  const iconWarning = trimmedIconName.length > 0 && !knownIcon;
+  const iconKnown = trimmedIconName.length > 0 && hasIcon(trimmedIconName);
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-3">
@@ -173,28 +147,21 @@ function CardEditor({
         {/* Icon preview cell */}
         <div className="flex flex-col items-center gap-1 md:pt-5">
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <PreviewIcon size={18} className={knownIcon ? 'text-primary' : 'text-gray-400'} />
+            <DynamicLucideIcon
+              name={trimmedIconName}
+              size={18}
+              className={iconKnown ? 'text-primary' : 'text-gray-400'}
+            />
           </div>
         </div>
         <div>
           <Label>Icon name</Label>
-          <input
-            type="text"
+          <IconInputField
+            compact
             value={card.iconName}
-            onChange={(e) => onUpdate(card.id, 'iconName', e.target.value)}
+            onChange={(v) => onUpdate(card.id, 'iconName', v)}
             placeholder="Phone"
-            className={inputClass}
           />
-          {iconWarning ? (
-            <p className="mt-1 flex items-start gap-1 text-[11px] text-amber-700">
-              <AlertCircle size={11} className="mt-0.5 shrink-0" />
-              <span>Unknown Lucide icon — public page will render the HelpCircle fallback.</span>
-            </p>
-          ) : (
-            <p className="mt-1 text-[11px] text-gray-500">
-              Lucide name — e.g. Phone, Mail, Globe, Facebook, MessageCircle
-            </p>
-          )}
         </div>
         <div>
           <Label>Title</Label>

@@ -1,33 +1,20 @@
 'use client';
 
 import Image from 'next/image';
-import {motion} from 'motion/react';
+import { motion } from 'motion/react';
+import { ChevronRight } from 'lucide-react';
 import Container from '../ui/Container';
 import SectionTitle from '../ui/SectionTitle';
-import {
-  ChevronRight,
-  // Original 7 — seed values for the BSc-ME research areas
-  Flame, Waves, Bot, Wrench, Layers, Leaf, Car,
-  // Expanded pool — covers common research-domain choices super_admin
-  // can pick in the admin form without needing a code change.
-  Atom, Cpu, Microscope, Brain, Zap, Activity,
-  FlaskConical, Dna, Cog, Lightbulb, Rocket, Database, BookOpen, Gauge,
-  type LucideIcon,
-} from 'lucide-react';
+import { DynamicLucideIcon } from '../ui/DynamicLucideIcon';
 
-// Resolution order for each ResearchArea card icon:
+// Phase 20 — icon resolution for each ResearchArea card:
 //   1. iconUrl set        → <Image>  (Cloudinary upload, signed)
-//   2. iconName in IconMap → <LucideIcon>
-//   3. iconName missing or not in map → <FlaskConical> (generic fallback)
+//   2. iconName set       → <DynamicLucideIcon> (any of 2,797 Lucide
+//                            icons, with HelpCircle fallback inside
+//                            DynamicLucideIcon for unknown names)
 //
 // Phase 0 schema constraint guarantees exactly one of (iconName,
-// iconUrl) is provided; the FlaskConical fallback is only reachable
-// if an admin types a Lucide name not present in this map.
-const IconMap: Record<string, LucideIcon> = {
-  Flame, Waves, Bot, Wrench, Layers, Leaf, Car,
-  Atom, Cpu, Microscope, Brain, Zap, Activity,
-  FlaskConical, Dna, Cog, Lightbulb, Rocket, Database, BookOpen, Gauge,
-};
+// iconUrl) is provided.
 
 type ResearchAreaRow = {
   id: string;
@@ -61,11 +48,7 @@ function ResearchAreaIcon({ area }: { area: ResearchAreaRow }) {
       />
     );
   }
-  const LucideIconComp = area.iconName ? IconMap[area.iconName] : null;
-  if (LucideIconComp) {
-    return <LucideIconComp size={24} />;
-  }
-  return <FlaskConical size={24} />;
+  return <DynamicLucideIcon name={area.iconName ?? ''} size={24} />;
 }
 
 export default function MajorResearchSection({ areas }: MajorResearchSectionProps) {

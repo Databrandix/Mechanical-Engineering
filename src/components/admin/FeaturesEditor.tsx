@@ -2,14 +2,13 @@
 
 import { useState } from 'react';
 import { Plus, X, ArrowUp, ArrowDown } from 'lucide-react';
+import IconInputField from './IconInputField';
 
 type Row = { iconName: string; title: string; description: string };
 
 type Props = {
   name: string;
   initialValue: unknown;
-  /** Optional curated Lucide icon hints for the datalist. */
-  iconHints?: readonly string[];
 };
 
 function normalize(v: unknown): Row[] {
@@ -23,7 +22,7 @@ function normalize(v: unknown): Row[] {
     }));
 }
 
-export default function FeaturesEditor({ name, initialValue, iconHints }: Props) {
+export default function FeaturesEditor({ name, initialValue }: Props) {
   const [rows, setRows] = useState<Row[]>(normalize(initialValue));
 
   function addRow() {
@@ -44,18 +43,10 @@ export default function FeaturesEditor({ name, initialValue, iconHints }: Props)
   // Drop visually-empty rows (title is load-bearing)
   const cleaned = rows.filter((r) => r.title.trim());
 
-  const datalistId = `${name}-icon-hints`;
-
   return (
     <div className="space-y-3">
       {rows.length === 0 && (
         <p className="text-xs text-gray-500 italic">No features yet.</p>
-      )}
-
-      {iconHints && (
-        <datalist id={datalistId}>
-          {iconHints.map((h) => <option key={h} value={h} />)}
-        </datalist>
       )}
 
       {rows.map((row, i) => (
@@ -86,13 +77,10 @@ export default function FeaturesEditor({ name, initialValue, iconHints }: Props)
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Lucide icon name</label>
-              <input
-                type="text"
+              <IconInputField
+                compact
                 value={row.iconName}
-                onChange={(e) => updateRow(i, { iconName: e.target.value })}
-                list={iconHints ? datalistId : undefined}
-                placeholder="Cog, ShieldCheck, FlaskConical, …"
-                className="w-full px-3 py-1.5 text-sm font-mono border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent bg-white"
+                onChange={(v) => updateRow(i, { iconName: v })}
               />
             </div>
             <div>

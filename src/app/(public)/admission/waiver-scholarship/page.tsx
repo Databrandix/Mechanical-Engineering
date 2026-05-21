@@ -1,17 +1,4 @@
-import {
-  Award,
-  Building2,
-  CheckCircle2,
-  GraduationCap,
-  HeartHandshake,
-  HelpCircle,
-  Info,
-  ListChecks,
-  Sparkles,
-  Trophy,
-  Users,
-  type LucideIcon,
-} from 'lucide-react';
+import { CheckCircle2, GraduationCap, ListChecks, Sparkles } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import {
@@ -19,6 +6,7 @@ import {
   getWaiverCategories,
   getWaiverScholarshipLanding,
 } from '@/lib/identity';
+import { DynamicLucideIcon } from '@/components/ui/DynamicLucideIcon';
 
 export const metadata = {
   title: 'Waiver & Scholarship — Department of Mechanical Engineering',
@@ -26,18 +14,9 @@ export const metadata = {
     'Tuition waivers and merit scholarships at Sonargaon University — eligibility, percentages, and how they apply.',
 };
 
-// Icon map for WaiverCategory.iconName. Unknown names fall back
-// to HelpCircle so a fresh admin row never crashes the page.
-const ICON_MAP: Record<string, LucideIcon> = {
-  Users, HeartHandshake, Award, Building2,
-  // Common fallbacks the admin may try
-  Sparkles, GraduationCap, Trophy, ListChecks, Info, HelpCircle,
-};
-
-function iconFor(name: string | undefined): LucideIcon {
-  if (!name) return HelpCircle;
-  return ICON_MAP[name] ?? HelpCircle;
-}
+// Phase 20 — WaiverCategory.iconName resolves via DynamicLucideIcon
+// against the full Lucide library; silent HelpCircle fallback on
+// unknown names.
 
 // ─── Json shape coercions (defensive) ────────────────────────
 
@@ -113,12 +92,11 @@ export default async function WaiverScholarshipPage() {
             </div>
 
             {/* ════════════════ WAIVERS ════════════════ */}
-            <PartHeader Icon={Sparkles} kicker={landing.part1Kicker} title={landing.part1Heading} />
+            <PartHeader iconName="Sparkles" kicker={landing.part1Kicker} title={landing.part1Heading} />
 
             {categories.length > 0 && (
               <div className="space-y-6 mb-12">
                 {categories.map((cat) => {
-                  const Icon = iconFor(cat.iconName);
                   const items = coerceCategoryItems(cat.items);
                   return (
                     <article
@@ -127,7 +105,7 @@ export default async function WaiverScholarshipPage() {
                     >
                       <div className="flex items-center gap-4 mb-5">
                         <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center shadow-md shrink-0">
-                          <Icon size={22} strokeWidth={1.75} />
+                          <DynamicLucideIcon name={cat.iconName} size={22} strokeWidth={1.75} />
                         </div>
                         <h3 className="font-display text-xl md:text-2xl font-bold text-primary leading-tight">
                           {cat.title}
@@ -224,7 +202,7 @@ export default async function WaiverScholarshipPage() {
             )}
 
             {/* ════════════════ SCHOLARSHIPS ════════════════ */}
-            <PartHeader Icon={Trophy} kicker={landing.part2Kicker} title={landing.part2Heading} />
+            <PartHeader iconName="Trophy" kicker={landing.part2Kicker} title={landing.part2Heading} />
 
             <p className="text-center text-gray-700 max-w-3xl mx-auto mb-10 leading-[1.85]">
               {landing.part2Intro}
@@ -316,18 +294,18 @@ export default async function WaiverScholarshipPage() {
 }
 
 function PartHeader({
-  Icon,
+  iconName,
   kicker,
   title,
 }: {
-  Icon: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>;
+  iconName: string;
   kicker: string;
   title: string;
 }) {
   return (
     <div className="text-center mb-8 md:mb-10">
       <div className="inline-flex w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-accent text-white items-center justify-center shadow-md mb-3">
-        <Icon size={22} strokeWidth={1.75} />
+        <DynamicLucideIcon name={iconName} size={22} strokeWidth={1.75} />
       </div>
       <span className="block text-accent text-[11px] font-bold tracking-[0.3em] uppercase mb-1">
         {kicker}
