@@ -8,6 +8,7 @@ import type { ComponentType } from 'react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getLaboratoryFacilityLanding, getLaboratoryLabs } from '@/lib/identity';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
   title: 'Laboratory Facility — Department of Mechanical Engineering',
@@ -64,7 +65,7 @@ export default async function LaboratoryFacilityPage() {
         <div className="max-w-3xl mx-auto text-center mb-12 md:mb-16">
           <p
             className="text-base md:text-lg text-gray-700 leading-[1.85]"
-            dangerouslySetInnerHTML={{ __html: landing.introBody }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(landing.introBody) }}
           />
         </div>
 

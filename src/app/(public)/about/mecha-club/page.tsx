@@ -11,6 +11,7 @@ import type { ComponentType } from 'react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getAboutMechaClub } from '@/lib/identity';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
   title: 'Mecha Club — Department of Mechanical Engineering',
@@ -91,7 +92,7 @@ export default async function MechaClubPage() {
             )}
             <h2
               className="font-display text-3xl md:text-4xl font-bold text-primary leading-tight mb-5"
-              dangerouslySetInnerHTML={{ __html: row.introHeading }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(row.introHeading) }}
             />
             <p className="text-gray-700 leading-[1.85] mb-6">
               {row.introBody1}

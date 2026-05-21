@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 import { programFeeStructureUpdateSchema } from '@/lib/validation';
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
@@ -63,6 +64,13 @@ export async function upsertProgramFeeStructureAction(
     return { ok: false, error: parsed.error.issues.map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`).join('; ') };
   }
 
+  // Phase 19 CP19.5 — sanitize HTML-allowed `policies[].text`. Schema-
+  // validated shape is { iconName, title, text }[]; only `text` is
+  // rendered via dangerouslySetInnerHTML on the public page.
+  const cleanPolicies = (parsed.data.policies as Array<{ text?: unknown } & Record<string, unknown>>).map((p) => ({
+    ...p,
+    text: typeof p.text === 'string' ? sanitizeHtml(p.text) : p.text,
+  }));
   const data = {
     programId,
     introOverline: parsed.data.introOverline,
@@ -70,7 +78,7 @@ export async function upsertProgramFeeStructureAction(
     introBody:     parsed.data.introBody,
     overviewStats: parsed.data.overviewStats as unknown as Prisma.InputJsonValue,
     shifts:        parsed.data.shifts        as unknown as Prisma.InputJsonValue,
-    policies:      parsed.data.policies      as unknown as Prisma.InputJsonValue,
+    policies:      cleanPolicies             as unknown as Prisma.InputJsonValue,
   };
 
   // Verify program exists (defensive — admin shouldn't be able to

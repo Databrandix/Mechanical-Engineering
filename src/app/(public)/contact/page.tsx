@@ -8,6 +8,7 @@ import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import ContactForm from '@/components/forms/ContactForm';
 import { getContactPageContent, getCampusLocations } from '@/lib/identity';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
   title: 'Contact Us — Sonargaon University',
@@ -88,7 +89,7 @@ export default async function ContactPage() {
           <div className="mx-auto max-w-3xl text-center mb-12 md:mb-16">
             <p
               className="text-[15px] md:text-[16px] leading-[1.85] text-gray-700"
-              dangerouslySetInnerHTML={{ __html: introBody }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(introBody) }}
             />
           </div>
         )}

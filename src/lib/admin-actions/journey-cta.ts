@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 import { journeyCTAContentUpdateSchema } from '@/lib/validation';
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
@@ -49,11 +50,14 @@ export async function updateJourneyCTAContentAction(
     };
   }
 
+  // Phase 19 CP19.5 — sanitize HTML-allowed `body` before persisting.
+  const data = { ...parsed.data, body: sanitizeHtml(parsed.data.body) };
+
   try {
     await prisma.journeyCTAContent.upsert({
       where: { id: 'singleton' },
-      create: { id: 'singleton', ...parsed.data },
-      update: parsed.data,
+      create: { id: 'singleton', ...data },
+      update: data,
     });
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Database error' };

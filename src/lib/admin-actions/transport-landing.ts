@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 import { transportLandingUpdateSchema } from '@/lib/validation';
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
@@ -51,9 +52,16 @@ export async function updateTransportLandingAction(
     return { ok: false, error: parsed.error.issues.map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`).join('; ') };
   }
 
+  // Phase 19 CP19.5 — sanitize bannerBody (HTML-allowed) and each
+  // instruction's `description` (HTML-allowed) before persisting.
+  const cleanInstructions = parsed.data.instructions.map((row) => ({
+    ...row,
+    description: sanitizeHtml(row.description),
+  }));
   const data = {
     ...parsed.data,
-    instructions: parsed.data.instructions as unknown as Prisma.InputJsonValue,
+    bannerBody: sanitizeHtml(parsed.data.bannerBody),
+    instructions: cleanInstructions as unknown as Prisma.InputJsonValue,
   };
 
   try {

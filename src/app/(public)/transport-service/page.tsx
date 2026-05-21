@@ -16,6 +16,7 @@ import {
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getBusRoutes, getTransportLanding } from '@/lib/identity';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
   title: 'Transport Service — Sonargaon University',
@@ -82,7 +83,7 @@ export default async function TransportServicePage() {
                     seeded from the pre-Phase-7 hardcoded markup. */}
                 <p
                   className="text-white/90 text-[14px] md:text-[15px] leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: landing.bannerBody }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(landing.bannerBody) }}
                 />
               </div>
             </div>
@@ -212,7 +213,7 @@ export default async function TransportServicePage() {
                       {/* HTML allowed — instructions can embed tel: links + bold text */}
                       <p
                         className="text-[14px] leading-[1.7] text-gray-700"
-                        dangerouslySetInnerHTML={{ __html: row.description }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(row.description) }}
                       />
                     </div>
                   </li>

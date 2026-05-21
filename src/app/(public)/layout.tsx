@@ -17,6 +17,7 @@ import {
   getFooterLegalLinks,
 } from '@/lib/identity';
 import { getSearchIndex } from '@/lib/search-index';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 // Phase 18 — universal ISR for the (public)/ subtree.
 //   - revalidate: 1 hour wall-time safety net. Admin save actions
@@ -102,7 +103,10 @@ export default async function PublicLayout({
           heroImageUrl={journeyCTA.heroImageUrl}
           heroImagePosition={`center ${journeyCTA.heroImageVerticalPercent}%`}
           heading={journeyCTA.heading}
-          body={journeyCTA.body}
+          // Phase 19 CP19.5 — sanitize on the server before passing into
+          // the 'use client' JourneyCTASection so DOMPurify/jsdom stays
+          // out of the client bundle.
+          body={sanitizeHtml(journeyCTA.body)}
           primaryCtaLabel={journeyCTA.primaryCtaLabel}
           primaryCtaHref={journeyCTA.primaryCtaHref}
           primaryCtaExternal={journeyCTA.primaryCtaExternal}

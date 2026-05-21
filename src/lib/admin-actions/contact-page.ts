@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 import { contactPageContentUpdateSchema } from '@/lib/validation';
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
@@ -62,8 +63,10 @@ export async function updateContactPageContentAction(
     };
   }
 
+  // Phase 19 CP19.5 — sanitize HTML-allowed `introBody` before persisting.
   const data = {
     ...parsed.data,
+    introBody: sanitizeHtml(parsed.data.introBody),
     quickContactCards: parsed.data.quickContactCards as unknown as Prisma.InputJsonValue,
   };
 

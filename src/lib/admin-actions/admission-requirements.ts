@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 import { admissionRequirementsUpdateSchema } from '@/lib/validation';
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
@@ -60,7 +61,8 @@ export async function updateAdmissionRequirementsAction(
     undergraduateRequirements: parsed.data.undergraduateRequirements as unknown as Prisma.InputJsonValue,
     additionalNotes:           parsed.data.additionalNotes           as unknown as Prisma.InputJsonValue,
     diplomaRequirements:       parsed.data.diplomaRequirements       as unknown as Prisma.InputJsonValue,
-    combinedGpaBody:           parsed.data.combinedGpaBody,
+    // Phase 19 CP19.5 — sanitize HTML-allowed `combinedGpaBody`.
+    combinedGpaBody:           sanitizeHtml(parsed.data.combinedGpaBody),
     diplomaQuickCriteria:      parsed.data.diplomaQuickCriteria      as unknown as Prisma.InputJsonValue,
   };
 

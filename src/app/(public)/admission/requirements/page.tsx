@@ -7,6 +7,7 @@ import {
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getAdmissionRequirements } from '@/lib/identity';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
   title: 'Admission Requirements — Department of Mechanical Engineering',
@@ -138,7 +139,7 @@ export default async function AdmissionRequirementsPage() {
                           Combined GPA Criteria
                         </h4>
                         <p className="text-[15px] text-gray-700 leading-[1.7]"
-                           dangerouslySetInnerHTML={{ __html: reqs.combinedGpaBody }} />
+                           dangerouslySetInnerHTML={{ __html: sanitizeHtml(reqs.combinedGpaBody) }} />
                       </div>
                     )}
                   </div>

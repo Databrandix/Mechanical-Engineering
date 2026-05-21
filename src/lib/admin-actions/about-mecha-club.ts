@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 import { aboutMechaClubUpdateSchema } from '@/lib/validation';
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
@@ -76,10 +77,14 @@ export async function updateAboutMechaClubAction(
   // Cast Json fields for Prisma — stats + activities are validated as
   // arrays-of-objects by Zod but Prisma's input type is the generic
   // InputJsonValue (same pattern as the Faculty Json columns).
+  // Phase 19 CP19.5 — sanitize HTML-allowed `introHeading` (the only
+  // dangerouslySetInnerHTML render in this entity per CP19.5.1
+  // inventory; other text fields go through React auto-escape).
   const data = {
     ...parsed.data,
-    stats:      parsed.data.stats as Prisma.InputJsonValue,
-    activities: parsed.data.activities as Prisma.InputJsonValue,
+    introHeading: sanitizeHtml(parsed.data.introHeading),
+    stats:        parsed.data.stats as Prisma.InputJsonValue,
+    activities:   parsed.data.activities as Prisma.InputJsonValue,
   };
 
   try {
