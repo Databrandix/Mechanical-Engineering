@@ -1,6 +1,7 @@
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getAboutOverview } from '@/lib/identity';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
   title: 'Overview — Department of Mechanical Engineering',
@@ -27,7 +28,7 @@ export default async function OverviewPage() {
       <Container>
         <div className="space-y-6 text-[16px] md:text-[17px] leading-[1.85] text-gray-800 text-justify">
           {row.paragraphs.map((p, i) => (
-            <p key={i} dangerouslySetInnerHTML={{ __html: p }} />
+            <p key={i} dangerouslySetInnerHTML={{ __html: sanitizeHtml(p) }} />
           ))}
         </div>
       </Container>

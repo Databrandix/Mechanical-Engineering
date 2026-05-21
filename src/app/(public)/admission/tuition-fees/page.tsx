@@ -15,6 +15,7 @@ import {
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getProgramFeeStructures } from '@/lib/identity';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
   title: 'Tuition Fees — Department of Mechanical Engineering',
@@ -308,7 +309,7 @@ export default async function TuitionFeesPage() {
                             </div>
                             <h3 className="font-display text-lg font-bold text-primary mb-2">{policy.title}</h3>
                             <p className="text-sm text-gray-700 leading-relaxed"
-                               dangerouslySetInnerHTML={{ __html: policy.text }} />
+                               dangerouslySetInnerHTML={{ __html: sanitizeHtml(policy.text) }} />
                           </article>
                         );
                       })}

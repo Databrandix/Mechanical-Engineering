@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 import {
   labFacilityLandingUpdateSchema,
   labCreateSchema,
@@ -69,11 +70,14 @@ export async function updateLabFacilityLandingAction(
     };
   }
 
+  // Phase 19 CP19.5 — sanitize HTML-allowed `introBody`.
+  const data = { ...parsed.data, introBody: sanitizeHtml(parsed.data.introBody) };
+
   try {
     await prisma.labFacilityLanding.upsert({
       where: { id: 'singleton' },
-      create: { id: 'singleton', ...parsed.data },
-      update: parsed.data,
+      create: { id: 'singleton', ...data },
+      update: data,
     });
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Database error' };

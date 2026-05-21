@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
+import { sanitizeHtmlArray } from '@/lib/sanitize-html';
 import {
   admissionNoticeCreateSchema,
   admissionNoticeUpdateSchema,
@@ -88,7 +89,8 @@ export async function createAdmissionNoticeAction(
     await prisma.admissionNotice.create({
       data: {
         ...parsed.data,
-        bodyParagraphs: parsed.data.bodyParagraphs as Prisma.InputJsonValue,
+        // Phase 19 CP19.5 — sanitize HTML-allowed paragraphs.
+        bodyParagraphs: sanitizeHtmlArray(parsed.data.bodyParagraphs) as unknown as Prisma.InputJsonValue,
         ccList:         parsed.data.ccList         as Prisma.InputJsonValue,
         displayOrder,
       },
@@ -121,7 +123,8 @@ export async function updateAdmissionNoticeAction(
       where: { id },
       data: {
         ...parsed.data,
-        bodyParagraphs: parsed.data.bodyParagraphs as Prisma.InputJsonValue,
+        // Phase 19 CP19.5 — sanitize HTML-allowed paragraphs.
+        bodyParagraphs: sanitizeHtmlArray(parsed.data.bodyParagraphs) as unknown as Prisma.InputJsonValue,
         ccList:         parsed.data.ccList         as Prisma.InputJsonValue,
       },
     });

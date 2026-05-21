@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
+import { sanitizeHtmlArray } from '@/lib/sanitize-html';
 import { aboutOverviewUpdateSchema } from '@/lib/validation';
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
@@ -53,11 +54,17 @@ export async function updateAboutOverviewAction(
     };
   }
 
+  // Phase 19 CP19.5 — sanitize HTML-allowed paragraphs before persisting.
+  const data = {
+    ...parsed.data,
+    paragraphs: sanitizeHtmlArray(parsed.data.paragraphs),
+  };
+
   try {
     await prisma.aboutOverview.upsert({
       where: { id: 'singleton' },
-      create: { id: 'singleton', ...parsed.data },
-      update: parsed.data,
+      create: { id: 'singleton', ...data },
+      update: data,
     });
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Database error' };

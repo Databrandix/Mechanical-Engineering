@@ -2,6 +2,7 @@ import { CheckCircle2, FileText, BookOpen, Receipt, GraduationCap } from 'lucide
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getAdmissionTransferCredits } from '@/lib/identity';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
   title: 'Transfer Credits — Department of Mechanical Engineering',
@@ -97,7 +98,7 @@ export default async function TransferCreditsPage() {
                         <CheckCircle2 size={20} className="text-accent shrink-0 mt-0.5" />
                         <p className="text-[15px] text-gray-800 leading-[1.7]">
                           <span className="font-semibold text-primary">{b.heading}:</span>{' '}
-                          <span dangerouslySetInnerHTML={{ __html: b.body }} />
+                          <span dangerouslySetInnerHTML={{ __html: sanitizeHtml(b.body) }} />
                         </p>
                       </li>
                     ))}

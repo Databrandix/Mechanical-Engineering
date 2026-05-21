@@ -31,3 +31,6 @@ next-env.d.ts
 
 # Local-only backup of pre-optimization images (Phase 1 of pagespeed work)
 /assets-original-backup/
+
+# Phase 19 — private security audit working notes (must never be committed)
+/.security-audit-notes/

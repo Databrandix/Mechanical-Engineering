@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 import {
   laboratoryFacilityLandingUpdateSchema,
   laboratoryLabCreateSchema,
@@ -81,9 +82,11 @@ export async function updateLaboratoryFacilityLandingAction(
     };
   }
 
+  // Phase 19 CP19.5 — sanitize HTML-allowed `introBody`.
   const data = {
     ...parsed.data,
-    features: parsed.data.features as Prisma.InputJsonValue,
+    introBody: sanitizeHtml(parsed.data.introBody),
+    features:  parsed.data.features as Prisma.InputJsonValue,
   };
 
   try {

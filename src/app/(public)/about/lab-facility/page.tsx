@@ -1,6 +1,7 @@
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getLabFacilityLanding, getLabs } from '@/lib/identity';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 import LabFacilityClient from './LabFacilityClient';
 
 export const metadata = {
@@ -33,7 +34,7 @@ export default async function LabFacilityPage() {
         <div className="max-w-3xl mx-auto text-center mb-10 md:mb-14">
           <p
             className="text-base md:text-lg text-gray-700 leading-[1.85]"
-            dangerouslySetInnerHTML={{ __html: landing.introBody }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(landing.introBody) }}
           />
         </div>
       </Container>

@@ -2,6 +2,7 @@ import { Calendar, FileText, Hash, Download, Building2 } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getActiveAdmissionNotice } from '@/lib/identity';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
   title: 'Admission Notice — Department of Mechanical Engineering',
@@ -93,7 +94,7 @@ export default async function AdmissionNoticePage() {
 
                 <div className="space-y-5 text-[15px] md:text-[16px] leading-[1.85] text-gray-800 text-justify">
                   {bodyParagraphs.map((html, i) => (
-                    <p key={i} dangerouslySetInnerHTML={{ __html: html }} />
+                    <p key={i} dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }} />
                   ))}
                 </div>
 

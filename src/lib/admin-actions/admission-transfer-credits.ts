@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 import { admissionTransferCreditsUpdateSchema } from '@/lib/validation';
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
@@ -55,11 +56,18 @@ export async function updateAdmissionTransferCreditsAction(
     return { ok: false, error: parsed.error.issues.map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`).join('; ') };
   }
 
+  // Phase 19 CP19.5 — sanitize HTML-allowed bullet bodies. Schema
+  // validates shape as { heading, body }[]; only `body` reaches a
+  // dangerouslySetInnerHTML render on the public page.
+  const cleanBullets = (parsed.data.minimumGradeBullets as Array<{ body?: unknown } & Record<string, unknown>>).map((b) => ({
+    ...b,
+    body: typeof b.body === 'string' ? sanitizeHtml(b.body) : b.body,
+  }));
   const data = {
     ...parsed.data,
-    minimumGradeBullets: parsed.data.minimumGradeBullets as unknown as Prisma.InputJsonValue,
-    documents:           parsed.data.documents           as unknown as Prisma.InputJsonValue,
-    summaryRows:         parsed.data.summaryRows         as unknown as Prisma.InputJsonValue,
+    minimumGradeBullets: cleanBullets             as unknown as Prisma.InputJsonValue,
+    documents:           parsed.data.documents    as unknown as Prisma.InputJsonValue,
+    summaryRows:         parsed.data.summaryRows  as unknown as Prisma.InputJsonValue,
   };
 
   try {

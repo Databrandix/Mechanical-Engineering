@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
+import { sanitizeHtmlArray } from '@/lib/sanitize-html';
 import {
   facultyCreateSchema,
   facultyUpdateSchema,
@@ -124,7 +125,8 @@ function buildFacultyData(parsed: ReturnType<typeof facultyCreateSchema.parse>) 
     isHead:                parsed.isHead ?? false,
     messageOverline:       parsed.messageOverline ?? null,
     messageHeading:        parsed.messageHeading ?? null,
-    messageParagraphs:     parsed.messageParagraphs ?? [],
+    // Phase 19 CP19.5 — sanitize HTML-allowed paragraphs before persisting.
+    messageParagraphs:     sanitizeHtmlArray(parsed.messageParagraphs ?? []),
     messagePhotoUrl:       parsed.messagePhotoUrl ?? null,
     messagePhotoPublicId:  parsed.messagePhotoPublicId ?? null,
     messageTitleLine1:     parsed.messageTitleLine1 ?? null,
