@@ -62,6 +62,17 @@ const nextConfig: NextConfig = {
   // header so attackers can't fingerprint the framework from a
   // simple HEAD request.
   poweredByHeader: false,
+  // Phase 19 CP19.6.HOTFIX — keep isomorphic-dompurify (jsdom +
+  // html-encoding-sniffer + @exodus/bytes transitively) out of
+  // the bundled serverless function chunks. Next.js bundling on
+  // the Vercel Node runtime tried to `require()` an ESM-only
+  // transitive (`@exodus/bytes/encoding-lite.js`) and crashed
+  // every dynamic-render route (/news first, admin routes next).
+  // Externalizing the package defers resolution to runtime
+  // `require()`, which handles the CJS/ESM interop correctly.
+  // Static prerenders weren't affected — their HTML was baked
+  // at build time before the runtime require ever fired.
+  serverExternalPackages: ['isomorphic-dompurify'],
   images: {
     formats: ['image/webp'],
     minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year
