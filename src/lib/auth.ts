@@ -37,6 +37,22 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24,
   },
 
+  // Phase 19 CP19.4 — Layer A: per-IP rate limit on the email
+  // sign-in endpoint. Better Auth derives the IP from request
+  // headers (x-forwarded-for, etc.) and stores counters in
+  // memory (per-Vercel-instance). 10 attempts per 15 min is
+  // generous for a human but blocks credential-stuffing rates.
+  // Layer B (per-account lockout) lives in src/lib/login-lockout.ts
+  // and is enforced by the route wrapper at /api/auth/[...all].
+  // `enabled: true` overrides the production-only default so
+  // local testing exercises the limiter; storage stays in-memory.
+  rateLimit: {
+    enabled: true,
+    customRules: {
+      '/sign-in/email': { window: 15 * 60, max: 10 },
+    },
+  },
+
   // Teach Better Auth's typed user about our domain columns.
   // These already exist in Prisma; `input: false` keeps them out
   // of public auth-API payloads (sign-in body, etc.) so they can
