@@ -4,7 +4,42 @@ import type { NextConfig } from 'next';
 // COEP intentionally omitted: it would require every cross-origin
 // resource (Cloudinary images, Google Fonts) to send a permissive
 // CORP header, which they don't, so enabling it would break image
-// loading site-wide. CSP added separately in CP19.6.
+// loading site-wide.
+//
+// Phase 19 CP19.6 — Content-Security-Policy shipped in Report-Only
+// mode initially. Browsers report violations to /api/csp-report but
+// do NOT block; gives 1-2 weeks of production observation before the
+// follow-up Enforce switch. `frame-ancestors 'none'` is the one
+// directive browsers enforce even in Report-Only (spec quirk), so
+// clickjacking protection is live immediately.
+//
+// Allowlist rationale:
+//   - script/style 'unsafe-inline' — Next.js hydration + React
+//     inline-style props; XSS surface closed at write+read by CP19.5
+//     sanitizer, so inline directives don't open a new attack class.
+//   - img-src + Cloudinary CDN — sole image source in production.
+//     Unsplash / picsum (dev-leftover from next.config.ts remote-
+//     Patterns) intentionally EXCLUDED so Report-Only flags any
+//     stray usage instead of silently allowing it.
+//   - frame-src — Footer Google Maps embed only.
+//   - font-src 'self' data: — next/font/google self-hosts to /_next/
+//     static/fonts at build time, no Google Fonts CDN runtime fetch.
+const cspReportOnly = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://res.cloudinary.com",
+  "font-src 'self' data:",
+  "connect-src 'self'",
+  "frame-src https://www.google.com https://maps.google.com",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+  "upgrade-insecure-requests",
+  "report-uri /api/csp-report",
+].join('; ');
+
 const securityHeaders = [
   { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
   { key: 'X-Content-Type-Options',    value: 'nosniff' },
@@ -19,6 +54,7 @@ const securityHeaders = [
   { key: 'X-DNS-Prefetch-Control',         value: 'on' },
   { key: 'Cross-Origin-Opener-Policy',     value: 'same-origin' },
   { key: 'Cross-Origin-Resource-Policy',   value: 'same-origin' },
+  { key: 'Content-Security-Policy-Report-Only', value: cspReportOnly },
 ];
 
 const nextConfig: NextConfig = {
