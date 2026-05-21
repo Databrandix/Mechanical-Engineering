@@ -171,7 +171,9 @@ export default async function FacultyDetailPage({
             {/* Contact panel */}
             <div className="lg:border-l lg:border-gray-200 lg:pl-8 space-y-4 text-sm min-w-[240px]">
               <ContactRow label="Address" Icon={MapPin}>
-                <span className="text-gray-700">{uni.address}</span>
+                <span className="text-gray-700 whitespace-pre-line">
+                  {member.officeAddress ?? uni.address}
+                </span>
               </ContactRow>
 
               {member.email && (
