@@ -9,6 +9,7 @@ import HeroImagePositionSlider from '@/components/admin/HeroImagePositionSlider'
 import PersonalInfoEditor from './PersonalInfoEditor';
 import SectionContentEditor from './SectionContentEditor';
 import ParagraphsEditor from '@/components/admin/ParagraphsEditor';
+import DesignationSelector from './DesignationSelector';
 import {
   createFacultyAction,
   updateFacultyAction,
@@ -98,10 +99,10 @@ export default function FacultyForm({ initial, currentDean, currentHead }: Props
           label="Name" name="name" required
           defaultValue={initial?.name ?? ''}
         />
-        <TextField
-          label="Designation" name="designation" required
-          defaultValue={initial?.designation ?? ''}
-          placeholder="e.g. Lecturer, Associate Professor"
+        <DesignationSelector
+          name="designation"
+          required
+          initialValue={initial?.designation ?? ''}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <TextField
