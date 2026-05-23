@@ -1,31 +1,46 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 type WithId = { id: string };
 
 // Admin list pattern — Server Component fetches rows via Prisma and
-// passes them to a client list. After a successful delete we used to
-// rely on router.refresh() alone, but Next.js 15 + Vercel routing
-// cache occasionally serves a stale RSC payload so the deleted row
-// stayed visible until the user hit reload (chair-reported).
+// passes them to a client list. After a successful delete the chair
+// wants the row to disappear instantly, but router.refresh() on its
+// own is unreliable on Vercel: the next RSC payload sometimes still
+// contains the deleted row (cache lag), so the user sees it pop back
+// in until manual reload.
 //
-// This hook holds a local mirror of the items prop and exposes
-// removeById() for instant optimistic removal. The useEffect resync
-// pulls in any fresh data once router.refresh() (still called by
-// callers for server-side cache invalidation) does return, and also
-// catches navigation-back / create-then-redirect flows where new
-// items appear in props.
+// Earlier version of this hook mirrored `initial` into useState +
+// useEffect-resynced on every prop change. That actively undid the
+// optimistic removal: when the stale RSC payload landed, useEffect
+// reset state right back to include the deleted row. PR #29 / 33.
+//
+// Current shape: keep the prop as the source of truth and layer a
+// locally-tracked set of "deleted" ids on top. Filtered view is
+// derived on every render, so:
+//   • optimistic delete is instant (set the id) and sticky
+//     (no resync clobbers it),
+//   • adds / edits / reorders from new props flow through unchanged,
+//   • once the server eventually catches up and drops the id from
+//     `initial`, the filter no-ops on the missing id — extra ids in
+//     the set are harmless, no cleanup needed.
 export function useAdminListItems<T extends WithId>(initial: T[]) {
-  const [items, setItems] = useState<T[]>(initial);
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(() => new Set());
 
-  useEffect(() => {
-    setItems(initial);
-  }, [initial]);
+  const items = useMemo(
+    () => initial.filter((x) => !deletedIds.has(x.id)),
+    [initial, deletedIds],
+  );
 
   function removeById(id: string) {
-    setItems((prev) => prev.filter((x) => x.id !== id));
+    setDeletedIds((prev) => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
   }
 
-  return { items, setItems, removeById };
+  return { items, removeById };
 }
