@@ -11,13 +11,21 @@ import {
   reorderScholarshipsAction,
 } from '@/lib/admin-actions/scholarships';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 export default function ScholarshipList({ items: initialItems }: { items: Scholarship[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, name: string) {
-    if (!window.confirm(`Delete scholarship "${name}"?\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete scholarship?',
+      message: `"${name}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteScholarshipAction(id);
     if (res.ok) {
       removeById(id);

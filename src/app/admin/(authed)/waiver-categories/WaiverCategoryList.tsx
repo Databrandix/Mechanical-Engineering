@@ -11,13 +11,21 @@ import {
   reorderWaiverCategoriesAction,
 } from '@/lib/admin-actions/waiver-categories';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 export default function WaiverCategoryList({ items: initialItems }: { items: WaiverCategory[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, title: string) {
-    if (!window.confirm(`Delete waiver category "${title}"?\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete waiver category?',
+      message: `"${title}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteWaiverCategoryAction(id);
     if (res.ok) {
       removeById(id);

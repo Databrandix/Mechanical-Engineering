@@ -8,6 +8,7 @@ import type { Faq } from '@prisma/client';
 import SortableList from '@/components/admin/SortableList';
 import { deleteFaqAction, reorderFaqsAction } from '@/lib/admin-actions/faqs';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 const CATEGORY_STYLES: Record<string, string> = {
   Admission: 'bg-primary/10 text-primary',
@@ -19,10 +20,17 @@ const CATEGORY_STYLES: Record<string, string> = {
 
 export default function FaqsList({ items: initialItems }: { items: Faq[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, question: string) {
-    if (!window.confirm(`Delete this FAQ?\n\n"${question}"\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete FAQ?',
+      message: `"${question}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteFaqAction(id);
     if (res.ok) {
       removeById(id);

@@ -48,6 +48,7 @@ import {
   Rocket,
   ShieldCheck,
 } from 'lucide-react';
+import { useConfirm } from './ConfirmDialogProvider';
 
 type SidebarUser = {
   id: string;
@@ -159,6 +160,8 @@ export default function Sidebar({
   // sidebar is `lg:translate-x-0` regardless of `drawerOpen`).
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
+  const confirm = useConfirm();
+
   // Close the drawer whenever the route changes — admin click-throughs
   // shouldn't require manual close on each navigation.
   useEffect(() => {
@@ -189,6 +192,13 @@ export default function Sidebar({
   }, [drawerOpen]);
 
   async function handleLogout() {
+    const ok = await confirm({
+      title: 'Log out?',
+      message: 'Are you sure you want to log out of the admin panel?',
+      confirmLabel: 'Log out',
+      cancelLabel: 'Cancel',
+    });
+    if (!ok) return;
     try {
       const res = await fetch('/api/auth/sign-out', {
         method: 'POST',

@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import SortableList from './SortableList';
 import IconInputField from './IconInputField';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from './ConfirmDialogProvider';
 
 export type LinkRowShape = {
   id: string;
@@ -54,13 +55,20 @@ export default function LinkListSection<T extends LinkRowShape>({
   extraField,
 }: Props<T>) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [, startTransition] = useTransition();
 
   async function handleDelete(id: string, name: string) {
-    if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete item?',
+      message: `"${name}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteAction(id);
     if (res.ok) {
       removeById(id);

@@ -8,13 +8,21 @@ import type { Alumni } from '@prisma/client';
 import SortableList from '@/components/admin/SortableList';
 import { deleteAlumniAction, reorderAlumniAction } from '@/lib/admin-actions/alumni';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 export default function AlumniList({ items: initialItems }: { items: Alumni[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, name: string) {
-    if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete alumni?',
+      message: `"${name}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteAlumniAction(id);
     if (res.ok) {
       removeById(id);

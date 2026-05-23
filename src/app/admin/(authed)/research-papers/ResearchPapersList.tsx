@@ -8,13 +8,21 @@ import type { ResearchPaper } from '@prisma/client';
 import SortableList from '@/components/admin/SortableList';
 import { deleteResearchPaperAction, reorderResearchPapersAction } from '@/lib/admin-actions/research-papers';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 export default function ResearchPapersList({ items: initialItems }: { items: ResearchPaper[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, title: string) {
-    if (!window.confirm(`Delete this paper?\n\n"${title}"\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete research paper?',
+      message: `"${title}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteResearchPaperAction(id);
     if (res.ok) {
       removeById(id);

@@ -11,13 +11,21 @@ import {
   reorderLabsAction,
 } from '@/lib/admin-actions/lab-facility';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 export default function LabsList({ items: initialItems }: { items: Lab[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, name: string) {
-    if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete lab?',
+      message: `"${name}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteLabAction(id);
     if (res.ok) {
       removeById(id);
