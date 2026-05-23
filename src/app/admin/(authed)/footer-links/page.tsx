@@ -9,11 +9,12 @@ export default async function FooterLinksPage() {
   const session = await getSession();
   if (!session?.user) redirect('/admin/login');
 
-  const [usefulLinks, getInTouchLinks, quickLinks, legalLinks] = await Promise.all([
+  const [usefulLinks, getInTouchLinks, quickLinks, legalLinks, campusLinks] = await Promise.all([
     prisma.footerUsefulLink.findMany({ orderBy: { displayOrder: 'asc' } }),
     prisma.footerGetInTouchLink.findMany({ orderBy: { displayOrder: 'asc' } }),
     prisma.footerQuickLink.findMany({ orderBy: { displayOrder: 'asc' } }),
     prisma.footerLegalLink.findMany({ orderBy: { displayOrder: 'asc' } }),
+    prisma.footerCampusLink.findMany({ orderBy: { displayOrder: 'asc' } }),
   ]);
 
   return (
@@ -21,7 +22,7 @@ export default async function FooterLinksPage() {
       <header>
         <h1 className="text-2xl font-display font-bold text-gray-900">Footer Links</h1>
         <p className="mt-1 text-sm text-gray-500">
-          Four link columns rendered in the site footer.
+          Five link columns rendered in the site footer.
         </p>
       </header>
 
@@ -30,6 +31,7 @@ export default async function FooterLinksPage() {
         getInTouchLinks={getInTouchLinks}
         quickLinks={quickLinks}
         legalLinks={legalLinks}
+        campusLinks={campusLinks}
       />
     </div>
   );

@@ -407,6 +407,25 @@ model FooterLegalLink {
   @@map("footer_legal_link")
 }
 
+// Footer "Campuses" column. Decoupled from CampusLocation so the
+// chair can curate the footer link list independently of the
+// contact-page cards (different label, different ordering, or even
+// extra/missing campuses). Same shape as the other four footer link
+// tables so it reuses LinkListSection unchanged.
+model FooterCampusLink {
+  id           String   @id @default(cuid())
+  name         String
+  href         String?
+  isExternal   Boolean  @default(true)
+  isDisabled   Boolean  @default(false)
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("footer_campus_link")
+}
+
 // ════════════════════════════════════════════════════════════════
 //  ABOUT PAGES  (Phase 4)
 //    Three singleton models — one per editable About page.
@@ -1189,6 +1208,10 @@ model CampusLocation {
   address      String   @db.Text
   phone        String?
   email        String
+  // Optional Google Maps URL (e.g. maps.app.goo.gl/... share link) for
+  // the campus pin. Footer + contact page prefer this when present;
+  // they fall back to an address-based maps.google.com/?q= search.
+  mapsUrl      String?
   displayOrder Int
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

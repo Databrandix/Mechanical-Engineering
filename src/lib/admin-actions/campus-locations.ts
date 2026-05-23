@@ -41,6 +41,7 @@ function readCampusRow(formData: FormData) {
     address: getStr(formData, 'address'),
     phone:   emptyToNull(formData.get('phone')),
     email:   getStr(formData, 'email'),
+    mapsUrl: emptyToNull(formData.get('mapsUrl')),
   };
 }
 

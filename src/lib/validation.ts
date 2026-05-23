@@ -1050,6 +1050,7 @@ export const campusLocationCreateSchema = z.object({
   address: z.string().min(1),
   phone:   optionalNullableString,
   email:   z.string().email().max(320),
+  mapsUrl: optionalNullableString,
 });
 
 export const campusLocationUpdateSchema = campusLocationCreateSchema;

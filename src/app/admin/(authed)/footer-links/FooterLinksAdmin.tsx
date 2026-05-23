@@ -1,12 +1,19 @@
 'use client';
 
-import type { FooterUsefulLink, FooterGetInTouchLink, FooterQuickLink, FooterLegalLink } from '@prisma/client';
+import type {
+  FooterUsefulLink,
+  FooterGetInTouchLink,
+  FooterQuickLink,
+  FooterLegalLink,
+  FooterCampusLink,
+} from '@prisma/client';
 import LinkListSection from '@/components/admin/LinkListSection';
 import {
   createFooterUsefulLinkAction, updateFooterUsefulLinkAction, deleteFooterUsefulLinkAction, reorderFooterUsefulLinksAction,
   createFooterGetInTouchLinkAction, updateFooterGetInTouchLinkAction, deleteFooterGetInTouchLinkAction, reorderFooterGetInTouchLinksAction,
   createFooterQuickLinkAction, updateFooterQuickLinkAction, deleteFooterQuickLinkAction, reorderFooterQuickLinksAction,
   createFooterLegalLinkAction, updateFooterLegalLinkAction, deleteFooterLegalLinkAction, reorderFooterLegalLinksAction,
+  createFooterCampusLinkAction, updateFooterCampusLinkAction, deleteFooterCampusLinkAction, reorderFooterCampusLinksAction,
 } from '@/lib/admin-actions/chrome-footer';
 
 export default function FooterLinksAdmin({
@@ -14,11 +21,13 @@ export default function FooterLinksAdmin({
   getInTouchLinks,
   quickLinks,
   legalLinks,
+  campusLinks,
 }: {
   usefulLinks: FooterUsefulLink[];
   getInTouchLinks: FooterGetInTouchLink[];
   quickLinks: FooterQuickLink[];
   legalLinks: FooterLegalLink[];
+  campusLinks: FooterCampusLink[];
 }) {
   return (
     <div className="space-y-6">
@@ -50,6 +59,16 @@ export default function FooterLinksAdmin({
         updateAction={updateFooterQuickLinkAction}
         deleteAction={deleteFooterQuickLinkAction}
         reorderAction={reorderFooterQuickLinksAction}
+      />
+
+      <LinkListSection
+        title="Campuses"
+        description='The "Campuses" footer column — each link opens a Google Maps pin.'
+        items={campusLinks}
+        createAction={createFooterCampusLinkAction}
+        updateAction={updateFooterCampusLinkAction}
+        deleteAction={deleteFooterCampusLinkAction}
+        reorderAction={reorderFooterCampusLinksAction}
       />
 
       <LinkListSection
