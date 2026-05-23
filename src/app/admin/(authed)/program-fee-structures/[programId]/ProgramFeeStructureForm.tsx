@@ -13,6 +13,7 @@ import {
   deleteProgramFeeStructureAction,
   type ActionResult,
 } from '@/lib/admin-actions/program-fee-structures';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 type State = ActionResult | { ok: null };
 
@@ -26,6 +27,7 @@ export default function ProgramFeeStructureForm({
   initial: ProgramFeeStructure | null;
 }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const action = upsertProgramFeeStructureAction.bind(null, program.id);
   const [state, formAction, pending] = useActionState<State, FormData>(action, { ok: null });
 
@@ -35,7 +37,13 @@ export default function ProgramFeeStructureForm({
   }, [state]);
 
   async function handleDelete() {
-    if (!window.confirm(`Delete fee structure for "${program.programName}"?\n\nThe public /admission/tuition-fees section for this program will disappear. This cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete fee structure?',
+      message: `The fee structure for "${program.programName}" will be removed and the public /admission/tuition-fees section for this program will disappear. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteProgramFeeStructureAction(program.id);
     if (res.ok) {
       toast.success('Fee structure deleted');

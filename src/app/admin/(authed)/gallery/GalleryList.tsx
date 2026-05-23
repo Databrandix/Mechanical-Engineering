@@ -11,13 +11,21 @@ import {
   reorderGalleryImagesAction,
 } from '@/lib/admin-actions/gallery';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 export default function GalleryList({ items: initialItems }: { items: GalleryImage[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, alt: string) {
-    if (!window.confirm(`Delete this gallery image?\n\n"${alt}"\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete gallery image?',
+      message: `"${alt}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteGalleryImageAction(id);
     if (res.ok) {
       removeById(id);

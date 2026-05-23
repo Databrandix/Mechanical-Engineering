@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { deleteUserAction } from '@/lib/admin-actions/users';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 export default function DeleteUserButton({
   userId,
@@ -16,13 +17,20 @@ export default function DeleteUserButton({
   isSelf: boolean;
 }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const [pending, startTransition] = useTransition();
 
-  function handleDelete() {
-    const prompt = isSelf
-      ? `Delete YOUR OWN account (${userName})?\n\nIf you are the only active super_admin this will be blocked. Otherwise you will be signed out immediately.\n\nThis cannot be undone.`
-      : `Delete admin "${userName}"?\n\nAll of their sessions will be revoked and the credential account removed.\n\nThis cannot be undone.`;
-    if (!window.confirm(prompt)) return;
+  async function handleDelete() {
+    const message = isSelf
+      ? `You are about to delete your own account (${userName}). If you are the only active super_admin this will be blocked. Otherwise you will be signed out immediately. This cannot be undone.`
+      : `"${userName}" will be removed permanently. All of their sessions will be revoked and the credential account removed. This cannot be undone.`;
+    const ok = await confirm({
+      title: isSelf ? 'Delete your own account?' : 'Delete admin?',
+      message,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
 
     startTransition(async () => {
       const res = await deleteUserAction(userId);

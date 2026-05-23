@@ -11,13 +11,21 @@ import {
   reorderCampusLocationsAction,
 } from '@/lib/admin-actions/campus-locations';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 export default function CampusLocationList({ items: initialItems }: { items: CampusLocation[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, name: string) {
-    if (!window.confirm(`Delete campus "${name}"?\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete campus?',
+      message: `"${name}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteCampusLocationAction(id);
     if (res.ok) {
       removeById(id);

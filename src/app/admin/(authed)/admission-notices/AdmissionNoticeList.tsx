@@ -11,13 +11,21 @@ import {
   reorderAdmissionNoticesAction,
 } from '@/lib/admin-actions/admission-notices';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 export default function AdmissionNoticeList({ items: initialItems }: { items: AdmissionNotice[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, title: string) {
-    if (!window.confirm(`Delete "${title}"?\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete admission notice?',
+      message: `"${title}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteAdmissionNoticeAction(id);
     if (res.ok) {
       removeById(id);

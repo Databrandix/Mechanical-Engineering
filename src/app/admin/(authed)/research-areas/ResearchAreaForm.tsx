@@ -11,6 +11,7 @@ import {
   updateResearchAreaAction,
   type ActionResult,
 } from '@/lib/admin-actions/research-areas';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 type State = ActionResult | { ok: null };
 type IconMode = 'lucide' | 'upload';
@@ -41,17 +42,20 @@ export default function ResearchAreaForm({
     action,
     { ok: null },
   );
+  const confirm = useConfirm();
 
   useEffect(() => {
     if (state.ok === true) toast.success(isEdit ? 'Research area saved' : 'Research area created');
     if (state.ok === false) toast.error(state.error);
   }, [state, isEdit]);
 
-  function handleFeaturedToggle(next: boolean) {
+  async function handleFeaturedToggle(next: boolean) {
     if (next && !initial?.isFeatured) {
-      const ok = window.confirm(
-        'Promoting this row to Featured will demote whichever row is currently featured. Continue?',
-      );
+      const ok = await confirm({
+        title: 'Promote to Featured?',
+        message: 'Promoting this row to Featured will demote whichever row is currently featured. Continue?',
+        confirmLabel: 'Continue',
+      });
       if (!ok) return;
     }
     setIsFeatured(next);

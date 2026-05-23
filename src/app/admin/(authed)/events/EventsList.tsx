@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import type { Event as EventRow } from '@prisma/client';
 import { deleteEventAction } from '@/lib/admin-actions/events';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 const STATUS_STYLES: Record<string, string> = {
   Past:     'bg-gray-200 text-gray-700',
@@ -16,10 +17,17 @@ const STATUS_STYLES: Record<string, string> = {
 
 export default function EventsList({ items: initialItems }: { items: EventRow[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, title: string) {
-    if (!window.confirm(`Delete "${title}"?\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete event?',
+      message: `"${title}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteEventAction(id);
     if (res.ok) {
       removeById(id);

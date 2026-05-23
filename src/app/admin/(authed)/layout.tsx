@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/auth-server';
 import { prisma } from '@/lib/db';
 import Sidebar from '@/components/admin/Sidebar';
+import { ConfirmDialogProvider } from '@/components/admin/ConfirmDialogProvider';
 import { getDepartmentIdentity, getUniversityIdentity } from '@/lib/identity';
 
 export default async function AuthedAdminLayout({
@@ -44,21 +45,27 @@ export default async function AuthedAdminLayout({
     // takes itself out of flow (position: fixed) so <main> fills the
     // viewport width. min-w-0 on main is needed so flex children with
     // long content (tables, code blocks) don't push past the column.
-    <div className="min-h-screen lg:flex bg-gray-50">
-      <Sidebar
-        user={{
-          id: session.user.id,
-          name: session.user.name,
-          email: session.user.email,
-          role,
-        }}
-        newSubmissionCount={newSubmissionCount}
-        logoUrl={dept.logoUrl}
-        logoAlt={`${uni.name} logo`}
-      />
-      <main className="flex-1 min-w-0 p-4 sm:p-6 md:p-8 lg:p-10 max-w-screen-2xl pt-16 lg:pt-10">
-        {children}
-      </main>
-    </div>
+    //
+    // ConfirmDialogProvider wraps everything so both the Sidebar's
+    // logout dialog and any list/form deeper in the tree can call
+    // useConfirm() without per-route plumbing.
+    <ConfirmDialogProvider>
+      <div className="min-h-screen lg:flex bg-gray-50">
+        <Sidebar
+          user={{
+            id: session.user.id,
+            name: session.user.name,
+            email: session.user.email,
+            role,
+          }}
+          newSubmissionCount={newSubmissionCount}
+          logoUrl={dept.logoUrl}
+          logoAlt={`${uni.name} logo`}
+        />
+        <main className="flex-1 min-w-0 p-4 sm:p-6 md:p-8 lg:p-10 max-w-screen-2xl pt-16 lg:pt-10">
+          {children}
+        </main>
+      </div>
+    </ConfirmDialogProvider>
   );
 }

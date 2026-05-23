@@ -12,11 +12,13 @@ import {
   createMainNavItemAction, updateMainNavItemAction, deleteMainNavItemAction, reorderMainNavItemsAction,
 } from '@/lib/admin-actions/chrome-nav';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 type ActionResult = { ok: true } | { ok: false; error: string };
 
 export default function MainNavSection({ groups: initialGroups }: { groups: MainNavGroupWithItems[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items: groups, removeById } = useAdminListItems(initialGroups);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -31,7 +33,13 @@ export default function MainNavSection({ groups: initialGroups }: { groups: Main
   }
 
   async function handleDelete(id: string, name: string) {
-    if (!window.confirm(`Delete "${name}" group?\n\nAll its items will be deleted as well. This cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete nav group?',
+      message: `"${name}" and all its items will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteMainNavGroupAction(id);
     if (res.ok) {
       removeById(id);

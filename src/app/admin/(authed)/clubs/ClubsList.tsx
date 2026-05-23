@@ -8,13 +8,21 @@ import type { Club } from '@prisma/client';
 import SortableList from '@/components/admin/SortableList';
 import { deleteClubAction, reorderClubsAction } from '@/lib/admin-actions/clubs';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 export default function ClubsList({ items: initialItems }: { items: Club[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, name: string) {
-    if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete club?',
+      message: `"${name}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteClubAction(id);
     if (res.ok) {
       removeById(id);

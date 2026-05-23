@@ -8,6 +8,7 @@ import {
   updateContactSubmissionStatusAction,
   deleteContactSubmissionAction,
 } from '@/lib/admin-actions/contact-submissions';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 type Status = 'new' | 'read' | 'archived';
 
@@ -19,6 +20,7 @@ export default function StatusActions({
   currentStatus: string;
 }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const [pending, startTransition] = useTransition();
 
   function runStatusUpdate(next: Status, label: string) {
@@ -33,8 +35,14 @@ export default function StatusActions({
     });
   }
 
-  function runDelete() {
-    if (!window.confirm('Delete this submission permanently?\n\nThis cannot be undone.')) return;
+  async function runDelete() {
+    const ok = await confirm({
+      title: 'Delete submission?',
+      message: 'This submission will be removed permanently. This cannot be undone.',
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const res = await deleteContactSubmissionAction(id);
       if (res.ok) {

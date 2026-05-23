@@ -12,6 +12,7 @@ import {
   reorderFacultyAction,
 } from '@/lib/admin-actions/faculty';
 import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 type Filter = 'all' | 'leadership' | 'full_time' | 'part_time';
 
@@ -31,6 +32,7 @@ function labelForType(t: string): string {
 
 export default function FacultyList({ items: initialItems }: { items: Faculty[] }) {
   const router = useRouter();
+  const confirm = useConfirm();
   const { items, removeById } = useAdminListItems(initialItems);
   const [filter, setFilter] = useState<Filter>('all');
 
@@ -44,7 +46,13 @@ export default function FacultyList({ items: initialItems }: { items: Faculty[] 
   };
 
   async function handleDelete(id: string, name: string) {
-    if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
+    const ok = await confirm({
+      title: 'Delete faculty?',
+      message: `"${name}" will be removed permanently. This cannot be undone.`,
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const res = await deleteFacultyAction(id);
     if (res.ok) {
       removeById(id);

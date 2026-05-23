@@ -15,6 +15,7 @@ import {
   updateFacultyAction,
   type ActionResult,
 } from '@/lib/admin-actions/faculty';
+import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 
 type State = ActionResult | { ok: null };
 
@@ -47,6 +48,7 @@ export default function FacultyForm({ initial, currentDean, currentHead }: Props
     action,
     { ok: null },
   );
+  const confirm = useConfirm();
 
   // Controls visibility of the Dean/Head message card.
   const [isDean, setIsDean] = useState(initial?.isDean ?? false);
@@ -58,30 +60,32 @@ export default function FacultyForm({ initial, currentDean, currentHead }: Props
   }, [state, isEdit]);
 
   // Decision D — confirm before swapping Dean/Head role away from
-  // the previous holder. preventDefault on cancel stops the React
-  // action handler too.
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  // the previous holder. The new in-app confirm is async, so we
+  // preventDefault unconditionally when a swap is needed, capture the
+  // FormData, and re-dispatch via formAction() if the user confirms.
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     const takingDean = isDean && currentDean && currentDean.id !== initial?.id;
     const takingHead = isHead && currentHead && currentHead.id !== initial?.id;
-
+    if (!takingDean && !takingHead) return;
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
     if (takingDean) {
-      const ok = window.confirm(
-        `Setting this faculty as Dean will remove "${currentDean.name}" from the Dean role. Continue?`,
-      );
-      if (!ok) {
-        e.preventDefault();
-        return;
-      }
+      const ok = await confirm({
+        title: 'Replace current Dean?',
+        message: `Setting this faculty as Dean will remove "${currentDean.name}" from the Dean role. Continue?`,
+        confirmLabel: 'Continue',
+      });
+      if (!ok) return;
     }
     if (takingHead) {
-      const ok = window.confirm(
-        `Setting this faculty as Head will remove "${currentHead.name}" from the Head role. Continue?`,
-      );
-      if (!ok) {
-        e.preventDefault();
-        return;
-      }
+      const ok = await confirm({
+        title: 'Replace current Head?',
+        message: `Setting this faculty as Head will remove "${currentHead.name}" from the Head role. Continue?`,
+        confirmLabel: 'Continue',
+      });
+      if (!ok) return;
     }
+    formAction(fd);
   }
 
   const showMessageCard = isDean || isHead;
