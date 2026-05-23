@@ -15,6 +15,7 @@ import {
   getFooterGetInTouchLinks,
   getFooterQuickLinks,
   getFooterLegalLinks,
+  getFooterCampusLinks,
 } from '@/lib/identity';
 import { getSearchIndex } from '@/lib/search-index';
 import { sanitizeHtml } from '@/lib/sanitize-html';
@@ -57,6 +58,7 @@ export default async function PublicLayout({
     getInTouchLinks,
     quickLinks,
     legalLinks,
+    campusLinks,
     searchItems,
   ] = await Promise.all([
     getDepartmentIdentity(),
@@ -69,6 +71,7 @@ export default async function PublicLayout({
     getFooterGetInTouchLinks(),
     getFooterQuickLinks(),
     getFooterLegalLinks(),
+    getFooterCampusLinks(),
     getSearchIndex(),
   ]);
 
@@ -122,7 +125,6 @@ export default async function PublicLayout({
         phones={uni.phones}
         emails={uni.emails}
         copyrightText={uni.copyrightText}
-        mapEmbedUrl={uni.mapEmbedUrl}
         socials={{
           facebookUrl:  uni.facebookUrl,
           instagramUrl: uni.instagramUrl,
@@ -137,6 +139,7 @@ export default async function PublicLayout({
         getInTouchLinks={getInTouchLinks}
         quickLinks={quickLinks}
         legalLinks={legalLinks}
+        campusLinks={campusLinks}
       />
     </>
   );

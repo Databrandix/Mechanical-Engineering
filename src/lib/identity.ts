@@ -157,6 +157,13 @@ export const getFooterLegalLinks = cache(async () => {
   });
 });
 
+export const getFooterCampusLinks = cache(async () => {
+  return prisma.footerCampusLink.findMany({
+    orderBy: { displayOrder: 'asc' },
+    select: { id: true, name: true, href: true, isExternal: true, isDisabled: true },
+  });
+});
+
 // ─────────────────────────────────────────────────────────────────
 //  About pages — Phase 4 (3 singletons)
 //    Each is a full row including the Json content fields so the

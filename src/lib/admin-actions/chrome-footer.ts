@@ -284,3 +284,67 @@ export async function reorderFooterLegalLinksAction(ids: string[]): Promise<Acti
   revalidateFooter();
   return { ok: true };
 }
+
+// ─────────────────────────────────────────────────────────────────
+//  Campus Links
+// ─────────────────────────────────────────────────────────────────
+
+export async function createFooterCampusLinkAction(formData: FormData): Promise<ActionResult> {
+  const denied = await requireAuth();
+  if (denied) return denied;
+  const row = readLinkRow(formData);
+  const invalid = validateLinkRow(row);
+  if (invalid) return invalid;
+  const last = await prisma.footerCampusLink.findFirst({ orderBy: { displayOrder: 'desc' }, select: { displayOrder: true } });
+  try {
+    await prisma.footerCampusLink.create({ data: { ...row, displayOrder: (last?.displayOrder ?? -1) + 1 } });
+  } catch (e) { return { ok: false, error: e instanceof Error ? e.message : 'Database error' }; }
+  revalidateFooter();
+  return { ok: true };
+}
+
+export async function updateFooterCampusLinkAction(id: string, formData: FormData): Promise<ActionResult> {
+  const denied = await requireAuth();
+  if (denied) return denied;
+  const row = readLinkRow(formData);
+  const invalid = validateLinkRow(row);
+  if (invalid) return invalid;
+  try {
+    await prisma.footerCampusLink.update({ where: { id }, data: row });
+  } catch (e: unknown) {
+    if ((e as { code?: string })?.code === 'P2025') return { ok: false, error: 'Footer link not found' };
+    return { ok: false, error: e instanceof Error ? e.message : 'Database error' };
+  }
+  revalidateFooter();
+  return { ok: true };
+}
+
+export async function deleteFooterCampusLinkAction(id: string): Promise<ActionResult> {
+  const denied = await requireAuth();
+  if (denied) return denied;
+  try {
+    await prisma.footerCampusLink.delete({ where: { id } });
+  } catch (e: unknown) {
+    if ((e as { code?: string })?.code === 'P2025') return { ok: false, error: 'Footer link not found' };
+    return { ok: false, error: e instanceof Error ? e.message : 'Database error' };
+  }
+  revalidateFooter();
+  return { ok: true };
+}
+
+export async function reorderFooterCampusLinksAction(ids: string[]): Promise<ActionResult> {
+  const denied = await requireAuth();
+  if (denied) return denied;
+  const existing = await prisma.footerCampusLink.findMany({ select: { id: true } });
+  const existingIds = new Set(existing.map((r) => r.id));
+  if (ids.length !== existingIds.size || !ids.every((id) => existingIds.has(id))) {
+    return { ok: false, error: 'Reorder list must include exactly the existing rows' };
+  }
+  try {
+    await prisma.$transaction(
+      ids.map((id, index) => prisma.footerCampusLink.update({ where: { id }, data: { displayOrder: index } })),
+    );
+  } catch (e) { return { ok: false, error: e instanceof Error ? e.message : 'Database error' }; }
+  revalidateFooter();
+  return { ok: true };
+}

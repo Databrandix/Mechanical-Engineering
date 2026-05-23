@@ -45,6 +45,14 @@ export default function CampusLocationForm({ initial }: { initial: CampusLocatio
           <TextField label="Email" name="email" required type="email"
                      defaultValue={initial?.email ?? ''} placeholder="info@su.edu.bd" />
         </div>
+        <TextField
+          label="Google Maps URL (optional — paste a share link)"
+          name="mapsUrl"
+          type="url"
+          defaultValue={initial?.mapsUrl ?? ''}
+          placeholder="https://maps.app.goo.gl/..."
+          monospace
+        />
       </Card>
 
       {state.ok === false && (

@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import {Facebook, Instagram, Linkedin, Youtube, Mail, MapPin, Phone, ArrowUp} from 'lucide-react';
+import {Facebook, Instagram, Linkedin, Youtube, Mail, MapPin, Phone, ArrowUp, ArrowUpRight} from 'lucide-react';
 import Container from '../ui/Container';
 
 const XIcon = ({ size = 18 }: { size?: number }) => (
@@ -43,7 +43,6 @@ type FooterProps = {
   phones: readonly string[];
   emails: readonly string[];
   copyrightText: string;
-  mapEmbedUrl: string | null;
   socials: {
     facebookUrl:  string | null;
     instagramUrl: string | null;
@@ -58,6 +57,11 @@ type FooterProps = {
   getInTouchLinks: readonly FooterLinkRow[];
   quickLinks: readonly FooterLinkRow[];
   legalLinks: readonly FooterLinkRow[];
+  // Campuses column is its own DB-driven link list (FooterCampusLink),
+  // decoupled from the CampusLocation table the contact page uses so
+  // the chair can curate the footer set independently. Same shape as
+  // the other four columns — name + href + isExternal + isDisabled.
+  campusLinks: readonly FooterLinkRow[];
 };
 
 export default function Footer({
@@ -66,12 +70,12 @@ export default function Footer({
   phones,
   emails,
   copyrightText,
-  mapEmbedUrl,
   socials,
   usefulLinks,
   getInTouchLinks,
   quickLinks,
   legalLinks,
+  campusLinks,
 }: FooterProps) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -188,29 +192,40 @@ export default function Footer({
             </ul>
           </div>
 
-          {/* Google Maps */}
-          {mapEmbedUrl && (
+          {/* Campuses — each row links to a Google Maps query built
+              from the campus address. Replaces the previous single
+              embedded iframe (chair preferred a compact multi-campus
+              list). Section hides itself when no campuses are seeded. */}
+          {campusLinks.length > 0 && (
             <div>
-              <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Google Maps</h4>
-              <div className="rounded-lg overflow-hidden border border-white/10 shadow-md">
-                <iframe
-                  title="Sonargaon University location"
-                  src={mapEmbedUrl}
-                  className="w-full h-[200px] border-0"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-                <noscript>
-                  <a
-                    href="https://maps.google.com/maps?q=Sonargaon+University+Panthapath+Dhaka"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block bg-white/10 px-4 py-3 text-sm text-white/80 hover:text-white"
-                  >
-                    View Sonargaon University location on Google Maps →
-                  </a>
-                </noscript>
-              </div>
+              <h4 className="font-display font-bold text-lg mb-5 border-b border-accent pb-2 inline-block">Campuses</h4>
+              <ul className="space-y-3 text-sm text-white/70">
+                {campusLinks.map((link) => {
+                  const live = !!link.href && !link.isDisabled;
+                  return (
+                    <li key={link.id}>
+                      <a
+                        href={live ? link.href! : '#'}
+                        {...(link.isExternal && live && {
+                          target: '_blank',
+                          rel: 'noopener noreferrer',
+                        })}
+                        aria-label={`Open ${link.name} on Google Maps`}
+                        aria-disabled={link.isDisabled || undefined}
+                        className={`group inline-flex items-center gap-1.5 transition-colors ${
+                          link.isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:text-accent'
+                        }`}
+                      >
+                        <span>{link.name}</span>
+                        <ArrowUpRight
+                          size={14}
+                          className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        />
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           )}
         </div>
