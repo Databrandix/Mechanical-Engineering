@@ -256,7 +256,7 @@ export default function Sidebar({
           className="h-10 w-auto mb-3 object-contain"
         />
         <div className="text-[10px] font-semibold tracking-widest uppercase text-gray-400">
-          ME Admin
+          Dept. of
         </div>
         <div className="text-base font-display font-bold text-primary mt-1 leading-tight">
           Mechanical Engineering
