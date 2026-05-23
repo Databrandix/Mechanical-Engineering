@@ -9,6 +9,7 @@ export type ConfirmDialogProps = {
   message: string;
   confirmLabel?: string;
   cancelLabel?: string;
+  pendingLabel?: string;
   variant?: ConfirmVariant;
   pending?: boolean;
   onCancel: () => void;
@@ -27,6 +28,7 @@ export default function ConfirmDialog({
   message,
   confirmLabel = 'OK',
   cancelLabel = 'Cancel',
+  pendingLabel = 'Working…',
   variant = 'primary',
   pending = false,
   onCancel,
@@ -84,7 +86,7 @@ export default function ConfirmDialog({
             autoFocus
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 ${confirmCls}`}
           >
-            {pending ? 'Working…' : confirmLabel}
+            {pending ? pendingLabel : confirmLabel}
           </button>
         </div>
       </div>

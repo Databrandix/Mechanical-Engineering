@@ -192,27 +192,32 @@ export default function Sidebar({
   }, [drawerOpen]);
 
   async function handleLogout() {
-    const ok = await confirm({
+    // Use the provider's pending-aware callback path so the modal
+    // stays open showing "Logging out…" while the sign-out fetch is
+    // in flight, instead of vanishing the instant the user clicks.
+    await confirm({
       title: 'Log out?',
       message: 'Are you sure you want to log out of the admin panel?',
       confirmLabel: 'Log out',
       cancelLabel: 'Cancel',
+      pendingLabel: 'Logging out…',
+      onConfirm: async () => {
+        try {
+          const res = await fetch('/api/auth/sign-out', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: '{}',
+          });
+          if (res.ok) {
+            window.location.href = '/admin/login';
+            return;
+          }
+          toast.error('Sign-out failed — try the /admin/logout link');
+        } catch {
+          toast.error('Network error during sign-out');
+        }
+      },
     });
-    if (!ok) return;
-    try {
-      const res = await fetch('/api/auth/sign-out', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: '{}',
-      });
-      if (res.ok) {
-        window.location.href = '/admin/login';
-        return;
-      }
-      toast.error('Sign-out failed — try the /admin/logout link');
-    } catch {
-      toast.error('Network error during sign-out');
-    }
   }
 
   const linkClass = (active: boolean) =>
