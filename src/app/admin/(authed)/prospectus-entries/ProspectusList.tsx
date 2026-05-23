@@ -10,15 +10,22 @@ import {
   deleteProspectusEntryAction,
   reorderProspectusEntriesAction,
 } from '@/lib/admin-actions/prospectus-entries';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function ProspectusList({ items }: { items: ProspectusEntry[] }) {
+export default function ProspectusList({ items: initialItems }: { items: ProspectusEntry[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, title: string) {
     if (!window.confirm(`Delete "${title}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteProspectusEntryAction(id);
-    if (res.ok) { toast.success('Prospectus deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Prospectus deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {

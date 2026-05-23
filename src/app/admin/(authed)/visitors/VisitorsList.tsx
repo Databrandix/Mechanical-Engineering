@@ -7,15 +7,22 @@ import { toast } from 'sonner';
 import type { Visitor } from '@prisma/client';
 import SortableList from '@/components/admin/SortableList';
 import { deleteVisitorAction, reorderVisitorsAction } from '@/lib/admin-actions/visitors';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function VisitorsList({ items }: { items: Visitor[] }) {
+export default function VisitorsList({ items: initialItems }: { items: Visitor[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, name: string) {
     if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteVisitorAction(id);
-    if (res.ok) { toast.success('Visitor deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Visitor deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {

@@ -7,15 +7,22 @@ import { toast } from 'sonner';
 import type { ResearchPaper } from '@prisma/client';
 import SortableList from '@/components/admin/SortableList';
 import { deleteResearchPaperAction, reorderResearchPapersAction } from '@/lib/admin-actions/research-papers';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function ResearchPapersList({ items }: { items: ResearchPaper[] }) {
+export default function ResearchPapersList({ items: initialItems }: { items: ResearchPaper[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, title: string) {
     if (!window.confirm(`Delete this paper?\n\n"${title}"\n\nThis cannot be undone.`)) return;
     const res = await deleteResearchPaperAction(id);
-    if (res.ok) { toast.success('Research paper deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Research paper deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {

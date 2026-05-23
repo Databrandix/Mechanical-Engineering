@@ -6,6 +6,7 @@ import { FileText, ImageIcon, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Notice } from '@prisma/client';
 import { deleteNoticeAction } from '@/lib/admin-actions/notices';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
 const CATEGORY_STYLES: Record<string, string> = {
   Academic:  'bg-primary/10 text-primary',
@@ -13,14 +14,20 @@ const CATEGORY_STYLES: Record<string, string> = {
   Transport: 'bg-amber-100 text-amber-700',
 };
 
-export default function NoticesList({ items }: { items: Notice[] }) {
+export default function NoticesList({ items: initialItems }: { items: Notice[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, title: string) {
     if (!window.confirm(`Delete "${title}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteNoticeAction(id);
-    if (res.ok) { toast.success('Notice deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Notice deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {

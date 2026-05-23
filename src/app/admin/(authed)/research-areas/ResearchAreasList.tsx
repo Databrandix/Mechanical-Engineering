@@ -10,14 +10,17 @@ import {
   deleteResearchAreaAction,
   reorderResearchAreasAction,
 } from '@/lib/admin-actions/research-areas';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function ResearchAreasList({ items }: { items: ResearchArea[] }) {
+export default function ResearchAreasList({ items: initialItems }: { items: ResearchArea[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, name: string) {
     if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteResearchAreaAction(id);
     if (res.ok) {
+      removeById(id);
       toast.success('Research area deleted');
       router.refresh();
     } else {

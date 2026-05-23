@@ -7,15 +7,22 @@ import { toast } from 'sonner';
 import type { BusRoute } from '@prisma/client';
 import SortableList from '@/components/admin/SortableList';
 import { deleteBusRouteAction, reorderBusRoutesAction } from '@/lib/admin-actions/bus-routes';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function BusRoutesList({ items }: { items: BusRoute[] }) {
+export default function BusRoutesList({ items: initialItems }: { items: BusRoute[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, name: string) {
     if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteBusRouteAction(id);
-    if (res.ok) { toast.success('Bus route deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Bus route deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {

@@ -10,15 +10,22 @@ import {
   deleteCampusLocationAction,
   reorderCampusLocationsAction,
 } from '@/lib/admin-actions/campus-locations';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function CampusLocationList({ items }: { items: CampusLocation[] }) {
+export default function CampusLocationList({ items: initialItems }: { items: CampusLocation[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, name: string) {
     if (!window.confirm(`Delete campus "${name}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteCampusLocationAction(id);
-    if (res.ok) { toast.success('Campus deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Campus deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {

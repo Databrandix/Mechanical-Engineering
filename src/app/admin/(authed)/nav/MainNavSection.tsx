@@ -11,11 +11,13 @@ import {
   createMainNavGroupAction, updateMainNavGroupAction, deleteMainNavGroupAction, reorderMainNavGroupsAction,
   createMainNavItemAction, updateMainNavItemAction, deleteMainNavItemAction, reorderMainNavItemsAction,
 } from '@/lib/admin-actions/chrome-nav';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
 type ActionResult = { ok: true } | { ok: false; error: string };
 
-export default function MainNavSection({ groups }: { groups: MainNavGroupWithItems[] }) {
+export default function MainNavSection({ groups: initialGroups }: { groups: MainNavGroupWithItems[] }) {
   const router = useRouter();
+  const { items: groups, removeById } = useAdminListItems(initialGroups);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [editingId, setEditingId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
@@ -31,8 +33,13 @@ export default function MainNavSection({ groups }: { groups: MainNavGroupWithIte
   async function handleDelete(id: string, name: string) {
     if (!window.confirm(`Delete "${name}" group?\n\nAll its items will be deleted as well. This cannot be undone.`)) return;
     const res = await deleteMainNavGroupAction(id);
-    if (res.ok) { toast.success('Group deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Group deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   async function handleCreate(fd: FormData) {

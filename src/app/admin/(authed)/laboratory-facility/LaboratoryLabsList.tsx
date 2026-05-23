@@ -10,15 +10,22 @@ import {
   deleteLaboratoryLabAction,
   reorderLaboratoryLabsAction,
 } from '@/lib/admin-actions/laboratory-facility';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function LaboratoryLabsList({ items }: { items: LaboratoryLab[] }) {
+export default function LaboratoryLabsList({ items: initialItems }: { items: LaboratoryLab[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, title: string) {
     if (!window.confirm(`Delete "${title}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteLaboratoryLabAction(id);
-    if (res.ok) { toast.success('Laboratory deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Laboratory deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {

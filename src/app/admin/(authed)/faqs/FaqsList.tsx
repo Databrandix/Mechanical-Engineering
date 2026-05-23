@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import type { Faq } from '@prisma/client';
 import SortableList from '@/components/admin/SortableList';
 import { deleteFaqAction, reorderFaqsAction } from '@/lib/admin-actions/faqs';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
 const CATEGORY_STYLES: Record<string, string> = {
   Admission: 'bg-primary/10 text-primary',
@@ -16,14 +17,20 @@ const CATEGORY_STYLES: Record<string, string> = {
   Exams:     'bg-rose-100 text-rose-700',
 };
 
-export default function FaqsList({ items }: { items: Faq[] }) {
+export default function FaqsList({ items: initialItems }: { items: Faq[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, question: string) {
     if (!window.confirm(`Delete this FAQ?\n\n"${question}"\n\nThis cannot be undone.`)) return;
     const res = await deleteFaqAction(id);
-    if (res.ok) { toast.success('FAQ deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('FAQ deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {

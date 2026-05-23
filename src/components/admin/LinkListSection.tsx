@@ -6,6 +6,7 @@ import { Pencil, Trash2, Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import SortableList from './SortableList';
 import IconInputField from './IconInputField';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
 export type LinkRowShape = {
   id: string;
@@ -44,7 +45,7 @@ type Props<T extends LinkRowShape> = {
 export default function LinkListSection<T extends LinkRowShape>({
   title,
   description,
-  items,
+  items: initialItems,
   emptyText = 'No items yet. Click + Add to create the first.',
   createAction,
   updateAction,
@@ -53,6 +54,7 @@ export default function LinkListSection<T extends LinkRowShape>({
   extraField,
 }: Props<T>) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [, startTransition] = useTransition();
@@ -61,6 +63,7 @@ export default function LinkListSection<T extends LinkRowShape>({
     if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteAction(id);
     if (res.ok) {
+      removeById(id);
       toast.success('Deleted');
       router.refresh();
     } else {

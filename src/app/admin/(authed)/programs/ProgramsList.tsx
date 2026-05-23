@@ -10,14 +10,17 @@ import {
   deleteProgramAction,
   reorderProgramsAction,
 } from '@/lib/admin-actions/programs';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function ProgramsList({ items }: { items: Program[] }) {
+export default function ProgramsList({ items: initialItems }: { items: Program[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, name: string) {
     if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteProgramAction(id);
     if (res.ok) {
+      removeById(id);
       toast.success('Program deleted');
       router.refresh();
     } else {

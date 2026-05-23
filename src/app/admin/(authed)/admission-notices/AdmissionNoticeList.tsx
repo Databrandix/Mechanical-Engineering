@@ -10,15 +10,22 @@ import {
   deleteAdmissionNoticeAction,
   reorderAdmissionNoticesAction,
 } from '@/lib/admin-actions/admission-notices';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function AdmissionNoticeList({ items }: { items: AdmissionNotice[] }) {
+export default function AdmissionNoticeList({ items: initialItems }: { items: AdmissionNotice[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, title: string) {
     if (!window.confirm(`Delete "${title}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteAdmissionNoticeAction(id);
-    if (res.ok) { toast.success('Notice deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Notice deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {
