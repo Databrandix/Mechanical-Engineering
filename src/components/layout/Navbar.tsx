@@ -200,13 +200,15 @@ export default function Navbar({
                 <GraduationCap size={16} className="text-accent" />
                 Convoc. Reg.
               </a>
-              <button
-                type="button"
+              <a
+                href={resolveQuickAccessHref(quickAccessItems, 'Verification')}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hidden md:flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-bold whitespace-nowrap transition-all shadow-sm border border-gray-100"
               >
                 <CheckCircle size={16} className="text-accent" />
                 Verification
-              </button>
+              </a>
             </div>
 
             {/* Apply Now */}
