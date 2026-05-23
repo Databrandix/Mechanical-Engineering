@@ -150,8 +150,13 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* 2. MIDDLE BAR - Logo & Action Buttons */}
-      <div className={`transition-all duration-500 border-b ${isScrolled ? 'bg-white/95 backdrop-blur-md border-gray-50 py-2 shadow-[0_4px_20px_rgba(0,0,0,0.02)]' : 'bg-white border-gray-100 py-4'}`}>
+      {/* 2. MIDDLE BAR - Logo & Action Buttons.
+          `relative z-[60]` keeps the bar (and its hamburger/X) above the
+          mobile drawer (`z-[55]`) inside this nav's stacking context.
+          Without an explicit z-index, the scrolled state's `backdrop-blur-md`
+          creates a stacking context that traps the button's `z-[70]` below
+          the drawer, hiding the X. */}
+      <div className={`relative z-[60] transition-all duration-500 border-b ${isScrolled ? 'bg-white/95 backdrop-blur-md border-gray-50 py-2 shadow-[0_4px_20px_rgba(0,0,0,0.02)]' : 'bg-white border-gray-100 py-4'}`}>
         <Container className="flex justify-between items-center !max-w-[1600px]">
           {/* Logo */}
           <a href="/" aria-label="Sonargaon University — Home" className="flex items-center shrink-0">
