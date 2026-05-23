@@ -10,15 +10,22 @@ import {
   deleteWaiverCategoryAction,
   reorderWaiverCategoriesAction,
 } from '@/lib/admin-actions/waiver-categories';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function WaiverCategoryList({ items }: { items: WaiverCategory[] }) {
+export default function WaiverCategoryList({ items: initialItems }: { items: WaiverCategory[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, title: string) {
     if (!window.confirm(`Delete waiver category "${title}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteWaiverCategoryAction(id);
-    if (res.ok) { toast.success('Waiver category deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Waiver category deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {

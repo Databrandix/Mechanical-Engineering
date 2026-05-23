@@ -6,6 +6,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Event as EventRow } from '@prisma/client';
 import { deleteEventAction } from '@/lib/admin-actions/events';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
 const STATUS_STYLES: Record<string, string> = {
   Past:     'bg-gray-200 text-gray-700',
@@ -13,14 +14,20 @@ const STATUS_STYLES: Record<string, string> = {
   Upcoming: 'bg-accent/10 text-accent',
 };
 
-export default function EventsList({ items }: { items: EventRow[] }) {
+export default function EventsList({ items: initialItems }: { items: EventRow[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, title: string) {
     if (!window.confirm(`Delete "${title}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteEventAction(id);
-    if (res.ok) { toast.success('Event deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Event deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {

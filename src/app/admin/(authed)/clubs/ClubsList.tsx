@@ -7,15 +7,22 @@ import { toast } from 'sonner';
 import type { Club } from '@prisma/client';
 import SortableList from '@/components/admin/SortableList';
 import { deleteClubAction, reorderClubsAction } from '@/lib/admin-actions/clubs';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function ClubsList({ items }: { items: Club[] }) {
+export default function ClubsList({ items: initialItems }: { items: Club[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, name: string) {
     if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteClubAction(id);
-    if (res.ok) { toast.success('Club deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Club deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {

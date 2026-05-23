@@ -11,6 +11,7 @@ import {
   deleteFacultyAction,
   reorderFacultyAction,
 } from '@/lib/admin-actions/faculty';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
 type Filter = 'all' | 'leadership' | 'full_time' | 'part_time';
 
@@ -28,8 +29,9 @@ function labelForType(t: string): string {
   return t;
 }
 
-export default function FacultyList({ items }: { items: Faculty[] }) {
+export default function FacultyList({ items: initialItems }: { items: Faculty[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
   const [filter, setFilter] = useState<Filter>('all');
 
   const filtered = filter === 'all' ? items : items.filter((f) => f.type === filter);
@@ -45,6 +47,7 @@ export default function FacultyList({ items }: { items: Faculty[] }) {
     if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteFacultyAction(id);
     if (res.ok) {
+      removeById(id);
       toast.success('Faculty deleted');
       router.refresh();
     } else {

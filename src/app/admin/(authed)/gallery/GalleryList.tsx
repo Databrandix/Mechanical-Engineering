@@ -10,15 +10,22 @@ import {
   deleteGalleryImageAction,
   reorderGalleryImagesAction,
 } from '@/lib/admin-actions/gallery';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function GalleryList({ items }: { items: GalleryImage[] }) {
+export default function GalleryList({ items: initialItems }: { items: GalleryImage[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, alt: string) {
     if (!window.confirm(`Delete this gallery image?\n\n"${alt}"\n\nThis cannot be undone.`)) return;
     const res = await deleteGalleryImageAction(id);
-    if (res.ok) { toast.success('Gallery image deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Gallery image deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {

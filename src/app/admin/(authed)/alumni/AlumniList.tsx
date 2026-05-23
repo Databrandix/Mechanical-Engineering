@@ -7,15 +7,22 @@ import { toast } from 'sonner';
 import type { Alumni } from '@prisma/client';
 import SortableList from '@/components/admin/SortableList';
 import { deleteAlumniAction, reorderAlumniAction } from '@/lib/admin-actions/alumni';
+import { useAdminListItems } from '@/lib/hooks/useAdminListItems';
 
-export default function AlumniList({ items }: { items: Alumni[] }) {
+export default function AlumniList({ items: initialItems }: { items: Alumni[] }) {
   const router = useRouter();
+  const { items, removeById } = useAdminListItems(initialItems);
 
   async function handleDelete(id: string, name: string) {
     if (!window.confirm(`Delete "${name}"?\n\nThis cannot be undone.`)) return;
     const res = await deleteAlumniAction(id);
-    if (res.ok) { toast.success('Alumni deleted'); router.refresh(); }
-    else toast.error(res.error);
+    if (res.ok) {
+      removeById(id);
+      toast.success('Alumni deleted');
+      router.refresh();
+    } else {
+      toast.error(res.error);
+    }
   }
 
   if (items.length === 0) {
