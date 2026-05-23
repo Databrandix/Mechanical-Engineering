@@ -2,8 +2,12 @@
 
 import Image from 'next/image';
 import { motion } from 'motion/react';
+import { ArrowUpRight } from 'lucide-react';
 import Container from '../ui/Container';
 import SectionTitle from '../ui/SectionTitle';
+import Button from '../ui/Button';
+
+const NEWS_PATH = '/news';
 
 // DB row shape — kept narrow on purpose (the homepage section only
 // needs cover + title + category + display date). Server fetcher
@@ -38,11 +42,22 @@ export default function NewsSection({ news }: Props) {
   return (
     <section className="py-8 md:py-16 bg-gray-50 border-t border-gray-100">
       <Container>
-        <SectionTitle
-          eyebrow="Department Updates"
-          title="Latest News"
-          subtitle="From hands-on workshops to breakthrough announcements—never miss what's shaping tomorrow's innovations."
-        />
+        <div className="flex justify-between items-end mb-6 md:mb-8">
+          <SectionTitle
+            eyebrow="Department Updates"
+            title="Latest News"
+            subtitle="From hands-on workshops to breakthrough announcements—never miss what's shaping tomorrow's innovations."
+          />
+          <a href={NEWS_PATH} className="hidden md:block">
+            <Button variant="ghost" className="mb-6 md:mb-8 group">
+              View All News
+              <ArrowUpRight
+                size={18}
+                className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
+              />
+            </Button>
+          </a>
+        </div>
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 mt-6 md:mt-8">
           {/* Main featured */}

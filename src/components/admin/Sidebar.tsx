@@ -87,10 +87,11 @@ const LAB_SYSTEMS_NAV: NavItem[] = [
 ];
 
 const CONTENT_HUBS_NAV: NavItem[] = [
-  { href: '/admin/news',     label: 'News',     icon: Newspaper },
-  { href: '/admin/events',   label: 'Events',   icon: CalendarDays },
-  { href: '/admin/notices',  label: 'Notices',  icon: Megaphone },
-  { href: '/admin/gallery',  label: 'Gallery',  icon: ImageIcon },
+  { href: '/admin/news-landing', label: 'News Landing', icon: Newspaper },
+  { href: '/admin/news',         label: 'News',         icon: Newspaper },
+  { href: '/admin/events',       label: 'Events',       icon: CalendarDays },
+  { href: '/admin/notices',      label: 'Notices',      icon: Megaphone },
+  { href: '/admin/gallery',      label: 'Gallery',      icon: ImageIcon },
 ];
 
 const STUDENT_SOCIETY_NAV: NavItem[] = [
@@ -209,8 +210,12 @@ export default function Sidebar({
       active ? 'bg-accent/10 text-accent' : 'text-gray-700 hover:bg-gray-50'
     }`;
 
+  // Use prefix-with-slash so sibling routes that share a string prefix
+  // (e.g. /admin/news vs /admin/news-landing) don't both light up.
   const isActive = (href: string) =>
-    href === '/admin' ? pathname === '/admin' : pathname?.startsWith(href);
+    href === '/admin'
+      ? pathname === '/admin'
+      : pathname === href || (pathname?.startsWith(href + '/') ?? false);
 
   return (
     <>

@@ -253,6 +253,13 @@ export const getHead = cache(async () => {
 //    Gallery sorts by displayOrder ASC (admin drag-reorder).
 // ─────────────────────────────────────────────────────────────────
 
+// Hero/intro singleton for /news. Optional row — public page
+// falls back to hardcoded defaults if the row is absent (e.g.
+// fresh DB before the seed runs).
+export const getNewsLanding = cache(async () => {
+  return prisma.newsLanding.findUnique({ where: { id: 'singleton' } });
+});
+
 // News list (paginated). `take`/`skip` callers compute from ?page=N.
 // Returns the full row so callers can render cards + detail pages
 // from the same shape; Json columns (body, meta) are read defensively

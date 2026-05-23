@@ -522,6 +522,19 @@ export const legalPagesUpdateSchema = z.object({
   termsSections:                   legalSectionsSchema,
 });
 
+// /news listing page hero — singleton, mirrors the LabFacilityLanding
+// shape but introBody is optional (the page body is the auto-paginated
+// news grid; an intro is editorial polish, not load-bearing).
+export const newsLandingUpdateSchema = z.object({
+  heroTitle:         z.string().min(1).max(300),
+  heroSubtitle:      optionalNullableString,
+  heroOverline:      optionalNullableString,
+  heroImageUrl:      z.string().min(1),
+  heroImagePublicId: optionalNullableString,
+  heroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
+  introBody:         optionalNullableString,
+});
+
 export const newsCategoryEnum = z.enum([
   'Academic',
   'Achievement',

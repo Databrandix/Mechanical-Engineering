@@ -3,13 +3,20 @@ import Link from 'next/link';
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getNews, getNewsCount } from '@/lib/identity';
+import { getNews, getNewsCount, getNewsLanding } from '@/lib/identity';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
   title: 'News — Department of Mechanical Engineering',
   description:
     'Latest news from the Department of Mechanical Engineering, Sonargaon University — events, workshops, industrial visits, and academic milestones.',
 };
+
+const FALLBACK_HERO_IMAGE = '/assets/site-school-1024x576.webp';
+const FALLBACK_HERO_TITLE = 'Latest News';
+const FALLBACK_HERO_OVERLINE = 'News';
+const FALLBACK_INTRO =
+  'Stay updated with the recent breakthroughs, campus highlights, and academic achievements from the heart of our community.';
 
 const PAGE_SIZE = 12;
 
@@ -30,21 +37,39 @@ export default async function NewsListingPage({
   const pageNum = Math.max(1, Number.parseInt(rawPage ?? '1', 10) || 1);
   const skip = (pageNum - 1) * PAGE_SIZE;
 
-  const [items, total] = await Promise.all([
+  const [items, total, landing] = await Promise.all([
     getNews({ skip, take: PAGE_SIZE }),
     getNewsCount(),
+    getNewsLanding(),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
+  const heroImage = landing?.heroImageUrl || FALLBACK_HERO_IMAGE;
+  const heroImagePosition = `center ${landing?.heroImageVerticalPercent ?? 50}%`;
+  const heroTitle = landing?.heroTitle || FALLBACK_HERO_TITLE;
+  const heroSubtitle = landing?.heroSubtitle ?? undefined;
+  const heroOverline = landing?.heroOverline ?? FALLBACK_HERO_OVERLINE;
+  const introBody = landing?.introBody ?? FALLBACK_INTRO;
+
   return (
-    <PageShell title="Latest News" overline="News" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell
+      title={heroTitle}
+      subtitle={heroSubtitle}
+      overline={heroOverline}
+      image={heroImage}
+      imagePosition={heroImagePosition}
+      contentClassName="bg-gray-50 py-12 md:py-20"
+    >
       <Container>
-        <div className="max-w-3xl mx-auto text-center mb-10 md:mb-12">
-          <p className="text-base md:text-lg text-gray-700 leading-[1.85]">
-            Stay updated with the recent breakthroughs, campus highlights, and academic achievements from the heart of our community.
-          </p>
-        </div>
+        {introBody && (
+          <div className="max-w-3xl mx-auto text-center mb-10 md:mb-12">
+            <p
+              className="text-base md:text-lg text-gray-700 leading-[1.85]"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(introBody) }}
+            />
+          </div>
+        )}
 
         {items.length === 0 ? (
           <div className="bg-white rounded-2xl border border-dashed border-gray-300 p-12 text-center">

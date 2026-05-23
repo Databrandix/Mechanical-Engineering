@@ -596,6 +596,23 @@ model LaboratoryLab {
 //    NoticesSection (5). Gallery has no homepage section.
 // ════════════════════════════════════════════════════════════════
 
+// Hero/intro singleton for the public /news listing page. Mirrors
+// the LabFacilityLanding shape — minimal copy (hero + intro)
+// because the page body is the auto-paginated news grid.
+model NewsLanding {
+  id                       String   @id @default("singleton")
+  heroTitle                String
+  heroSubtitle             String?
+  heroOverline             String?
+  heroImageUrl             String
+  heroImagePublicId        String?
+  heroImageVerticalPercent Int      @default(50)
+  introBody                String?  @db.Text
+  updatedAt                DateTime @updatedAt
+
+  @@map("news_landing")
+}
+
 model News {
   id            String   @id @default(cuid())
   slug          String   @unique
