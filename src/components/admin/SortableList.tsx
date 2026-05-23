@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import {
   DndContext,
   KeyboardSensor,
@@ -36,6 +36,16 @@ export default function SortableList<T>({
   onReorder,
 }: Props<T>) {
   const [items, setItems] = useState(initial);
+
+  // Sync local state when the prop changes. Without this, deletes
+  // handled by the parent (via useAdminListItems removeById) never
+  // reach the rendered list because useState(initial) only seeds
+  // once on mount. The parent's hook already protects against stale
+  // RSC payloads, so resyncing here is safe — we won't get
+  // resurrected rows.
+  useEffect(() => {
+    setItems(initial);
+  }, [initial]);
   // Stable per-instance id — without this, dnd-kit's internal counter
   // produces non-deterministic accessibility ids (DndDescribedBy-N)
   // across SSR ↔ hydration when multiple SortableLists live on the
