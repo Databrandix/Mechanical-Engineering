@@ -1,10 +1,11 @@
 import Image from 'next/image';
-import { ArrowRight, Network, Users } from 'lucide-react';
+import { ArrowRight, Network } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import { getAboutMechaClub } from '@/lib/identity';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { DynamicLucideIcon } from '@/components/ui/DynamicLucideIcon';
+import JoinMechaClubButton from './JoinMechaClubButton';
 
 export const metadata = {
   title: 'Mecha Club — Department of Mechanical Engineering',
@@ -204,15 +205,12 @@ export default async function MechaClubPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
-              <a
-                href={row.networkPrimaryCtaHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-button-yellow text-primary font-bold rounded-md shadow-lg hover:brightness-110 hover:-translate-y-0.5 transition-all whitespace-nowrap"
-              >
-                <Users size={18} />
-                {row.networkPrimaryCtaLabel}
-              </a>
+              {/* Primary CTA opens an in-app application form modal
+                  instead of linking out — chair's request. Label still
+                  comes from the DB so admin can rename via
+                  /admin/about-mecha-club; networkPrimaryCtaHref is
+                  intentionally unused for this CTA now. */}
+              <JoinMechaClubButton label={row.networkPrimaryCtaLabel} />
               {row.networkSecondaryCtaLabel && row.networkSecondaryCtaHref && (
                 <a
                   href={row.networkSecondaryCtaHref}
