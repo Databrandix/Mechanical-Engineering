@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import type { Faculty } from '@prisma/client';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getFacultyList } from '@/lib/identity';
+import { getFacultyList, getPageHero } from '@/lib/identity';
 
 export const metadata = {
   title: 'Faculty Members — Department of Mechanical Engineering',
@@ -21,17 +21,21 @@ const initialsOf = (name: string) =>
     .join('');
 
 export default async function FacultyMemberPage() {
-  const all = await getFacultyList();
+  const [all, hero] = await Promise.all([
+    getFacultyList(),
+    getPageHero('faculty-member'),
+  ]);
   const leaders  = all.filter((f) => f.type === 'leadership');
   const fullTime = all.filter((f) => f.type === 'full_time');
   const partTime = all.filter((f) => f.type === 'part_time');
 
   return (
     <PageShell
-      title="Faculty Members"
-      overline="Department"
-      image="/assets/faculty-hero.webp"
-      imagePosition="top"
+      title={hero?.heroTitle ?? 'Faculty Members'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Department'}
+      image={hero?.heroImageUrl ?? '/assets/faculty-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : 'top'}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

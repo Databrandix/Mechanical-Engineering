@@ -1,6 +1,6 @@
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getNotices } from '@/lib/identity';
+import { getNotices, getPageHero } from '@/lib/identity';
 import NoticesClient from './NoticesClient';
 
 export const metadata = {
@@ -10,13 +10,18 @@ export const metadata = {
 };
 
 export default async function NoticeBoardPage() {
-  const notices = await getNotices();
+  const [notices, hero] = await Promise.all([
+    getNotices(),
+    getPageHero('student-society-notice-board'),
+  ]);
 
   return (
     <PageShell
-      title="Notice Board"
-      overline="Student"
-      image="/assets/notice-board-hero.webp"
+      title={hero?.heroTitle ?? 'Notice Board'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Student'}
+      image={hero?.heroImageUrl ?? '/assets/notice-board-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : undefined}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

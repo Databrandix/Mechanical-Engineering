@@ -1,6 +1,6 @@
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getFaqs } from '@/lib/identity';
+import { getFaqs, getPageHero } from '@/lib/identity';
 import FAQList from './FAQList';
 
 export const metadata = {
@@ -10,14 +10,18 @@ export const metadata = {
 };
 
 export default async function FAQPage() {
-  const faqs = await getFaqs();
+  const [faqs, hero] = await Promise.all([
+    getFaqs(),
+    getPageHero('student-society-faq'),
+  ]);
 
   return (
     <PageShell
-      title="Frequently Asked Questions"
-      overline="Student Society"
-      image="/assets/faq-hero.webp"
-      imagePosition="center 35%"
+      title={hero?.heroTitle ?? 'Frequently Asked Questions'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Student Society'}
+      image={hero?.heroImageUrl ?? '/assets/faq-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : 'center 35%'}
       contentClassName="bg-gray-50 py-12 md:py-16"
     >
       <Container>

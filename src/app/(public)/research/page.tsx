@@ -1,7 +1,7 @@
 import { Calendar, MapPin, Users, FileText } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getResearchPapers } from '@/lib/identity';
+import { getResearchPapers, getPageHero } from '@/lib/identity';
 
 export const metadata = {
   title: 'Research — Department of Mechanical Engineering',
@@ -10,12 +10,18 @@ export const metadata = {
 };
 
 export default async function ResearchPage() {
-  const papers = await getResearchPapers();
+  const [papers, hero] = await Promise.all([
+    getResearchPapers(),
+    getPageHero('research'),
+  ]);
 
   return (
     <PageShell
-      title="Research Publications"
-      overline="Academic Excellence"
+      title={hero?.heroTitle ?? 'Research Publications'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Academic Excellence'}
+      image={hero?.heroImageUrl ?? undefined}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : undefined}
       contentClassName="bg-gray-50 py-12 md:py-16"
     >
       <Container>

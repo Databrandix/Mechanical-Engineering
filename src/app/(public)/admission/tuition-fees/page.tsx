@@ -1,6 +1,6 @@
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getProgramFeeStructures } from '@/lib/identity';
+import { getProgramFeeStructures, getPageHero } from '@/lib/identity';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { DynamicLucideIcon } from '@/components/ui/DynamicLucideIcon';
 
@@ -92,14 +92,18 @@ function coercePolicies(v: unknown): FeePolicy[] {
 const fmt = (n: number) => 'BDT ' + n.toLocaleString('en-BD');
 
 export default async function TuitionFeesPage() {
-  const feeStructures = await getProgramFeeStructures();
+  const [feeStructures, hero] = await Promise.all([
+    getProgramFeeStructures(),
+    getPageHero('admission-tuition-fees'),
+  ]);
 
   return (
     <PageShell
-      title="Tuition Fees"
-      overline="Admission"
-      image="/assets/admission-hero.webp"
-      imagePosition="top"
+      title={hero?.heroTitle ?? 'Tuition Fees'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Admission'}
+      image={hero?.heroImageUrl ?? '/assets/admission-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : 'top'}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Briefcase, GraduationCap, IdCard, UserCircle2 } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getAlumni } from '@/lib/identity';
+import { getAlumni, getPageHero } from '@/lib/identity';
 
 export const metadata = {
   title: 'Alumni — Department of Mechanical Engineering',
@@ -11,13 +11,18 @@ export const metadata = {
 };
 
 export default async function AlumniPage() {
-  const alumni = await getAlumni();
+  const [alumni, hero] = await Promise.all([
+    getAlumni(),
+    getPageHero('student-society-alumni'),
+  ]);
 
   return (
     <PageShell
-      title="Our Alumni"
-      overline="Student Society"
-      image="/assets/alumni-hero.webp"
+      title={hero?.heroTitle ?? 'Our Alumni'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Student Society'}
+      image={hero?.heroImageUrl ?? '/assets/alumni-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : undefined}
       contentClassName="bg-gray-50 py-12 md:py-16"
     >
       <Container>

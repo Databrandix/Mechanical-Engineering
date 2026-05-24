@@ -1,6 +1,6 @@
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getEvents } from '@/lib/identity';
+import { getEvents, getPageHero } from '@/lib/identity';
 import EventsClient from './EventsClient';
 
 export const metadata = {
@@ -10,10 +10,20 @@ export const metadata = {
 };
 
 export default async function EventsPage() {
-  const events = await getEvents();
+  const [events, hero] = await Promise.all([
+    getEvents(),
+    getPageHero('student-society-events'),
+  ]);
 
   return (
-    <PageShell title="Events" overline="Student" image="/assets/events-hero.webp" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell
+      title={hero?.heroTitle ?? 'Events'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Student'}
+      image={hero?.heroImageUrl ?? '/assets/events-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : undefined}
+      contentClassName="bg-gray-50 py-12 md:py-20"
+    >
       <Container>
         {events.length === 0 ? (
           <div className="bg-white rounded-2xl border border-dashed border-gray-300 p-12 text-center">
