@@ -407,8 +407,7 @@ async function seedMainNav() {
         { name: 'Message from Head',   href: '/about/message-from-head',   displayOrder: 1 },
         { name: 'Mission & Vision',    href: '/about/mission-vision',      displayOrder: 2 },
         { name: 'Laboratory Facility', href: '/about/laboratory-facility', displayOrder: 3 },
-        { name: 'Mecha Club',          href: '/about/mecha-club',          displayOrder: 4 },
-        { name: 'Lab Facility',        href: '/about/lab-facility',        displayOrder: 5 },
+        { name: 'Lab Facility',        href: '/about/lab-facility',        displayOrder: 4 },
       ],
     },
     {
@@ -437,6 +436,7 @@ async function seedMainNav() {
         { name: 'FAQ',          href: '/student-society/faq',          displayOrder: 5 },
         { name: 'Syllabus',     href: '/student-society/syllabus',     displayOrder: 6 },
         { name: 'Club list',    href: '/student-society/club-list',    displayOrder: 7 },
+        { name: 'Mecha Club',   href: '/about/mecha-club',             displayOrder: 8 },
       ],
     },
     {
