@@ -243,8 +243,15 @@ function AccordionPanel({
   label: string;
   children: React.ReactNode;
 }) {
+  // The `name` attribute groups every panel on this page so opening
+  // one auto-closes the others — chair's "only one open at a time"
+  // requirement. Native HTML5 accordion behaviour (Chrome 120+ /
+  // Firefox 119+ / Safari 17+), no client JS / state needed.
   return (
-    <details className="group bg-white rounded-md border border-gray-200 overflow-hidden">
+    <details
+      name="faculty-detail-sections"
+      className="group bg-white rounded-md border border-gray-200 overflow-hidden"
+    >
       <summary className="flex items-center justify-between gap-3 px-5 py-3.5 bg-primary text-white cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:bg-primary/95 transition-colors">
         <span className="font-semibold text-[15px]">{label}</span>
         <Plus
