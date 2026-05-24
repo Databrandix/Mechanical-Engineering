@@ -1,7 +1,7 @@
 import { Calendar, FileText, Hash, Download, Building2 } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getActiveAdmissionNotice } from '@/lib/identity';
+import { getActiveAdmissionNotice, getPageHero } from '@/lib/identity';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
@@ -19,7 +19,10 @@ function coerceParagraphs(v: unknown): string[] {
 }
 
 export default async function AdmissionNoticePage() {
-  const notice = await getActiveAdmissionNotice();
+  const [notice, hero] = await Promise.all([
+    getActiveAdmissionNotice(),
+    getPageHero('admission-notice'),
+  ]);
   const heroImage = notice?.heroImageUrl ?? '/assets/admission-hero.webp';
   const bodyParagraphs = coerceParagraphs(notice?.bodyParagraphs);
   const ccList = coerceParagraphs(notice?.ccList);
@@ -29,10 +32,11 @@ export default async function AdmissionNoticePage() {
 
   return (
     <PageShell
-      title="Admission Notice"
-      overline="Admission"
-      image={heroImage}
-      imagePosition="top"
+      title={hero?.heroTitle ?? 'Admission Notice'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Admission'}
+      image={hero?.heroImageUrl ?? heroImage}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : 'top'}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

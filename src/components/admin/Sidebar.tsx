@@ -75,6 +75,7 @@ const PRIMARY_NAV: NavItem[] = [
   { href: '/admin/footer-links',        label: 'Footer Links',        icon: PanelBottom },
   { href: '/admin/journey-cta',         label: 'Journey CTA',         icon: Rocket },
   { href: '/admin/legal-pages',         label: 'Legal Pages',         icon: ShieldCheck },
+  { href: '/admin/page-heroes',         label: 'Page Heroes',         icon: ImageIcon },
 ];
 
 const ABOUT_PAGES_NAV: NavItem[] = [

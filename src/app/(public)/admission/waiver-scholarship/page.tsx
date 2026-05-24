@@ -5,6 +5,7 @@ import {
   getScholarships,
   getWaiverCategories,
   getWaiverScholarshipLanding,
+  getPageHero,
 } from '@/lib/identity';
 import { DynamicLucideIcon } from '@/components/ui/DynamicLucideIcon';
 
@@ -52,10 +53,11 @@ function coerceStringArray(v: unknown): string[] {
 }
 
 export default async function WaiverScholarshipPage() {
-  const [landing, categories, scholarships] = await Promise.all([
+  const [landing, categories, scholarships, hero] = await Promise.all([
     getWaiverScholarshipLanding(),
     getWaiverCategories(),
     getScholarships(),
+    getPageHero('admission-waiver-scholarship'),
   ]);
 
   // Filter Inactive rows out of the public summary table — they
@@ -66,10 +68,11 @@ export default async function WaiverScholarshipPage() {
 
   return (
     <PageShell
-      title="Waiver & Scholarship"
-      overline="Admission"
-      image="/assets/admission-hero.webp"
-      imagePosition="top"
+      title={hero?.heroTitle ?? 'Waiver & Scholarship'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Admission'}
+      image={hero?.heroImageUrl ?? '/assets/admission-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : 'top'}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

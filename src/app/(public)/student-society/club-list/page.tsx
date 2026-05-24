@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Users } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getClubs } from '@/lib/identity';
+import { getClubs, getPageHero } from '@/lib/identity';
 
 export const metadata = {
   title: 'Club List — Sonargaon University',
@@ -11,13 +11,18 @@ export const metadata = {
 };
 
 export default async function ClubListPage() {
-  const clubs = await getClubs();
+  const [clubs, hero] = await Promise.all([
+    getClubs(),
+    getPageHero('student-society-club-list'),
+  ]);
 
   return (
     <PageShell
-      title="Student Clubs"
-      overline="Student Society"
-      image="/assets/club-list-hero.webp"
+      title={hero?.heroTitle ?? 'Student Clubs'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Student Society'}
+      image={hero?.heroImageUrl ?? '/assets/club-list-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : undefined}
       contentClassName="bg-gray-50 py-12 md:py-16"
     >
       <Container>

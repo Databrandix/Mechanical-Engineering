@@ -1,6 +1,6 @@
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getProspectusEntries } from '@/lib/identity';
+import { getProspectusEntries, getPageHero } from '@/lib/identity';
 import ProspectusClient from './ProspectusClient';
 
 export const metadata = {
@@ -9,7 +9,10 @@ export const metadata = {
 };
 
 export default async function ProspectusPage() {
-  const entries = await getProspectusEntries();
+  const [entries, hero] = await Promise.all([
+    getProspectusEntries(),
+    getPageHero('admission-prospectus'),
+  ]);
   // The Json columns are not present on this table — just basic
   // strings/IDs. Pass the rows directly to the client; date columns
   // (createdAt/updatedAt) are unused by the renderer.
@@ -25,10 +28,11 @@ export default async function ProspectusPage() {
 
   return (
     <PageShell
-      title="Prospectus"
-      overline="Admission"
-      image="/assets/admission-hero.webp"
-      imagePosition="top"
+      title={hero?.heroTitle ?? 'Prospectus'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Admission'}
+      image={hero?.heroImageUrl ?? '/assets/admission-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : 'top'}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

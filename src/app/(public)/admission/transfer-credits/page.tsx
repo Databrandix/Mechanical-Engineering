@@ -1,7 +1,7 @@
 import { CheckCircle2, FileText, BookOpen, Receipt, GraduationCap } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getAdmissionTransferCredits } from '@/lib/identity';
+import { getAdmissionTransferCredits, getPageHero } from '@/lib/identity';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
@@ -54,7 +54,10 @@ function coerceSummaryRows(v: unknown): SummaryRow[] {
 }
 
 export default async function TransferCreditsPage() {
-  const data = await getAdmissionTransferCredits();
+  const [data, hero] = await Promise.all([
+    getAdmissionTransferCredits(),
+    getPageHero('admission-transfer-credits'),
+  ]);
 
   const bullets       = coerceHeadingBody(data?.minimumGradeBullets);
   const documents     = coerceDocuments(data?.documents);
@@ -62,10 +65,11 @@ export default async function TransferCreditsPage() {
 
   return (
     <PageShell
-      title="Transfer Credits"
-      overline="Admission"
-      image="/assets/admission-hero.webp"
-      imagePosition="top"
+      title={hero?.heroTitle ?? 'Transfer Credits'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Admission'}
+      image={hero?.heroImageUrl ?? '/assets/admission-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : 'top'}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

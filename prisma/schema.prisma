@@ -1365,6 +1365,31 @@ model NewsletterPage {
   @@map("newsletter_page")
 }
 
+// Generic per-page hero CMS. Each public page that doesn't already
+// own a singleton with hero fields (AboutOverview, AboutMechaClub,
+// LegalPage, NewsLanding, ContactPageContent, NewsletterPage, etc.)
+// gets a row keyed by `pageKey` — that way the chair can change the
+// hero image + copy independently per page without N singleton
+// tables. Admin reads/writes via /admin/page-heroes.
+model PageHero {
+  id                       String   @id @default(cuid())
+  pageKey                  String   @unique
+  // Human-readable label shown to admin (e.g. "Faculty Members List").
+  pageLabel                String
+  // Public route this hero powers, so the admin edit form can link
+  // out to "View page" (e.g. "/faculty-member", "/admission/notice").
+  publicPath               String
+  heroTitle                String
+  heroSubtitle             String?
+  heroOverline             String?
+  heroImageUrl             String
+  heroImagePublicId        String?
+  heroImageVerticalPercent Int      @default(50)
+  updatedAt                DateTime @updatedAt
+
+  @@map("page_hero")
+}
+
 // Mecha Club join applications — populated by the public popup form
 // on /about/mecha-club. Admin reviews + approves/rejects via
 // /admin/mecha-club-applications.

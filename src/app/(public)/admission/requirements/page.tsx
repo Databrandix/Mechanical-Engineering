@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getAdmissionRequirements } from '@/lib/identity';
+import { getAdmissionRequirements, getPageHero } from '@/lib/identity';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export const metadata = {
@@ -38,7 +38,10 @@ function coerceQuickCriteria(v: unknown): { label: string; value: string }[] {
 }
 
 export default async function AdmissionRequirementsPage() {
-  const reqs = await getAdmissionRequirements();
+  const [reqs, hero] = await Promise.all([
+    getAdmissionRequirements(),
+    getPageHero('admission-requirements'),
+  ]);
   const ugReqs = coerceStringArray(reqs?.undergraduateRequirements);
   const notes  = coerceStringArray(reqs?.additionalNotes);
   const dipReqs = coerceStringArray(reqs?.diplomaRequirements);
@@ -46,10 +49,11 @@ export default async function AdmissionRequirementsPage() {
 
   return (
     <PageShell
-      title="Admission Requirements"
-      overline="Admission"
-      image="/assets/admission-hero.webp"
-      imagePosition="top"
+      title={hero?.heroTitle ?? 'Admission Requirements'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Admission'}
+      image={hero?.heroImageUrl ?? '/assets/admission-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : 'top'}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >
       <Container>

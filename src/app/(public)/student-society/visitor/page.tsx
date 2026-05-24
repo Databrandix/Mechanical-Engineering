@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Briefcase, Building2, Quote as QuoteIcon } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getVisitors } from '@/lib/identity';
+import { getVisitors, getPageHero } from '@/lib/identity';
 
 export const metadata = {
   title: 'Visitors — Department of Mechanical Engineering',
@@ -17,14 +17,18 @@ function coerceParagraphs(v: unknown): string[] {
 }
 
 export default async function VisitorsPage() {
-  const visitors = await getVisitors();
+  const [visitors, hero] = await Promise.all([
+    getVisitors(),
+    getPageHero('student-society-visitor'),
+  ]);
 
   return (
     <PageShell
-      title="Visitors"
-      overline="Student Society"
-      image="/assets/mission-vision-hero.webp"
-      imagePosition="center 3%"
+      title={hero?.heroTitle ?? 'Visitors'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Student Society'}
+      image={hero?.heroImageUrl ?? '/assets/mission-vision-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : 'center 3%'}
       contentClassName="bg-gray-50 py-12 md:py-16"
     >
       <Container>

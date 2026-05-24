@@ -1077,6 +1077,18 @@ export const mechaClubApplicationStatusUpdateSchema = z.object({
   status: mechaClubApplicationStatusEnum,
 });
 
+// Generic page-hero update. pageKey + publicPath + pageLabel are
+// stable identifiers seeded by migration — they are NOT in the
+// editable surface, so the admin form passes only the hero fields.
+export const pageHeroUpdateSchema = z.object({
+  heroTitle:                z.string().min(1).max(300),
+  heroSubtitle:             optionalNullableString,
+  heroOverline:             optionalNullableString,
+  heroImageUrl:             z.string().min(1),
+  heroImagePublicId:        optionalNullableString,
+  heroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
+});
+
 // ─────────────────────────────────────────────────────────────────
 //  Phase 10 — ContactPageContent singleton + CampusLocation multi-row
 //    Final hardcoded-content close-out from the /contact page.

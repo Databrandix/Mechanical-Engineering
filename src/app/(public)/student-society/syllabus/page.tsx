@@ -1,6 +1,6 @@
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getSyllabi } from '@/lib/identity';
+import { getSyllabi, getPageHero } from '@/lib/identity';
 import SyllabusClient from './SyllabusClient';
 
 export const metadata = {
@@ -10,10 +10,20 @@ export const metadata = {
 };
 
 export default async function SyllabusPage() {
-  const items = await getSyllabi();
+  const [items, hero] = await Promise.all([
+    getSyllabi(),
+    getPageHero('student-society-syllabus'),
+  ]);
 
   return (
-    <PageShell title="Syllabus" overline="Student" image="/assets/syllabus-hero.webp" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell
+      title={hero?.heroTitle ?? 'Syllabus'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Student'}
+      image={hero?.heroImageUrl ?? '/assets/syllabus-hero.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : undefined}
+      contentClassName="bg-gray-50 py-12 md:py-20"
+    >
       <Container>
         <div className="max-w-3xl mx-auto text-center mb-10 md:mb-12">
           <p className="text-base md:text-lg text-gray-700 leading-[1.85]">

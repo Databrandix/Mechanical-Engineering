@@ -168,6 +168,15 @@ export const getNewsletterPage = cache(async () => {
   return prisma.newsletterPage.findUnique({ where: { id: 'singleton' } });
 });
 
+// Generic per-page hero CMS. Each public page that doesn't have its
+// own singleton looks up its hero by a stable pageKey. The seed
+// migration creates a row for every page that previously had a
+// hardcoded hero, so a missing row is a developer error (new page
+// added without seeding) — public pages can fall back gracefully.
+export const getPageHero = cache(async (pageKey: string) => {
+  return prisma.pageHero.findUnique({ where: { pageKey } });
+});
+
 // ─────────────────────────────────────────────────────────────────
 //  About pages — Phase 4 (3 singletons)
 //    Each is a full row including the Json content fields so the

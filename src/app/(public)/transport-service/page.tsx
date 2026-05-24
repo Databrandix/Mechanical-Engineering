@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getBusRoutes, getTransportLanding } from '@/lib/identity';
+import { getBusRoutes, getTransportLanding, getPageHero } from '@/lib/identity';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { DynamicLucideIcon } from '@/components/ui/DynamicLucideIcon';
 
@@ -38,18 +38,21 @@ function coerceInstructions(v: unknown): InstructionRow[] {
 }
 
 export default async function TransportServicePage() {
-  const [routes, landing] = await Promise.all([
+  const [routes, landing, hero] = await Promise.all([
     getBusRoutes(),
     getTransportLanding(),
+    getPageHero('transport-service'),
   ]);
 
   const instructions = coerceInstructions(landing?.instructions);
 
   return (
     <PageShell
-      title="Transport Service"
-      overline="Campus Services"
-      image="/assets/transport/dsc01671.webp"
+      title={hero?.heroTitle ?? 'Transport Service'}
+      subtitle={hero?.heroSubtitle ?? undefined}
+      overline={hero?.heroOverline ?? 'Campus Services'}
+      image={hero?.heroImageUrl ?? '/assets/transport/dsc01671.webp'}
+      imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : undefined}
       contentClassName="bg-gray-50 py-12 md:py-16"
     >
       <Container>
