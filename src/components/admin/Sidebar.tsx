@@ -95,6 +95,11 @@ const CONTENT_HUBS_NAV: NavItem[] = [
   { href: '/admin/gallery',      label: 'Gallery',      icon: ImageIcon },
 ];
 
+const NEWSLETTER_NAV: NavItem[] = [
+  { href: '/admin/newsletter',             label: 'Page Content', icon: Info },
+  { href: '/admin/newsletter-subscribers', label: 'Subscribers',  icon: Mail },
+];
+
 const STUDENT_SOCIETY_NAV: NavItem[] = [
   { href: '/admin/alumni',          label: 'Alumni',          icon: UserCircle2 },
   { href: '/admin/clubs',           label: 'Clubs',           icon: Users2 },
@@ -153,6 +158,8 @@ export default function Sidebar({
   const [admissionOpen, setAdmissionOpen] = useState<boolean>(admissionActive);
   const contactPageActive = CONTACT_PAGE_NAV.some((n) => pathname?.startsWith(n.href));
   const [contactPageOpen, setContactPageOpen] = useState<boolean>(contactPageActive);
+  const newsletterActive = NEWSLETTER_NAV.some((n) => pathname?.startsWith(n.href));
+  const [newsletterOpen, setNewsletterOpen] = useState<boolean>(newsletterActive);
 
   // Phase 11 — mobile/tablet drawer state. Persistent sidebar on
   // desktop (≥lg); off-canvas drawer with backdrop on smaller
@@ -496,6 +503,33 @@ export default function Sidebar({
             </span>
           )}
         </Link>
+
+        {/* Newsletter — page CMS + subscriber list. Grouped together so
+            content edits and the audience view live side by side. */}
+        <button
+          type="button"
+          onClick={() => setNewsletterOpen((v) => !v)}
+          aria-expanded={newsletterOpen}
+          className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            newsletterActive ? 'text-accent' : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <span className="flex items-center gap-3">
+            <Mail size={16} />
+            Newsletter
+          </span>
+          <ChevronDown size={14} className={`transition-transform ${newsletterOpen ? 'rotate-180' : ''}`} />
+        </button>
+        {newsletterOpen && (
+          <div className="pl-6 space-y-1">
+            {NEWSLETTER_NAV.map(({ href, label }) => (
+              <Link key={href} href={href} className={linkClass(!!isActive(href))}>
+                <span className="text-[10px] leading-none">●</span>
+                {label}
+              </Link>
+            ))}
+          </div>
+        )}
 
         {isSuperAdmin && (
           <Link

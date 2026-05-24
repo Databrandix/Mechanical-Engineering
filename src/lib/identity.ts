@@ -164,6 +164,10 @@ export const getFooterCampusLinks = cache(async () => {
   });
 });
 
+export const getNewsletterPage = cache(async () => {
+  return prisma.newsletterPage.findUnique({ where: { id: 'singleton' } });
+});
+
 // ─────────────────────────────────────────────────────────────────
 //  About pages — Phase 4 (3 singletons)
 //    Each is a full row including the Json content fields so the

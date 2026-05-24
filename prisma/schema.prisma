@@ -1325,3 +1325,65 @@ model ContactSubmission {
   @@index([submittedAt])
   @@map("contact_submission")
 }
+
+// ─────────────────────────────────────────────────────────────────
+//  Newsletter page + subscribers
+//    Singleton CMS for the public /newsletter landing (hero, intro,
+//    advantages list, form labels) + a subscribers table populated
+//    by the public form submit. Subscribers are stored DB-only —
+//    chair queries / exports via /admin/newsletter-subscribers.
+// ─────────────────────────────────────────────────────────────────
+
+model NewsletterPage {
+  id                       String   @id @default("singleton")
+  // Hero (PageShell)
+  heroTitle                String
+  heroSubtitle             String?
+  heroOverline             String?
+  heroImageUrl             String
+  heroImagePublicId        String?
+  heroImageVerticalPercent Int      @default(50)
+  // Intro paragraph above the advantages grid (HTML allowed,
+  // sanitized at render time — same J1 pattern as AboutOverview).
+  introBody                String   @db.Text
+  // Advantages section
+  advantagesOverline       String?
+  advantagesHeading        String
+  // advantages — Json [{ iconName, title, description }]. iconName
+  // resolves through DynamicLucideIcon (Phase 20). Variable length;
+  // admin manages via a structured editor.
+  advantages               Json
+  // Subscribe form
+  ctaHeading               String
+  ctaBody                  String?
+  ctaButtonLabel           String   // "Subscribe"
+  emailPlaceholder         String   // "you@example.com"
+  // Optional note under the form (e.g. privacy reassurance).
+  privacyNote              String?
+  updatedAt                DateTime @updatedAt
+
+  @@map("newsletter_page")
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  // status — 'active' | 'unsubscribed'. Future unsubscribe flow can
+  // flip this without losing history. Stored as String (forward-
+  // flexible, same as ContactSubmission.status).
+  status    String   @default("active")
+  // Where the submission came from. Currently only 'newsletter-page';
+  // future footer-form or popup signups can tag themselves separately.
+  source    String?
+  // Forensics — first hop from x-forwarded-for / raw UA header.
+  // Same nullable shape as ContactSubmission so the same redaction
+  // helpers apply.
+  ipAddress String?
+  userAgent String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
+  @@index([status, createdAt])
+  @@map("newsletter_subscriber")
+}

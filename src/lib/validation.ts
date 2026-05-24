@@ -1014,6 +1014,45 @@ export const contactSubmissionStatusUpdateSchema = z.object({
 });
 
 // ─────────────────────────────────────────────────────────────────
+//  Newsletter — page CMS + public subscribe + admin subscriber actions
+// ─────────────────────────────────────────────────────────────────
+
+// Each advantage row in the NewsletterPage.advantages Json array.
+// Mirrors the AboutMechaClub.activities shape (Json structured editor)
+// — iconName resolves through DynamicLucideIcon at render time.
+const newsletterAdvantagesArraySchema = z.array(
+  z.object({
+    iconName:    z.string().min(1),
+    title:       z.string().min(1),
+    description: z.string().min(1),
+  }),
+);
+
+export const newsletterPageUpdateSchema = z.object({
+  heroTitle:                z.string().min(1).max(300),
+  heroSubtitle:             optionalNullableString,
+  heroOverline:             optionalNullableString,
+  heroImageUrl:             z.string().min(1),
+  heroImagePublicId:        optionalNullableString,
+  heroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
+  introBody:                z.string().min(1),
+  advantagesOverline:       optionalNullableString,
+  advantagesHeading:        z.string().min(1).max(300),
+  advantages:               newsletterAdvantagesArraySchema,
+  ctaHeading:               z.string().min(1).max(300),
+  ctaBody:                  optionalNullableString,
+  ctaButtonLabel:           z.string().min(1).max(80),
+  emailPlaceholder:         z.string().min(1).max(120),
+  privacyNote:              optionalNullableString,
+});
+
+// Public form input — narrow to just the email, with conservative
+// length cap mirroring ContactSubmission email validation.
+export const newsletterSubscribeSchema = z.object({
+  email: z.string().trim().email().max(320),
+});
+
+// ─────────────────────────────────────────────────────────────────
 //  Phase 10 — ContactPageContent singleton + CampusLocation multi-row
 //    Final hardcoded-content close-out from the /contact page.
 // ─────────────────────────────────────────────────────────────────
