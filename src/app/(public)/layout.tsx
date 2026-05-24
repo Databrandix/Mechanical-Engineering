@@ -92,6 +92,11 @@ export default async function PublicLayout({
         quickAccessItems={quickAccessItems}
         mainNav={mainNav}
         searchItems={searchItems}
+        topBarSocials={{
+          facebookUrl: uni.facebookUrl,
+          linkedinUrl: uni.linkedinUrl,
+          youtubeUrl:  uni.youtubeUrl,
+        }}
       />
 
       {/* Phase 15 — Tier 3 page transition. The wrapper is a small
