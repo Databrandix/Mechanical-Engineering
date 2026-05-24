@@ -72,7 +72,7 @@ async function seedUniversityIdentity() {
       threadsUrl: 'https://www.threads.com/@sonargaonuniversitybd',
       erpUrl: 'http://sue.su.edu.bd:5081/sonargaon_erp/',
       applyUrl:
-        'http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/create_smart_panel',
+        'http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/admission_info',
       libraryUrl: 'http://lib.su.edu.bd',
       iqacUrl: 'https://su.edu.bd/iqac',
       careerUrl: 'https://su.edu.bd/welcome/career',
@@ -398,7 +398,7 @@ async function seedMainNav() {
   // edits to UniversityIdentity.applyUrl after seed don't auto-sync
   // here — they must update both places. See CP3.1 commit message.
   const universityIdentity = await prisma.universityIdentity.findUnique({ where: { id: 'singleton' } });
-  const applyUrl = universityIdentity?.applyUrl ?? 'http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/create_smart_panel';
+  const applyUrl = universityIdentity?.applyUrl ?? 'http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/admission_info';
 
   const groups = [
     {
@@ -1820,7 +1820,7 @@ async function seedJourneyCTAContent() {
       heading: 'Shape Your Future with Excellence',
       body: 'Join a vibrant academic community where innovation, leadership, and lifelong learning shape your path to success.',
       primaryCtaLabel: 'Apply Now',
-      primaryCtaHref: 'http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/create_smart_panel',
+      primaryCtaHref: 'http://sue.su.edu.bd:5081/sonargaon_erp/siteadmin/admission_info',
       primaryCtaExternal: true,
       secondaryCtaLabel: 'Request for Information',
       secondaryCtaHref: '/contact',

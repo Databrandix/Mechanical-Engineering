@@ -3,10 +3,20 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import {
-  Menu, X, Search, Facebook, Linkedin, Youtube,
+  Menu, X, Search, Facebook, Linkedin,
   User, ChevronDown, ChevronRight, LayoutGrid,
   GraduationCap, CheckCircle,
 } from 'lucide-react';
+
+// Lucide's Youtube icon is an outline-style mark; at the top bar's
+// tiny size (12–14px) with fill applied it collapses into an
+// unrecognisable blob. Use the official brand "play-in-rounded-
+// rectangle" path instead so the icon reads at a glance.
+const YoutubeBrandIcon = ({ size = 14 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+  </svg>
+);
 import Container from '../ui/Container';
 import SearchOverlay from './SearchOverlay';
 import { DynamicLucideIcon } from '../ui/DynamicLucideIcon';
@@ -54,6 +64,16 @@ type MainNavGroupRow = {
   items: MainNavItemRow[];
 };
 
+// Top-bar socials. Subset of UniversityIdentity's full social field
+// set — the top bar only renders 3 icons (FB / LinkedIn / YouTube);
+// the footer renders the full 8. Both sources of truth are the same
+// UniversityIdentity singleton, editable via /admin/university-identity.
+type TopBarSocials = {
+  facebookUrl: string | null;
+  linkedinUrl: string | null;
+  youtubeUrl:  string | null;
+};
+
 type NavbarProps = {
   logoUrl: string;
   applyUrl: string;
@@ -61,6 +81,7 @@ type NavbarProps = {
   quickAccessItems: readonly QuickAccessRow[];
   mainNav: readonly MainNavGroupRow[];
   searchItems: readonly SearchItem[];
+  topBarSocials: TopBarSocials;
 };
 
 export default function Navbar({
@@ -70,6 +91,7 @@ export default function Navbar({
   quickAccessItems,
   mainNav,
   searchItems,
+  topBarSocials,
 }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -131,21 +153,30 @@ export default function Navbar({
           </Container>
         </div>
 
-        {/* Right Side - Socials with Dark Blue Background */}
+        {/* Right Side - Socials with Dark Blue Background. URLs come
+            from UniversityIdentity (editable via /admin/university-identity)
+            — same source the footer's social icons use. A null URL
+            hides that entry instead of rendering an inert link. */}
         <div className="bg-primary h-full flex items-center px-10">
           <div className="flex items-center gap-6 text-white text-[11px] font-medium">
-            <a href="https://www.facebook.com/SonargaonUniversity" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
-              <Facebook size={12} fill="currentColor" />
-              <span className="uppercase tracking-widest">Facebook</span>
-            </a>
-            <a href="https://www.linkedin.com/school/14451954/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
-              <Linkedin size={12} fill="currentColor" />
-              <span className="uppercase tracking-widest">LinkedIn</span>
-            </a>
-            <a href="https://www.youtube.com/@SonargaonUniversityEdu" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
-              <Youtube size={14} fill="currentColor" />
-              <span className="uppercase tracking-widest">Youtube</span>
-            </a>
+            {topBarSocials.facebookUrl && (
+              <a href={topBarSocials.facebookUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
+                <Facebook size={12} fill="currentColor" />
+                <span className="uppercase tracking-widest">Facebook</span>
+              </a>
+            )}
+            {topBarSocials.linkedinUrl && (
+              <a href={topBarSocials.linkedinUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
+                <Linkedin size={12} fill="currentColor" />
+                <span className="uppercase tracking-widest">LinkedIn</span>
+              </a>
+            )}
+            {topBarSocials.youtubeUrl && (
+              <a href={topBarSocials.youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-accent transition-colors">
+                <YoutubeBrandIcon size={14} />
+                <span className="uppercase tracking-widest">Youtube</span>
+              </a>
+            )}
           </div>
         </div>
       </div>

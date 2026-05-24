@@ -43,6 +43,38 @@ type Kind =
   // Phase 17
   | 'legal-hero';
 
+// Per-kind ideal upload size hint, surfaced under every image field
+// so admins have a target before opening the file picker. null = no
+// hint (e.g. PDF-only uploads where pixel dimensions don't apply).
+// Per-call sites can override via the `recommendedSize` prop.
+const RECOMMENDED_SIZE_BY_KIND: Record<Kind, string | null> = {
+  'department-logo':       'Square / horizontal logo · transparent PNG · ~512×512',
+  'department-hero':       'Landscape banner · 1920×600 (16:5) recommended',
+  'university-logo':       'Horizontal logo · transparent PNG · ~600×200',
+  'program-image':         'Landscape · 1200×675 (16:9)',
+  'research-icon':         'Square · 400×400',
+  'faculty-photo':         'Square portrait · 600×600 minimum',
+  'faculty-message-hero':  'Landscape banner · 1920×600 (16:5)',
+  'about-image':           'Landscape · 1920×600 (16:5) for hero use',
+  'lab-image':             'Landscape · 1600×900 (16:9)',
+  'news-cover':            'Landscape · 1600×1000 (16:10)',
+  'event-image':           'Landscape · 1600×1000 (16:10)',
+  'notice-file':           'PDF preferred · or 1200×1600 portrait image',
+  'gallery-image':         'Long side ≥1600 px · any aspect ratio',
+  'alumni-photo':          'Square portrait · 400×400',
+  'club-image':            'Landscape · 1200×675 (16:9)',
+  'visitor-photo':         'Square portrait · 400×400',
+  'syllabus-cover':        'Portrait · 800×1131 (A4 ratio)',
+  'syllabus-pdf':          null,
+  'admission-notice-hero': 'Landscape banner · 1920×600',
+  'admission-notice-file': null,
+  'prospectus-cover':      'Portrait · 800×1131 (A4 ratio)',
+  'prospectus-pdf':        null,
+  'contact-hero':          'Landscape banner · 1920×500',
+  'journey-cta-hero':      'Landscape · 1920×800',
+  'legal-hero':            'Landscape banner · 1920×500',
+};
+
 export type UploadMeta = {
   fileType: 'image' | 'pdf';
   fileName: string;
@@ -66,6 +98,12 @@ type Props = {
   initialFileName?: string | null;
   label?: string;
   aspectRatio?: 'square' | 'wide' | 'auto';
+  /**
+   * Override the per-kind default size hint shown under the uploader.
+   * Pass null to suppress the hint entirely (useful for the rare
+   * field where the default doesn't fit).
+   */
+  recommendedSize?: string | null;
   /**
    * Accept attribute for the underlying <input type="file">. Default
    * 'image/*' preserves Phase 0-5 behaviour. Phase 6 'notice-file'
@@ -95,8 +133,13 @@ export default function ImageUploader({
   label,
   aspectRatio = 'auto',
   accept = 'image/*',
+  recommendedSize,
   onChange,
 }: Props) {
+  // Resolve hint: explicit override (including `null` to suppress)
+  // wins over the per-kind default.
+  const sizeHint =
+    recommendedSize !== undefined ? recommendedSize : RECOMMENDED_SIZE_BY_KIND[kind];
   const [url, setUrl] = useState<string>(initialUrl ?? '');
   const [publicId, setPublicId] = useState<string>(initialPublicId ?? '');
   const [fileType, setFileType] = useState<'image' | 'pdf'>(
@@ -290,6 +333,12 @@ export default function ImageUploader({
           <span className="text-xs text-gray-500 animate-pulse">Uploading…</span>
         )}
       </div>
+      {sizeHint && (
+        <p className="text-[11px] text-gray-500 leading-snug">
+          <span className="font-semibold text-gray-600">Recommended size:</span>{' '}
+          {sizeHint}
+        </p>
+      )}
       {showQuality && (
         <fieldset
           className="border border-gray-200 rounded-md p-2.5 mt-1"
