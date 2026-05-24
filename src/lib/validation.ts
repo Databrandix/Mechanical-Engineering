@@ -1053,6 +1053,31 @@ export const newsletterSubscribeSchema = z.object({
 });
 
 // ─────────────────────────────────────────────────────────────────
+//  Mecha Club join application — public submit + admin status edit
+// ─────────────────────────────────────────────────────────────────
+
+const mechaClubSemesterEnum = z.enum(['1', '2', '3', '4', '5', '6', '7', '8']);
+
+export const mechaClubApplicationCreateSchema = z.object({
+  fullName:   z.string().trim().min(1).max(200),
+  studentId:  z.string().trim().min(1).max(50),
+  email:      z.string().trim().email().max(320),
+  phone:      z.string().trim().min(1).max(50),
+  semester:   mechaClubSemesterEnum,
+  motivation: z.string().trim().min(1).max(2000),
+});
+
+export const mechaClubApplicationStatusEnum = z.enum([
+  'pending',
+  'approved',
+  'rejected',
+]);
+
+export const mechaClubApplicationStatusUpdateSchema = z.object({
+  status: mechaClubApplicationStatusEnum,
+});
+
+// ─────────────────────────────────────────────────────────────────
 //  Phase 10 — ContactPageContent singleton + CampusLocation multi-row
 //    Final hardcoded-content close-out from the /contact page.
 // ─────────────────────────────────────────────────────────────────

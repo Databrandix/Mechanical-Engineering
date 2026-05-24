@@ -47,6 +47,7 @@ import {
   Building,
   Rocket,
   ShieldCheck,
+  Wrench,
 } from 'lucide-react';
 import { useConfirm } from './ConfirmDialogProvider';
 
@@ -502,6 +503,16 @@ export default function Sidebar({
               {newSubmissionCount}
             </span>
           )}
+        </Link>
+
+        {/* Mecha Club join applications — operational inbox, mirrors
+            the Contact Submissions placement (no badge wired yet). */}
+        <Link
+          href="/admin/mecha-club-applications"
+          className={linkClass(!!pathname?.startsWith('/admin/mecha-club-applications'))}
+        >
+          <Wrench size={16} />
+          Mecha Club Applications
         </Link>
 
         {/* Newsletter — page CMS + subscriber list. Grouped together so
