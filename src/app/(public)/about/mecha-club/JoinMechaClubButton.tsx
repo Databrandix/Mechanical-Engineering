@@ -110,7 +110,7 @@ export default function JoinMechaClubButton({ label }: { label: string }) {
               X button, so no click handler here. */}
           <div aria-hidden="true" className="absolute inset-0 bg-black/50" />
 
-          <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-2xl bg-white text-gray-800 rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
             {/* Header */}
             <div className="sticky top-0 bg-white border-b border-gray-100 px-7 md:px-8 py-5 flex items-start justify-between gap-3 z-[1]">
               <div>
@@ -298,8 +298,12 @@ export default function JoinMechaClubButton({ label }: { label: string }) {
   );
 }
 
+// Explicit text-gray-900 + bg-white because the modal is portaled
+// inside the "Building a Professional Network" section which sets
+// `text-white` on its descendants; without overriding here the
+// typed value rendered white-on-white and looked invisible.
 const inputClass =
-  'w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent';
+  'w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent';
 
 function Field({
   label,
