@@ -112,13 +112,14 @@ export default function Navbar({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Lock body scroll while the mobile drawer is open
+  // Lock body scroll while the mobile drawer OR the search overlay is open
+  // (both cover the viewport on mobile; without this the page scrolls behind them).
   useEffect(() => {
-    if (!mobileMenuOpen) return;
+    if (!mobileMenuOpen && !searchOpen) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = prev; };
-  }, [mobileMenuOpen]);
+  }, [mobileMenuOpen, searchOpen]);
 
   // Mobile drawer "Quick Links" derives from the main_nav Admission
   // group children (Phase 3 Decision 3 — no separate table). If
@@ -197,7 +198,7 @@ export default function Navbar({
               width={400}
               height={120}
               priority
-              className={`${isScrolled ? 'h-7 md:h-8' : 'h-8 md:h-9 xl:h-10'} w-auto max-w-[42vw] object-contain transition-all duration-500`}
+              className={`${isScrolled ? 'h-7 md:h-8' : 'h-8 md:h-9 xl:h-10'} w-auto max-w-[52vw] object-contain transition-all duration-500`}
             />
           </a>
 
