@@ -332,18 +332,26 @@ export default function Navbar({
       <div
         onClick={() => setMobileMenuOpen(false)}
         aria-hidden="true"
-        className={`lg:hidden fixed inset-0 bg-black/40 z-[50] transition-opacity duration-300 ${
+        className={`lg:hidden fixed inset-0 bg-black/40 z-[90] transition-opacity duration-300 ${
           mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       />
       {/* Drawer */}
       <div
-        className={`lg:hidden fixed inset-y-0 right-0 w-[min(85vw,340px)] overflow-y-auto overscroll-contain bg-white z-[55] shadow-2xl transform transition-transform duration-300 pb-6 ${
+        className={`lg:hidden fixed inset-y-0 right-0 w-[min(85vw,340px)] overflow-y-auto overscroll-contain bg-white z-[95] shadow-2xl transform transition-transform duration-300 pb-6 ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
         }`}
       >
-        <div className="px-4 pt-8 pb-3">
+        <div className="px-4 pt-6 pb-3 flex items-center justify-between">
           <h3 className="text-base font-bold text-primary">Menu</h3>
+          <button
+            type="button"
+            aria-label="Close menu"
+            onClick={() => setMobileMenuOpen(false)}
+            className="p-1 -mr-1 text-primary"
+          >
+            <X size={24} />
+          </button>
         </div>
 
         <div className="px-4">
