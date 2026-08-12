@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
-import { Search, Download } from 'lucide-react';
+import { Search, Download, ExternalLink } from 'lucide-react';
+import { withAttachmentDownload } from '@/lib/pdf-helpers';
 
 export type SyllabusCardRow = {
   slug: string;
@@ -127,14 +128,25 @@ export default function SyllabusClient({ items }: { items: readonly SyllabusCard
                 <p className="text-sm text-gray-700 leading-relaxed mb-5">{s.summary}</p>
 
                 {s.pdfUrl ? (
-                  <a
-                    href={s.pdfUrl}
-                    download
-                    className="mt-auto inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-md transition-colors"
-                  >
-                    <Download size={16} />
-                    Download Syllabus
-                  </a>
+                  <div className="mt-auto flex flex-col gap-2.5">
+                    <a
+                      href={s.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-md transition-colors"
+                    >
+                      <ExternalLink size={16} />
+                      View Syllabus
+                    </a>
+                    <a
+                      href={withAttachmentDownload(s.pdfUrl)}
+                      download
+                      className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white text-sm font-semibold rounded-md transition-colors"
+                    >
+                      <Download size={16} />
+                      Download
+                    </a>
+                  </div>
                 ) : (
                   <span className="mt-auto inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-gray-100 text-gray-400 text-sm font-semibold rounded-md cursor-not-allowed">
                     PDF not uploaded yet

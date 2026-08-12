@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
-import { Search, Download } from 'lucide-react';
+import { Search, Download, ExternalLink } from 'lucide-react';
+import { withAttachmentDownload } from '@/lib/pdf-helpers';
 
 type Level = 'Undergraduate' | 'Postgraduate';
 
@@ -34,6 +35,10 @@ export default function ProspectusClient({ items }: { items: ProspectusItem[] })
       );
     });
   }, [items, query, active]);
+
+  /* The reader follows the filter above it, so narrowing to a programme opens
+     that programme rather than leaving the wrong document on screen. */
+  const reading = filtered.find((p) => p.pdf);
 
   return (
     <>
@@ -78,6 +83,50 @@ export default function ProspectusClient({ items }: { items: ProspectusItem[] })
         Showing <span className="font-semibold text-primary">{filtered.length}</span>{' '}
         {filtered.length === 1 ? 'program' : 'programs'}
       </p>
+
+      {reading && (
+        <section className="mb-10 md:mb-14">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="text-primary font-display text-lg font-bold md:text-xl">
+                {reading.shortTitle}
+              </h2>
+              <p className="text-sm text-gray-600">{reading.department}</p>
+            </div>
+            <a
+              href={reading.pdf}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:text-accent inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
+            >
+              <ExternalLink size={15} aria-hidden />
+              Open in a new tab
+            </a>
+          </div>
+
+          {/* The browser's own PDF reader, scrolling the document in place.
+              Some mobile browsers refuse to render a PDF in a frame and show
+              nothing at all — which is why the link above it is not optional.
+
+              The fragment asks that reader for the document and nothing else:
+              no thumbnail rail, no toolbar, and the page scaled to the width
+              of the frame so it does not sit in a grey trough. Hints, not
+              guarantees — Chrome honours all of them, Safari few — so the
+              layout still has to look right if a browser ignores every one.
+
+              Below `sm` the frame takes the shape of an A4 page: scaled to a
+              narrow screen the page is about 480px tall, and a fixed height
+              would leave a band of empty grey beneath it. */}
+          <div className="aspect-[595/842] min-h-[320px] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm sm:aspect-auto sm:h-[75vh] sm:min-h-[420px]">
+            <iframe
+              key={reading.slug}
+              src={`${reading.pdf}#toolbar=0&navpanes=0&statusbar=0&view=FitH`}
+              title={reading.title}
+              className="h-full w-full"
+            />
+          </div>
+        </section>
+      )}
 
       {/* Program cards */}
       {filtered.length === 0 ? (
@@ -140,14 +189,25 @@ export default function ProspectusClient({ items }: { items: ProspectusItem[] })
                 <p className="text-sm text-gray-600 mb-5">{p.department}</p>
 
                 {p.pdf ? (
-                  <a
-                    href={p.pdf}
-                    download
-                    className="mt-auto inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-md transition-colors"
-                  >
-                    <Download size={16} />
-                    Download
-                  </a>
+                  <div className="mt-auto flex flex-col gap-2.5">
+                    <a
+                      href={p.pdf}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-md transition-colors"
+                    >
+                      <ExternalLink size={16} />
+                      View Prospectus
+                    </a>
+                    <a
+                      href={withAttachmentDownload(p.pdf)}
+                      download
+                      className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white text-sm font-semibold rounded-md transition-colors"
+                    >
+                      <Download size={16} />
+                      Download
+                    </a>
+                  </div>
                 ) : (
                   <span className="mt-auto inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-gray-100 text-gray-400 text-sm font-semibold rounded-md cursor-not-allowed">
                     PDF coming soon
