@@ -716,6 +716,16 @@ export const researchPaperCreateSchema = z.object({
   area:            z.string().min(1),
   date:            optionalNullableString,
   publicationYear: z.number().int().min(1900).max(2100).nullable().optional(),
+  // DOIs and article links. Only http(s) — the page renders these as links,
+  // and a "javascript:" value in a label/value pair would be one too.
+  links: z
+    .array(
+      z.object({
+        label: z.string().min(1).max(60),
+        value: z.string().url().refine((u) => /^https?:\/\//i.test(u), 'Must be an http(s) link'),
+      }),
+    )
+    .default([]),
 });
 
 export const researchPaperUpdateSchema = researchPaperCreateSchema;

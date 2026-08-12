@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
 import type { ResearchPaper } from '@prisma/client';
+import KeyValueListEditor from '@/components/admin/KeyValueListEditor';
 import {
   createResearchPaperAction,
   updateResearchPaperAction,
@@ -42,6 +43,23 @@ export default function ResearchPaperForm({ initial }: { initial: ResearchPaper 
         <p className="text-xs text-gray-500">
           The structured year (left) enables optional year-based sort/filter; the free-form date string (right) keeps human-readable nuance like &quot;January–February 2023&quot;.
         </p>
+      </Card>
+
+      <Card title="Links">
+        <p className="text-xs text-gray-500 -mt-2">
+          DOIs and article links, shown as buttons under the paper. Only http(s)
+          addresses are accepted. They open in a new tab and carry{' '}
+          <code className="font-mono">nofollow</code> — the department does not
+          vouch for publishers it links to.
+        </p>
+        <KeyValueListEditor
+          name="links"
+          initialValue={Array.isArray(initial?.links) ? initial.links : []}
+          labelPlaceholder="Label (e.g. DOI)"
+          valuePlaceholder="https://doi.org/…"
+          addButtonLabel="Add link"
+          emptyHint="No links for this paper."
+        />
       </Card>
 
       {state.ok === false && (

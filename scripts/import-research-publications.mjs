@@ -1,21 +1,19 @@
 /**
  * Add publications to the research page from the department's template.
  *
- *   node --env-file=.env scripts/import-research-publications.mjs <xlsx> [--apply]
+ *   node --env-file=.env scripts/import-research-publications.mjs <xlsx> [--apply] [--replace]
  *
  * The file is one row per researcher, not per paper: each "Publication Title"
  * cell holds that person's whole list, numbered, with every entry a full
- * citation — authors, the title in quotes, then the venue and year. So the
- * cells are split into entries and each entry parsed into the three fields
- * the page shows.
+ * citation. So the cells are split into entries and each entry read.
  *
  * Reports by default. Parsing citations written by hand is guesswork at the
- * edges, and the run prints every title it extracted so the guesses can be
- * read before anything is saved. An entry whose title is not in quotes is
- * reported and skipped rather than stored half-parsed.
+ * edges, and the run prints what it made of every one so the guesses can be
+ * read before anything is saved.
  *
- * Existing papers are matched by title and left alone, so re-running adds
- * only what is new.
+ * --replace clears the publications a previous run added (anything with a
+ * link, or matching a title in the sheet) before writing. Without it, papers
+ * already on the site are matched by title and left alone.
  */
 import { existsSync } from 'node:fs';
 import XLSX from 'xlsx';
@@ -23,9 +21,10 @@ import { PrismaClient } from '@prisma/client';
 
 const [, , xlsxArg] = process.argv;
 const APPLY = process.argv.includes('--apply');
+const REPLACE = process.argv.includes('--replace');
 
 if (!xlsxArg || !existsSync(xlsxArg)) {
-  console.error('usage: node --env-file=.env scripts/import-research-publications.mjs <xlsx> [--apply]');
+  console.error('usage: node --env-file=.env scripts/import-research-publications.mjs <xlsx> [--apply] [--replace]');
   process.exit(1);
 }
 
@@ -41,12 +40,26 @@ function cell(row, prefix) {
   return '';
 }
 
-/** "1. …  2. …" — one citation per numbered entry. */
+/**
+ * "1. …  2. …" — one citation per numbered entry.
+ *
+ * A fragment that is only a DOI is a continuation of the entry above it, not
+ * a publication of its own; an earlier run stored three of those as papers
+ * whose whole title was a URL. They are folded back into the previous entry.
+ */
 function entries(blob) {
-  return String(blob ?? '')
+  const raw = String(blob ?? '')
     .split(/(?=\b\d{1,2}\s*[.)]\s*[A-Z“"])/)
     .map((s) => text(s).replace(/^\d{1,2}\s*[.)]\s*/, ''))
-    .filter((s) => s.length > 40);
+    .filter(Boolean);
+
+  const out = [];
+  for (const part of raw) {
+    const isFragment = /^(doi|https?:)/i.test(part) || part.length < 40;
+    if (isFragment && out.length > 0) out[out.length - 1] += ` ${part}`;
+    else if (!isFragment) out.push(part);
+  }
+  return out;
 }
 
 const yearIn = (s) => {
@@ -54,48 +67,96 @@ const yearIn = (s) => {
   return years.length > 0 ? years[years.length - 1] : null;
 };
 
+/** DOIs and article links, pulled out so the page can offer them as links. */
+function links(citation) {
+  const found = [...citation.matchAll(/https?:\/\/[^\s,;)]+/gi)].map((m) =>
+    m[0].replace(/[.,;]+$/, ''),
+  );
+  return [...new Set(found)].map((value) => ({
+    label: /doi\.org|dx\.doi/i.test(value) ? 'DOI' : 'Article',
+    value,
+  }));
+}
+
+/** Everything from the first link onwards is trailing apparatus, not prose. */
+function withoutLinks(citation) {
+  return text(citation.replace(/(doi\s*:)?\s*https?:\/\/\S+.*$/i, '')).replace(/[,;.\s]+$/, '');
+}
+
 /**
- * These citations are written in at least three styles, and only two of them
- * mark where the title ends:
+ * Four styles appear in these cells:
  *
- *   authors, “Title”, venue          — quoted, whatever the quote character
- *   Authors (2024). Title. Venue.    — APA, sentence-delimited
- *   Title. Authors. Venue (2022).    — title first, nothing to delimit it
+ *   authors, “Title”, venue                   quoted
+ *   Authors (2024). Title. Venue.             APA
+ *   Authors (2022): Title, Venue, pages       colon
+ *   Title. Authors. Venue (2022).             title first
  *
- * The first two are split into title, authors and venue. The third is not
- * guessed at: splitting on the first full stop would cut "…: a case study
- * based on real data" off the title of one of these, and a research page that
- * mis-attributes work is worse than one that lists a citation whole. Those
- * entries are kept intact as the title, with the researcher named as the
- * author, which is what the faculty pages already do with the same text.
+ * Each marks the title differently, so each is matched separately rather than
+ * by one rule that would half-fit them all.
  */
 function parse(citation) {
-  const quoted = citation.match(/[“"”]([^“”"]{10,})[”"“]/);
+  const body = withoutLinks(citation);
+  const year = yearIn(citation);
+
+  const quoted = body.match(/[“"”]([^“”"]{10,})[”"“]/);
   if (quoted) {
-    const venue = text(citation.slice(quoted.index + quoted[0].length)).replace(/^[,;.\s]+/, '');
     return {
-      split: true,
+      style: 'quoted',
       title: text(quoted[1]).replace(/[,;.]\s*$/, ''),
-      authors: text(citation.slice(0, quoted.index)).replace(/[,;]\s*$/, ''),
-      venue,
-      year: yearIn(venue) ?? yearIn(citation),
+      authors: text(body.slice(0, quoted.index)).replace(/[,;]\s*$/, ''),
+      venue: text(body.slice(quoted.index + quoted[0].length)).replace(/^[,;.\s]+/, ''),
+      year,
     };
   }
 
-  /* APA: everything up to "(year)." is authors, the sentence after it is the
-     title, the rest is where it appeared. */
-  const apa = citation.match(/^(.{10,}?)\((?:19|20)\d{2}[a-z]?\)\.\s*([^.]{15,}?)\.\s*(.*)$/);
+  const apa = body.match(/^(.{10,}?)\((?:19|20)\d{2}[a-z]?\)\.\s*([^.]{15,}?)\.\s*(.*)$/);
   if (apa) {
     return {
-      split: true,
+      style: 'APA',
       title: text(apa[2]),
       authors: text(apa[1]).replace(/[,;&\s]+$/, ''),
       venue: text(apa[3]),
-      year: yearIn(citation),
+      year,
     };
   }
 
-  return { split: false, year: yearIn(citation) };
+  /* "Authors (2022): Title, Venue, 5(8), 107-118" — the venue follows the
+     title, separated by a comma in some entries and a full stop in others, so
+     the title ends at whichever comes first. A title containing either would
+     be cut short; none in this file is, and the run prints every title so a
+     truncated one is visible. */
+  const colon = body.match(/^(.{10,}?)\((?:19|20)\d{2}[a-z]?\)\s*:\s*(.+)$/);
+  if (colon) {
+    const rest = text(colon[2]);
+    const breaks = [rest.indexOf(', '), rest.indexOf('. ')].filter((i) => i > 15);
+    const at = breaks.length > 0 ? Math.min(...breaks) : -1;
+    return {
+      style: 'colon',
+      title: at > 0 ? rest.slice(0, at) : rest,
+      authors: text(colon[1]).replace(/[,;&\s]+$/, ''),
+      venue: at > 0 ? text(rest.slice(at + 1)).replace(/^[,.\s]+/, '') : '',
+      year,
+    };
+  }
+
+  /* "Title. Authors. Venue (2022)." — sentence-delimited, title first. Only
+     taken when the opening sentence looks like a title rather than a name
+     list: long, and with no year or initials in it. */
+  const parts = body.split(/\.\s+/);
+  const first = text(parts[0] ?? '');
+  const looksLikeTitle =
+    parts.length >= 2 && first.length > 30 && !/\(\d{4}\)/.test(first) && !/\b[A-Z]\.\s?[A-Z]?\./.test(first);
+  if (looksLikeTitle) {
+    return {
+      style: 'title first',
+      title: first,
+      authors: text(parts[1] ?? ''),
+      venue: text(parts.slice(2).join('. ')),
+      year,
+    };
+  }
+
+  return { style: 'unparsed', title: body, authors: '', venue: '', year };
 }
 
 const normalize = (title) => text(title).toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -104,12 +165,9 @@ async function main() {
   const wb = XLSX.readFile(xlsxArg);
   const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
 
-  const existing = await prisma.researchPaper.findMany({ select: { title: true } });
-  const seen = new Set(existing.map((p) => normalize(p.title)));
-
-  const toAdd = [];
-  const unparsed = [];
-  let duplicates = 0;
+  const parsed = [];
+  const counts = {};
+  const untrustworthy = [];
 
   for (const row of rows) {
     const researcher = text(cell(row, 'researcher name'));
@@ -117,57 +175,76 @@ async function main() {
     if (researcher === '') continue;
 
     for (const citation of entries(cell(row, 'publication title'))) {
-      const parsed = parse(citation);
+      const p = parse(citation);
 
-      /* A citation kept whole is stored as the title; the researcher is named
-         as its author, because they are one and the citation lists the rest. */
-      const paper = parsed.split
-        ? {
-            title: parsed.title,
-            authors: parsed.authors || researcher,
-            area: parsed.venue || department,
-          }
-        : { title: citation, authors: researcher, area: department };
-
-      if (seen.has(normalize(paper.title))) {
-        duplicates += 1;
+      /* One researcher's cell is not a citation list at all but a filled-in
+         template — "Journal Paper 1 Publisher Paper title : …" — describing
+         several papers at once. Every rule above finds something in it, and
+         what they find is nonsense: an author field hundreds of characters
+         long. An author list that long is a parse that went wrong, so the
+         entry is reported for hand entry instead of published. */
+      if (p.authors.length > 150) {
+        untrustworthy.push(`${researcher}: ${citation.slice(0, 80)}…`);
         continue;
       }
-      seen.add(normalize(paper.title));
 
-      if (!parsed.split) unparsed.push(`${researcher}: ${citation.slice(0, 80)}…`);
-
-      toAdd.push({
-        ...paper,
-        date: parsed.year ? String(parsed.year) : null,
-        publicationYear: parsed.year,
+      counts[p.style] = (counts[p.style] ?? 0) + 1;
+      parsed.push({
+        title: p.title,
+        authors: p.authors || researcher,
+        area: p.venue || department,
+        date: p.year ? String(p.year) : null,
+        publicationYear: p.year,
+        links: links(citation),
+        style: p.style,
       });
     }
   }
 
-  for (const paper of toAdd) {
-    console.log(`${paper.publicationYear ?? '????'}  ${paper.title.slice(0, 90)}`);
-    console.log(`        ${paper.authors.slice(0, 90)}`);
+  for (const p of parsed) {
+    console.log(`[${p.style}] ${p.publicationYear ?? '????'}  ${p.title}`);
+    console.log(`         by ${p.authors}`);
+    if (p.area) console.log(`         in ${p.area.slice(0, 100)}`);
+    if (p.links.length) console.log(`         ${p.links.map((l) => l.value).join(' ')}`);
   }
 
-  console.log(`\n${APPLY ? 'Added' : 'Would add'} ${toAdd.length} publications.`);
-  if (duplicates > 0) console.log(`  ${duplicates} already on the site — left alone.`);
-  if (unparsed.length > 0) {
-    console.log(`\n${unparsed.length} entries had no quoted title and were skipped:`);
-    for (const u of unparsed) console.log(`  ${u}`);
+  console.log(`\nStyles: ${Object.entries(counts).map(([k, v]) => `${k} ${v}`).join(', ')}`);
+  console.log(`${APPLY ? 'Writing' : 'Would write'} ${parsed.length} publications.`);
+
+  if (!APPLY) {
+    console.log('\nNothing was written. Re-run with --apply (add --replace to redo a previous import).');
+    return;
   }
 
-  if (APPLY && toAdd.length > 0) {
-    const last = await prisma.researchPaper.findFirst({
-      orderBy: { displayOrder: 'desc' },
-      select: { displayOrder: true },
-    });
-    let order = (last?.displayOrder ?? -1) + 1;
-    await prisma.researchPaper.createMany({
-      data: toAdd.map((p) => ({ ...p, displayOrder: order++ })),
-    });
+  const titles = new Set(parsed.map((p) => normalize(p.title)));
+  const existing = await prisma.researchPaper.findMany();
+
+  if (REPLACE) {
+    /* Anything a previous run of this importer left behind: a paper whose
+       title the sheet still names, or one whose whole title is a URL. */
+    const stale = existing.filter(
+      (p) => titles.has(normalize(p.title)) || /^DOI:|^https?:/i.test(p.title.trim()),
+    );
+    if (stale.length > 0) {
+      await prisma.researchPaper.deleteMany({ where: { id: { in: stale.map((p) => p.id) } } });
+      console.log(`  removed ${stale.length} rows from the previous import`);
+    }
   }
-  if (!APPLY) console.log(`\nNothing was written. Re-run with --apply.`);
+
+  const kept = await prisma.researchPaper.findMany({ select: { title: true, displayOrder: true } });
+  const seen = new Set(kept.map((p) => normalize(p.title)));
+  let order = kept.reduce((n, p) => Math.max(n, p.displayOrder), -1) + 1;
+
+  const toAdd = parsed.filter((p) => {
+    if (seen.has(normalize(p.title))) return false;
+    seen.add(normalize(p.title));
+    return true;
+  });
+
+  await prisma.researchPaper.createMany({
+    data: toAdd.map(({ style: _style, ...p }) => ({ ...p, displayOrder: order++ })),
+  });
+  console.log(`  added ${toAdd.length}, skipped ${parsed.length - toAdd.length} already present`);
 }
 
 main()

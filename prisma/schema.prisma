@@ -845,6 +845,8 @@ model ResearchPaper {
   // structured sort key.
   date            String?
   publicationYear Int?
+  /// {label, value}[] — DOIs and article links pulled out of the citation.
+  links           Json     @default("[]")
   displayOrder    Int
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

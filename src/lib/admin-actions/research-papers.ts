@@ -36,6 +36,17 @@ function revalidateResearchPaperSurfaces() {
   revalidatePath('/', 'layout');
 }
 
+/** KeyValueListEditor posts the whole list as one JSON field. */
+function parseKeyValueArray(fd: FormData, key: string): unknown {
+  const raw = fd.get(key);
+  if (typeof raw !== 'string' || !raw.trim()) return [];
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
 function readResearchPaperRow(formData: FormData) {
   return {
     title:           getStr(formData, 'title'),
@@ -43,6 +54,7 @@ function readResearchPaperRow(formData: FormData) {
     area:            getStr(formData, 'area'),
     date:            emptyToNull(formData.get('date')),
     publicationYear: getIntOrNull(formData, 'publicationYear'),
+    links:           parseKeyValueArray(formData, 'links'),
   };
 }
 
