@@ -1149,3 +1149,27 @@ export const journeyCTAContentUpdateSchema = z.object({
   secondaryCtaHref:     z.string().min(1).max(500),
   secondaryCtaExternal: z.boolean().optional().default(false),
 });
+
+// ─────────────────────────────────────────────────────────────────
+//  Layout Plan — the rooms table and the document beneath it
+//    (/about/layout-plan). Rooms carry a number rather than a floor
+//    level, because that is what the department's plan records.
+// ─────────────────────────────────────────────────────────────────
+
+export const officeLocationCreateSchema = z.object({
+  name:     z.string().min(1).max(300),
+  // "507", "08", "UG001-UG005" — a label, not a number.
+  room:     z.string().min(1).max(60),
+  building: z.string().min(1).max(200),
+});
+
+export const officeLocationUpdateSchema = officeLocationCreateSchema;
+
+export const departmentLayoutUpdateSchema = z.object({
+  title:       z.string().min(1).max(300),
+  shortTitle:  z.string().min(1).max(200),
+  coverUrl:    z.string().min(1).max(600),
+  pdfUrl:      optionalNullableString,
+  // What the browser saves the file as; the URL itself carries a hash.
+  pdfFileName: optionalNullableString,
+});
