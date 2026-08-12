@@ -44,8 +44,11 @@ const lines = (body: string) =>
     .filter(Boolean);
 
 function Bullets({ items }: { items: string[] }) {
+  /* One column: these sit inside a card that is a third of the page on a wide
+     screen, and a viewport-based two-column split would put two very narrow
+     columns inside it. */
   return (
-    <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
+    <ul className="grid gap-y-2">
       {items.map((item) => (
         <li key={item} className="flex gap-2.5 text-[15px] leading-[1.7] text-gray-700">
           <span className="mt-[9px] size-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
@@ -85,7 +88,10 @@ export default async function ServiceCharterPage() {
             <p className="text-gray-500">The service charter will be published soon.</p>
           </div>
         ) : (
-          <div className="mx-auto max-w-5xl space-y-5 md:space-y-6">
+          /* Three columns on a wide screen. Sections vary a lot in length, so
+             the grid leaves ragged gaps under the short ones — the alternative
+             is one long column that reads as a wall of prose. */
+          <div className="mx-auto grid max-w-[1400px] items-start gap-5 md:gap-6 lg:grid-cols-2 xl:grid-cols-3">
             {sections.map((section) => {
               const paragraphs = strings(section.paragraphs);
               const bullets = strings(section.bullets);
@@ -95,7 +101,12 @@ export default async function ServiceCharterPage() {
               return (
                 <article
                   key={section.id}
-                  className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm md:p-8"
+                  /* The service standards table needs the full width: thirteen
+                     rows of three columns inside a third-width card would
+                     scroll sideways to be read at all. */
+                  className={`rounded-xl border border-gray-100 bg-white p-6 shadow-sm md:p-8 ${
+                    showsStandards ? 'lg:col-span-2 xl:col-span-3' : ''
+                  }`}
                 >
                   <header className="mb-4 flex items-start gap-3">
                     <span className="font-display inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-[14px] font-bold text-white">
@@ -117,7 +128,9 @@ export default async function ServiceCharterPage() {
                   {bullets.length > 0 && <Bullets items={bullets} />}
 
                   {named.length > 0 && (
-                    <div className="grid gap-5 sm:grid-cols-2">
+                    /* Stacked, for the same reason the bullets are: the card is
+                       already narrow on a wide screen. */
+                    <div className="grid gap-5">
                       {named.map((group) => (
                         <div key={group.heading}>
                           <h3 className="mb-2 text-[13px] font-bold tracking-wider text-accent uppercase">
