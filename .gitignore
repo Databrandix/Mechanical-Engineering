@@ -34,3 +34,7 @@ next-env.d.ts
 
 # Phase 19 — private security audit working notes (must never be committed)
 /.security-audit-notes/
+
+# Local scratch files kept beside the project, not part of it
+__find_ids.js
+backendrules.md
