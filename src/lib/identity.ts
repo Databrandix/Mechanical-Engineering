@@ -507,3 +507,19 @@ export const getServiceStandards = cache(async () => {
 export const getServiceCharterLanding = cache(async () => {
   return prisma.serviceCharterLanding.findUnique({ where: { id: 'singleton' } });
 });
+
+// Programme detail (/programs/[slug]).
+export const getProgramBySlug = cache(async (slug: string) => {
+  return prisma.program.findFirst({
+    where: { degreeCode: { equals: slug, mode: 'insensitive' } },
+  });
+});
+
+export const getProgramCurriculumBySlug = cache(async (slug: string) => {
+  const program = await prisma.program.findFirst({
+    where: { degreeCode: { equals: slug, mode: 'insensitive' } },
+    select: { id: true },
+  });
+  if (!program) return null;
+  return prisma.programCurriculum.findUnique({ where: { programId: program.id } });
+});

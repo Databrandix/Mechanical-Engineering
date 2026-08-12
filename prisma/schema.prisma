@@ -166,6 +166,7 @@ model Program {
   // Program admin form stays focused on academic metadata (per
   // constraint #12); fee structure lives at /admin/program-fee-structures.
   feeStructure ProgramFeeStructure?
+  curriculum   ProgramCurriculum?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1548,4 +1549,33 @@ model ServiceCharterLanding {
   updatedAt DateTime @updatedAt
 
   @@map("service_charter_landing")
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  Course curriculum — /programs/[slug]
+//    One row per Program. The semester-by-semester course list and
+//    the credit summary are Json because their shape is a document's,
+//    not a database's: twelve semesters of six to eight courses, read
+//    whole and never queried across.
+// ─────────────────────────────────────────────────────────────────
+
+model ProgramCurriculum {
+  id        String  @id @default(cuid())
+  programId String  @unique
+  program   Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  /// { name, credits, courses: [{ serial, code, title, theory, theoryHours,
+  ///   sessional, sessionalHours, total }] }[]
+  semesters  Json
+  /// { semester, theory, sessional, total, cumulative }[]
+  creditRows Json
+
+  /// The course structure as a bundled PDF, generated from the rows above.
+  pdfUrl      String?
+  pdfFileName String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("program_curriculum")
 }

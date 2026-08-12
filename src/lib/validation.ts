@@ -1205,3 +1205,10 @@ export const serviceCharterLandingUpdateSchema = z.object({
   pdfUrl:      optionalNullableString,
   pdfFileName: optionalNullableString,
 });
+
+// The course tables come from the guide book importer; only the document
+// beside them is editable in the admin panel.
+export const programCurriculumDocumentUpdateSchema = z.object({
+  pdfUrl:      optionalNullableString,
+  pdfFileName: optionalNullableString,
+});
