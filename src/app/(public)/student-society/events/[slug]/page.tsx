@@ -77,7 +77,17 @@ export default async function EventDetailPage({
   const catStyle = CATEGORY_STYLES[ev.category] ?? 'bg-gray-100 text-gray-700';
 
   return (
-    <PageShell title={ev.shortTitle} overline="Events" contentClassName="bg-gray-50 py-12 md:py-20">
+    <PageShell
+      title={ev.shortTitle}
+      overline="Events"
+      /* The banner, falling back to the card cover. A cover is cropped to
+         read at card size, so across a wide, short hero band it often cuts
+         heads off — but it is still this event's own photograph, which the
+         generic campus shot was not. */
+      image={ev.heroImageUrl ?? ev.imageUrl}
+      imagePosition={`center ${ev.heroImageVerticalPercent}%`}
+      contentClassName="bg-gray-50 py-12 md:py-20"
+    >
       <Container>
         {/* Back link */}
         <Link

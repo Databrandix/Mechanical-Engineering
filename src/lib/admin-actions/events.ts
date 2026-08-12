@@ -80,6 +80,10 @@ function readEventRow(formData: FormData) {
     venue:         emptyToNull(formData.get('venue')),
     imageUrl:      getStr(formData, 'imageUrl'),
     imagePublicId: emptyToNull(formData.get('imagePublicId')),
+    // The banner is optional: null means the detail page uses the cover.
+    heroImageUrl:      emptyToNull(formData.get('heroImageUrl')),
+    heroImagePublicId: emptyToNull(formData.get('heroImagePublicId')),
+    heroImageVerticalPercent: formData.get('heroImageVerticalPercent') ?? undefined,
     summary:       getStr(formData, 'summary'),
     description:   getParagraphs(formData, 'description'),
     focus:         getStr(formData, 'focus'),

@@ -5,6 +5,7 @@ import { useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
 import type { Event as EventRow } from '@prisma/client';
 import ImageUploader from '@/components/admin/ImageUploader';
+import HeroImagePositionSlider from '@/components/admin/HeroImagePositionSlider';
 import ParagraphsEditor from '@/components/admin/ParagraphsEditor';
 import KeyValueListEditor from '@/components/admin/KeyValueListEditor';
 import {
@@ -76,9 +77,28 @@ export default function EventForm({ initial }: { initial: EventRow | null }) {
       </Card>
 
       <Card title="Cover image">
+        <p className="text-xs text-gray-500 -mt-2">
+          The picture on the events list. Cropped to read at card size.
+        </p>
         <ImageUploader kind="event-image" name="image" aspectRatio="wide"
                        initialUrl={initial?.imageUrl}
                        initialPublicId={initial?.imagePublicId} />
+      </Card>
+
+      <Card title="Banner image">
+        <p className="text-xs text-gray-500 -mt-2">
+          The band across the top of this event&apos;s own page. Leave it empty to
+          use the cover — a cover stretched across a wide, short banner often
+          cuts heads off, which is why this is a separate picture.
+        </p>
+        <ImageUploader kind="event-image" name="heroImage" aspectRatio="wide"
+                       label="Banner image"
+                       initialUrl={initial?.heroImageUrl ?? undefined}
+                       initialPublicId={initial?.heroImagePublicId ?? undefined} />
+        <HeroImagePositionSlider
+          name="heroImageVerticalPercent"
+          initialValue={initial?.heroImageVerticalPercent}
+        />
       </Card>
 
       <Card title="Description — paragraphs">

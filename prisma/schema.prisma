@@ -665,38 +665,48 @@ model News {
 }
 
 model Event {
-  id            String    @id @default(cuid())
-  slug          String    @unique
-  title         String
-  shortTitle    String
+  id                       String    @id @default(cuid())
+  slug                     String    @unique
+  title                    String
+  shortTitle               String
   // category — Sports | Industrial Visit | Achievement | Partnership | Seminar | Exhibition
-  category      String
+  category                 String
   // status — Past | Current | Upcoming. Admin sets manually (no auto-derive
   // from eventDate). Matches the existing render which has events with
   // null dates marked Current.
-  status        String
+  status                   String
   // eventDate — nullable; some events have no fixed date (e.g. "current
   // partnerships"). Sort ordering: eventDate DESC NULLS LAST, createdAt DESC.
-  eventDate     DateTime?
+  eventDate                DateTime?
   // displayDate — admin override (e.g. "20 Apr", "2024"). Null = derive
   // from eventDate, both null = hide the date pill.
-  displayDate   String?
-  time          String?
-  venue         String?
-  imageUrl      String
-  imagePublicId String?
-  summary       String    @db.Text
+  displayDate              String?
+  time                     String?
+  venue                    String?
+  // imageUrl is the card cover on the events list. The banner across the top
+  // of the detail page is a separate picture: a cover is a portrait-ish crop
+  // chosen to read at card size, and stretching it across a wide, short hero
+  // band cuts the heads off. Null falls back to the cover, which is better
+  // than the generic campus shot the page used before these columns existed.
+  imageUrl                 String
+  imagePublicId            String?
+  heroImageUrl             String?
+  heroImagePublicId        String?
+  // Where the banner crops. Higher shows a lower slice of the picture, which
+  // moves the picture up in the frame.
+  heroImageVerticalPercent Int       @default(50)
+  summary                  String    @db.Text
   // description — Json string[]: paragraphs for the detail page.
-  description   Json
-  focus         String    @db.Text
+  description              Json
+  focus                    String    @db.Text
   // details — Json [{label,value}]: optional "Chief Guest / Chairperson /
   // Date / Venue" sidebar rows. Defaults to empty array.
-  details       Json
-  ctaLabel      String?
-  ctaHref       String?
-  ctaExternal   Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  details                  Json
+  ctaLabel                 String?
+  ctaHref                  String?
+  ctaExternal              Boolean   @default(false)
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
 
   @@index([eventDate])
   @@index([status])
