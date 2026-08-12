@@ -56,7 +56,7 @@ export default function OverviewSection() {
               width={1600}
               height={900}
               sizes="(min-width: 1024px) 540px, 100vw"
-              className="h-auto w-full object-cover lg:h-[294px]"
+              className="h-auto w-full rounded-lg object-cover lg:h-[294px]"
             />
           </motion.div>
         </div>
