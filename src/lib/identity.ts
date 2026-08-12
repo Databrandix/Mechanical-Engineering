@@ -494,3 +494,16 @@ export const getOfficeLocations = cache(async () => {
 export const getDepartmentLayouts = cache(async () => {
   return prisma.departmentLayout.findMany({ orderBy: { displayOrder: 'asc' } });
 });
+
+// Service Charter (/student-society/service-charter).
+export const getServiceCharterSections = cache(async () => {
+  return prisma.serviceCharterSection.findMany({ orderBy: { displayOrder: 'asc' } });
+});
+
+export const getServiceStandards = cache(async () => {
+  return prisma.serviceStandard.findMany({ orderBy: { displayOrder: 'asc' } });
+});
+
+export const getServiceCharterLanding = cache(async () => {
+  return prisma.serviceCharterLanding.findUnique({ where: { id: 'singleton' } });
+});

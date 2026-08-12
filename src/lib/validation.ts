@@ -1173,3 +1173,35 @@ export const departmentLayoutUpdateSchema = z.object({
   // What the browser saves the file as; the URL itself carries a hash.
   pdfFileName: optionalNullableString,
 });
+
+// ─────────────────────────────────────────────────────────────────
+//  Service Charter (/student-society/service-charter)
+// ─────────────────────────────────────────────────────────────────
+
+const charterGroup = z.object({
+  heading: z.string().min(1).max(200),
+  // One item per line — the shape HeadingBodyListEditor writes.
+  body: z.string().min(1),
+});
+
+export const serviceCharterSectionUpdateSchema = z.object({
+  serial:     z.coerce.number().int().min(1).max(99),
+  title:      z.string().min(1).max(300),
+  paragraphs: z.array(z.string().min(1)).default([]),
+  bullets:    z.array(z.string().min(1)).default([]),
+  groups:     z.array(charterGroup).default([]),
+});
+
+export const serviceStandardCreateSchema = z.object({
+  service:           z.string().min(1).max(300),
+  responsibleOffice: z.string().min(1).max(200),
+  processingTime:    z.string().min(1).max(200),
+});
+
+export const serviceStandardUpdateSchema = serviceStandardCreateSchema;
+
+export const serviceCharterLandingUpdateSchema = z.object({
+  intro:       z.string().min(1),
+  pdfUrl:      optionalNullableString,
+  pdfFileName: optionalNullableString,
+});

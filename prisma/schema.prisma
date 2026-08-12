@@ -1486,3 +1486,66 @@ model DepartmentLayout {
   @@index([displayOrder])
   @@map("department_layout")
 }
+
+// ─────────────────────────────────────────────────────────────────
+//  Service Charter — /student-society/service-charter
+//    The department's charter is prose, not a list of errands: fifteen
+//    numbered sections of purpose, values, responsibilities and
+//    commitments, with one table in the middle. Sections carry the
+//    prose; the table is its own model because the processing times
+//    are the part a student actually comes for, and a four-column
+//    table folded into headings and bodies would lose its columns.
+// ─────────────────────────────────────────────────────────────────
+
+model ServiceCharterSection {
+  id     String @id @default(cuid())
+  /// The number the document gives it, 1-15. Shown beside the title.
+  serial Int
+  title  String
+
+  /// string[] — lead prose, before any list.
+  paragraphs Json
+  /// string[] — a flat list of points.
+  bullets    Json
+  /// {heading, body}[] — a named list of points; `body` holds one item
+  /// per line, which is how HeadingBodyListEditor already edits this
+  /// shape elsewhere in the admin panel.
+  groups     Json
+
+  displayOrder Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("service_charter_section")
+}
+
+/// Section 8 of the charter: what the department will do, and by when.
+/// The document's fourth column, Remarks, is empty on every row and is
+/// not modelled; add it here if the department ever fills it in.
+model ServiceStandard {
+  id                String @id @default(cuid())
+  service           String
+  responsibleOffice String
+  processingTime    String
+  displayOrder      Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("service_standard")
+}
+
+/// Page chrome and the charter itself as a document.
+model ServiceCharterLanding {
+  id          String  @id @default("singleton")
+  intro       String  @db.Text
+  pdfUrl      String?
+  pdfFileName String?
+
+  updatedAt DateTime @updatedAt
+
+  @@map("service_charter_landing")
+}
