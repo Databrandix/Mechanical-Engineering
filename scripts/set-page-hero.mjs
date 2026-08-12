@@ -44,12 +44,18 @@ const label = flag('label');
 const publicPath = flag('path');
 const title = flag('title');
 const image = flag('image');
+/**
+ * A picture that is already served — a bundled file under /assets, or one
+ * already on Cloudinary. Uploading a copy of something the site can already
+ * reach only to control where it crops would leave two of the same picture.
+ */
+const url = flag('url');
 const overline = flag('overline');
 const subtitle = flag('subtitle');
 const verticalFlag = flag('vertical');
 
 if (!key) {
-  console.error('usage: --key <pageKey> [--label …] [--path /route] [--title …] [--image <file>] [--overline …] [--subtitle …] [--vertical 0-100]');
+  console.error('usage: --key <pageKey> [--label …] [--path /route] [--title …] [--image <file> | --url <path or URL>] [--overline …] [--subtitle …] [--vertical 0-100]');
   process.exit(1);
 }
 if (image && !existsSync(image)) {
@@ -90,14 +96,14 @@ async function readForUpload(filePath) {
 async function main() {
   const before = await prisma.pageHero.findUnique({ where: { pageKey: key } });
 
-  if (!before && (!label || !publicPath || !title || !image)) {
-    console.error(`No banner exists for "${key}" yet — creating one needs --label, --path, --title and --image.`);
+  if (!before && (!label || !publicPath || !title || (!image && !url))) {
+    console.error(`No banner exists for "${key}" yet — creating one needs --label, --path, --title and either --image or --url.`);
     process.exit(1);
   }
 
   /* Re-uploading a picture that has not changed costs a slow upload for
      nothing, and adjusting the crop is the usual reason to run this twice. */
-  let picture = null;
+  let picture = url ? { url, publicId: null, size: "already served" } : null;
   if (image) {
     const { buffer, mime } = await readForUpload(image);
     const uploaded = await cloudinary.uploader.upload(
@@ -142,7 +148,7 @@ async function main() {
           heroSubtitle: subtitle ?? null,
           heroOverline: overline ?? null,
           heroImageUrl: picture.url,
-          heroImagePublicId: picture.publicId,
+          heroImagePublicId: picture.publicId ?? null,
           heroImageVerticalPercent: vertical,
         },
       });
