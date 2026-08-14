@@ -43,7 +43,7 @@ export const faculty: Faculty[] = [
   // ───── Leadership ─────
   {
     slug: 'habibur-rahman-kamal',
-    name: 'Brig. Gen. (Retd) Prof. Habibur Rahman Kamal, ndc, psc',
+    name: 'Brig. Gen. (Retd) Prof. Habibur Rahman Kamal, NDC, PSC',
     designation: 'Dean, Faculty of Science & Engineering',
     badge: 'Dean',
     type: 'leadership',

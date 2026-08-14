@@ -6,6 +6,7 @@ import { motion } from 'motion/react';
 import { ChevronRight, Home } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Container from '../ui/Container';
+import { buildTrail } from '@/lib/breadcrumb';
 
 const slugToTitle = (slug: string) =>
   slug
@@ -126,24 +127,22 @@ export default function PageShell({
               >
                 <Home size={13} /> Home
               </a>
-              {segments.map((seg, idx) => {
-                const href = '/' + segments.slice(0, idx + 1).join('/');
-                const isLast = idx === segments.length - 1;
-                return (
-                  <span key={href} className="inline-flex items-center gap-2">
-                    <ChevronRight size={13} className="opacity-50" />
-                    {isLast ? (
-                      <span className="text-button-yellow font-semibold">
-                        {slugToTitle(seg)}
-                      </span>
-                    ) : (
-                      <a href={href} className="hover:text-button-yellow transition-colors">
-                        {slugToTitle(seg)}
-                      </a>
-                    )}
-                  </span>
-                );
-              })}
+              {buildTrail(pathname, title).map((crumb, idx, all) => (
+                <span key={`${crumb.label}-${idx}`} className="inline-flex items-center gap-2">
+                  <ChevronRight size={13} className="opacity-50" />
+                  {idx === all.length - 1 ? (
+                    <span className="text-button-yellow font-semibold">{crumb.label}</span>
+                  ) : crumb.href ? (
+                    <a href={crumb.href} className="hover:text-button-yellow transition-colors">
+                      {crumb.label}
+                    </a>
+                  ) : (
+                    /* A menu heading with no page behind it. Shown, so the
+                       structure still reads, but not a link to nowhere. */
+                    <span className="opacity-80">{crumb.label}</span>
+                  )}
+                </span>
+              ))}
             </motion.nav>
           </Container>
         </div>
