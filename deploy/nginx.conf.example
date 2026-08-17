@@ -1,0 +1,102 @@
+# Nginx reverse proxy for me.su.edu.bd on the Hostinger VPS (Ubuntu 24.04).
+#
+#   sudo cp deploy/nginx.conf.example /etc/nginx/sites-available/me-platform
+#   sudo ln -s /etc/nginx/sites-available/me-platform /etc/nginx/sites-enabled/
+#   sudo nginx -t && sudo systemctl reload nginx
+#   sudo certbot --nginx -d me.su.edu.bd
+#
+# Install this file BEFORE running certbot, with only the port 80 server block
+# below. Certbot needs the HTTP vhost to answer the ACME challenge, and it
+# rewrites the file itself to add the TLS block once the certificate is issued.
+# The 443 block here is shown for reference / manual setup.
+#
+# Security headers are set by the application (next.config.ts) so they are not
+# duplicated here; duplicating them produces conflicting values.
+#
+# This config terminates TLS itself, so `X-Real-IP $remote_addr;` below is
+# already the true client address. If a CDN or load balancer is ever placed in
+# front of this Nginx, load ngx_http_realip_module and tell Nginx which upstream
+# to trust before relying on that header again -- otherwise every visitor is
+# reported as the CDN's IP.
+
+upstream me_platform {
+    # Port 3002. su-platform holds 3001 on this host; they must not collide.
+    server 127.0.0.1:3002;
+    keepalive 32;
+}
+
+# Redirect http -> https. Certbot rewrites this block when it issues the cert.
+server {
+    listen 80;
+    listen [::]:80;
+    server_name me.su.edu.bd;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name me.su.edu.bd;
+
+    # Certbot manages these paths.
+    ssl_certificate     /etc/letsencrypt/live/me.su.edu.bd/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/me.su.edu.bd/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+    # Admin CMS uploads pass through Node on their way to Cloudinary, so the
+    # proxy limit has to clear whatever the application accepts, or the upload
+    # fails here with a 413 before the app's own size check ever runs.
+    client_max_body_size 12M;
+
+    # Compress text responses. Images and PDFs are already compressed.
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css application/javascript application/json
+               application/xml image/svg+xml font/woff2;
+
+    access_log /var/log/nginx/me-platform.access.log;
+    error_log  /var/log/nginx/me-platform.error.log;
+
+    # Immutable build assets: hashed filenames, safe to cache forever.
+    location /_next/static/ {
+        proxy_pass http://me_platform;
+        proxy_cache_valid 200 365d;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        access_log off;
+    }
+
+    # No /uploads/ alias here, unlike the su.edu.bd vhost: this site stores CMS
+    # media on Cloudinary (CLOUDINARY_* env), so nothing is written to disk and
+    # there is no upload directory for Nginx to serve.
+
+    location / {
+        proxy_pass http://me_platform;
+        proxy_http_version 1.1;
+
+        proxy_set_header Upgrade           $http_upgrade;
+        proxy_set_header Connection        "upgrade";
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host  $host;
+
+        proxy_connect_timeout 10s;
+        proxy_send_timeout    60s;
+        proxy_read_timeout    60s;
+
+        proxy_buffering on;
+        proxy_cache_bypass $http_upgrade;
+    }
+}

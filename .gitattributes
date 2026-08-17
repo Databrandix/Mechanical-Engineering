@@ -15,6 +15,10 @@
 *.sh                          text eol=lf
 *.toml                        text eol=lf
 prisma/migrations/**/*.sql    text eol=lf
+# systemd refuses a unit file with CRLF, and Nginx carries the stray \r into
+# directive values, so a Windows round-trip of these would break the deploy.
+*.service                     text eol=lf
+deploy/nginx.conf.example     text eol=lf
 
 # Mark common binaries so Git doesn't try to diff/normalize them
 *.png      binary

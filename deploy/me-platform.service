@@ -1,0 +1,79 @@
+# systemd unit for the Mechanical Engineering department site (me.su.edu.bd).
+#
+#   sudo cp deploy/me-platform.service /etc/systemd/system/me-platform.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now me-platform
+#   systemctl status me-platform
+#   journalctl -u me-platform -f
+#
+# Runs alongside su-platform.service on the same host without touching it:
+# different service user, different port, different release directory.
+#
+# Why systemd rather than PM2: production secrets live in a root-owned
+# .env.production (mode 600) that the deploy account cannot read. systemd reads
+# EnvironmentFile as root and only then drops to User=, so the process gets its
+# secrets while the account that builds the release never can. PM2 running as
+# deploy would need the file to be deploy-readable, which is the thing this
+# deployment is set up to avoid.
+[Unit]
+Description=SU Mechanical Engineering department site (Next.js standalone)
+After=network-online.target
+Wants=network-online.target
+# No postgresql dependency, unlike su-platform.service: this site's database is
+# Neon (managed, off-host), reached over the network. There is no local Postgres
+# for it to wait on.
+
+[Service]
+Type=simple
+User=me-web
+Group=me-web
+
+# The standalone server calls process.chdir(__dirname) on start, so it resolves
+# ./public and ./.next from here regardless of what is set below. Both are
+# symlinks back into the project, recreated by the postbuild step
+# (scripts/link-standalone-assets.mjs) on every build.
+WorkingDirectory=/var/www/sites/me.su.edu.bd/.next/standalone
+
+# Root-owned, mode 600. systemd reads it as root before dropping privileges, so
+# `deploy` never needs access. Must be plain KEY=value lines: systemd does not
+# evaluate `export`, shell expansion, or multi-line values, and treats a
+# trailing `# comment` after a value as part of the value.
+EnvironmentFile=/var/www/sites/me.su.edu.bd/.env.production
+
+# After EnvironmentFile on purpose: later assignments win, so these three are
+# fixed here rather than left to whatever the secrets file happens to carry.
+Environment=NODE_ENV=production
+Environment=PORT=3002
+Environment=HOSTNAME=127.0.0.1
+
+ExecStart=/usr/bin/node server.js
+
+Restart=always
+RestartSec=5
+KillSignal=SIGTERM
+TimeoutStopSec=20
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=me-platform
+
+# ---------------------------------------------------------------- hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+# ProtectSystem=full (not strict): /usr and /boot go read-only, /var stays
+# writable. The release itself is still protected by ownership -- every file
+# belongs to `deploy` and me-web cannot write to it -- while the one path the
+# service legitimately writes (the ISR cache) is a symlink into a
+# group-writable directory outside the release. See deploy/README.md.
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

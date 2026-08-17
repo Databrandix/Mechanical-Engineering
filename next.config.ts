@@ -80,6 +80,17 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Self-hosted target (the university VPS): emit .next/standalone/server.js
+  // with only the traced dependencies, so the release does not need
+  // node_modules on the server and systemd can start it with plain
+  // `node server.js`. Matches how the main su.edu.bd site is deployed.
+  //
+  // Safe to leave on unconditionally: Vercel ignores `output: 'standalone'`,
+  // so the existing Vercel deployment is unaffected. The postbuild step
+  // (scripts/link-standalone-assets.mjs) fills in the two asset trees Next.js
+  // leaves out of the standalone tree.
+  output: 'standalone',
+
   // Phase 19 CP19.3 — strip the default "X-Powered-By: Next.js"
   // header so attackers can't fingerprint the framework from a
   // simple HEAD request.
