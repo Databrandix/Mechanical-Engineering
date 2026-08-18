@@ -37,6 +37,17 @@ function paperLinks(value: unknown): PaperLink[] {
     .filter((l) => /^https?:\/\//i.test(l.value));
 }
 
+/**
+ * The one link the title should open.
+ *
+ * A PDF wins over anything else: it is the paper, where a publisher or
+ * ResearchGate page is a stop on the way to it. Failing that, whichever link
+ * the record lists first.
+ */
+function primaryLink(links: PaperLink[]): PaperLink | undefined {
+  return links.find((l) => /pdf/i.test(l.label) || /\.pdf($|\?)/i.test(l.value)) ?? links[0];
+}
+
 export default async function ResearchPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
   const raw = Array.isArray(sp.page) ? sp.page[0] : sp.page;
@@ -97,8 +108,25 @@ export default async function ResearchPage({ searchParams }: { searchParams: Sea
                 </div>
 
                 <div className="flex-1 min-w-0">
+                  {/* The title is the link when the record has one: that is
+                      where a reader looks and clicks first, and the pills
+                      below still name it. A paper with no link stays plain
+                      text rather than becoming a control that goes nowhere. */}
                   <h3 className="text-[15px] md:text-[16px] font-bold leading-snug text-primary mb-3">
-                    {paper.title}
+                    {(() => {
+                      const main = primaryLink(paperLinks(paper.links));
+                      if (!main) return paper.title;
+                      return (
+                        <a
+                          href={main.value}
+                          target="_blank"
+                          rel="nofollow noopener noreferrer"
+                          className="hover:text-accent hover:underline underline-offset-2 transition-colors"
+                        >
+                          {paper.title}
+                        </a>
+                      );
+                    })()}
                   </h3>
 
                   <div className="flex flex-wrap gap-x-5 gap-y-2 mb-3 text-[12.5px]">
