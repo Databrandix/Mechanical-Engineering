@@ -228,12 +228,218 @@ rm .env
 # .next was rebuilt, so restore the ISR cache symlink from step 5:
 ln -sfn /var/www/sites/me-platform-cache .next/standalone/.next/cache
 
+# .next was rebuilt, so the server/ tree is deploy:deploy again and the service
+# account cannot write the ISR pages it has to regenerate. See "Why server/
+# needs group write". Skipping this gives EACCES at runtime, not at deploy time,
+# so the site looks fine until the first revalidation.
+SERVER=/var/www/sites/me.su.edu.bd/.next/standalone/.next/server
+find "$SERVER" -type d -exec chgrp me-web {} + -exec chmod g+rwx,g+s {} +
+find "$SERVER" -type f -exec chgrp me-web {} + -exec chmod g+w {} +
+
 sudo systemctl restart me-platform
 ```
 
 Nothing from steps 1-7 above is repeated: the `me-web` user, `.env.production`,
 the cache directory, the systemd unit, the Nginx vhost, the certificate and the
 DNS record are all one-time setup.
+
+## Automatic deployment
+
+Optional, and independent of everything above: the manual redeploy keeps working
+whether or not this is installed. A systemd timer polls `origin/main` every five
+minutes and deploys when it moves, so a push goes live 0–5 minutes later.
+
+Nothing is granted to GitHub — no deploy key, no webhook, no inbound port. The
+repository is public, which rules out a self-hosted Actions runner (a fork's
+pull request would execute on this host) and makes storing a production SSH key
+in GitHub Secrets unattractive. Design notes and the rejected alternatives are
+in `docs/superpowers/specs/2026-08-18-me-auto-deploy-design.md`.
+
+### What it does, in order
+
+Lock (`flock`) → refuse if the working tree is dirty → `git fetch` → stop if
+`origin/main` has not moved → refuse anything that is not a fast-forward →
+`git pull --ff-only` → `npm ci` only if `package-lock.json` changed →
+`npm run build` → restore the ISR cache symlink → restart → three health checks.
+
+Any failure before the restart aborts without touching the service. The ISR
+symlink is restored only after a successful build, and the restart happens only
+after that.
+
+The script never runs a database migration, `db push`, or a seed. `npm run
+build` invokes `prisma generate`, which reads the schema file and generates
+TypeScript; it does not connect to the database. Schema changes stay a
+deliberate human action.
+
+### Install
+
+```bash
+# 0. Let deploy hand the server/ tree to the me-web group after each build.
+#    Required — see "Why server/ needs group write" below. An SSH session that
+#    is already open will not see the new group; log out and back in.
+sudo usermod -aG me-web deploy
+
+# 1. Build credentials: DATABASE_URL and DIRECT_URL only, nothing else.
+sudo install -d -o root -g root -m 0700 /etc/me-platform
+sudo install -o root -g root -m 0600 /dev/null /etc/me-platform/build.env
+sudo nano /etc/me-platform/build.env          # see deploy/build.env.example
+
+# 2. Sudoers rule. Validate BEFORE installing — a malformed file in
+#    sudoers.d locks every account out of sudo.
+cd /var/www/sites/me.su.edu.bd
+sudo visudo -c -f deploy/sudoers.me-deploy
+sudo install -o root -g root -m 0440 deploy/sudoers.me-deploy /etc/sudoers.d/me-deploy
+
+# 3. Script and units.
+sudo install -o root -g root -m 0755 deploy/auto-deploy.sh /usr/local/bin/me-deploy
+sudo cp deploy/me-deploy.service deploy/me-deploy.timer /etc/systemd/system/
+sudo systemctl daemon-reload
+
+# 4. Dry run first, with the timer still off.
+sudo systemctl start me-deploy
+journalctl -u me-deploy -n 50 --no-pager
+
+# 5. Enable polling.
+sudo systemctl enable --now me-deploy.timer
+systemctl list-timers me-deploy.timer
+```
+
+Once this is installed there is no permanent `.env` on the server: the build
+receives its two database variables from systemd, and nothing writes them to
+disk. If you had created one for a manual build, delete it.
+
+### Where the secrets live
+
+| File | Owner | Mode | Contents | Read by |
+|---|---|---|---|---|
+| `/etc/me-platform/build.env` | `root:root` | `0600` | `DATABASE_URL`, `DIRECT_URL` | the build, via systemd |
+| `.env.production` | `root:root` | `0600` | every runtime secret | `me-platform.service`, via systemd |
+
+systemd reads both as root and only then drops to the service user, so neither
+`deploy` nor `me-web` can read either file. The two sets are disjoint on
+purpose: the build has no use for the auth, Cloudinary or Resend secrets, so it
+never receives them.
+
+`DATABASE_URL` is necessarily in both files. **Rotating the database credential
+means editing both.**
+
+To build by hand after this is installed, run `sudo systemctl start me-deploy`
+rather than `npm run build` — as `deploy` you no longer have the credentials in
+your environment, and that is the point.
+
+### Why `server/` needs group write
+
+Next.js does not keep ISR output in `.next/cache`. When a page with
+`revalidate` regenerates, the filesystem incremental cache writes the new
+render back into the server bundle:
+
+```
+.next/standalone/.next/server/app/<route>.html
+.next/standalone/.next/server/app/<route>.rsc
+.next/standalone/.next/server/app/<route>.meta
+```
+
+So the cache symlink set up in step 5 of the manual guide, which redirects
+`.next/cache` to a group-writable directory, covers the fetch cache and nothing
+else. It does not make `server/` writable, and without that the running service
+fails the first time a page tries to revalidate:
+
+```
+EACCES: permission denied, open
+/var/www/sites/me.su.edu.bd/.next/standalone/.next/server/app/index.html
+```
+
+The build runs as `deploy` and creates that tree as `deploy:deploy`, mode 775
+on directories and 664 on files. `me-web` belongs to no group but its own, so
+it matches "other" — read and traverse, no write.
+
+**`deploy` stays the owner.** It is the account that builds, rewrites and
+replaces this tree on every deployment, and ownership is what lets it do that.
+Handing ownership to `me-web` would invert the relationship: the service
+account would own files it only ever needs to update in place, and the build
+account would need permission to overwrite someone else's tree. Group
+membership gives `me-web` exactly the access it needs without moving anything.
+
+**Only `server/` is opened, and only to the group.** The rest of the release —
+`server.js`, `public/`, the traced `node_modules` — stays `deploy:deploy` and
+read-only to the service. There is no `chown` anywhere, and no recursive
+permission change outside this one subtree.
+
+Directories and files are treated differently on purpose. A directory needs
+group `+x` to be traversed and `+w` to have entries created in it; a regular
+file needs `+w` and must not gain an execute bit it never had. A single
+`chmod -R g+w` would leave directories untraversable, and `-R g+wX` would
+sprinkle execute bits. Hence the two `find` passes, and the setgid bit, which
+makes route directories Next.js creates at runtime inherit both the group and
+the setgid bit itself.
+
+**This has to run after every build.** `next build` deletes `.next` and creates
+it again from scratch, so the group and mode are reset to `deploy:deploy` every
+single time. A one-off manual `chmod` fixes the site only until the next
+deployment. `deploy/auto-deploy.sh` therefore repeats it as a step of every run,
+after a successful build and before the restart — and the same two commands
+belong in any manual rebuild:
+
+```bash
+SERVER=/var/www/sites/me.su.edu.bd/.next/standalone/.next/server
+find "$SERVER" -type d -exec chgrp me-web {} + -exec chmod g+rwx,g+s {} +
+find "$SERVER" -type f -exec chgrp me-web {} + -exec chmod g+w {} +
+```
+
+Check it held:
+
+```bash
+stat -c '%U %G %a' "$SERVER/app"        # expect: deploy me-web 2775
+sudo -u me-web test -w "$SERVER/app" && echo writable
+```
+
+### Privilege boundary
+
+```
+deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart me-platform.service
+```
+
+Exactly one command. No wildcard, because `systemctl restart *` would also
+cover `su-platform.service`. Verify the boundary holds — this should be denied:
+
+```bash
+sudo -n systemctl restart su-platform.service    # expected: a sudo error
+```
+
+### Watching it
+
+```bash
+journalctl -u me-deploy -f                # live
+journalctl -u me-deploy --since today     # today's runs
+systemctl list-timers me-deploy.timer     # when it next fires
+sudo systemctl start me-deploy            # deploy now, without waiting
+```
+
+A run with nothing to do logs `already at <sha>; nothing to deploy` and exits 0.
+A run that collides with another logs `skipping this run` and exits 0. Neither
+is a failure.
+
+### Known limitation
+
+`npm run build` rewrites `.next` **in place**, inside the directory the running
+service is serving from. For the 1–3 minutes a build takes, the hashed files
+under `.next/static` are being replaced, so a visitor who loaded a page just
+before the build can get 404s on its assets. If the build fails, `.next` is left
+partially rewritten and the site stays degraded until the next successful build
+— the service keeps running, but it is not intact.
+
+There is no artifact rollback. Going back to an earlier commit means building
+that commit, with the same duration and the same risk.
+
+The fix, when this starts to hurt, is to build into `releases/<sha>` and swap a
+symlink after the health checks pass, which makes rollback a symlink swap and a
+restart. That is deliberately not built yet; see the spec for the shape of it.
+
+To stop automatic deployment without uninstalling anything:
+
+```bash
+sudo systemctl disable --now me-deploy.timer
+```
 
 ## Rollback
 

@@ -1,0 +1,16 @@
+# Polls every five minutes. A push therefore goes live 0-5 minutes later, which
+# is the price of not handing GitHub a key to this server.
+[Unit]
+Description=Poll for new me.su.edu.bd commits
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=5min
+# Small jitter so this does not land on the same second as other timers.
+RandomizedDelaySec=30
+# Persistent is left off on purpose: after downtime we want one poll, not a
+# catch-up burst of missed runs.
+Unit=me-deploy.service
+
+[Install]
+WantedBy=timers.target

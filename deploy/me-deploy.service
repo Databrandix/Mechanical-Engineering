@@ -1,0 +1,57 @@
+# Pull-based deployment for me.su.edu.bd. Runs once per timer tick, checks
+# whether origin/main has moved, and deploys only if it has.
+#
+#   sudo install -o root -g root -m 0755 deploy/auto-deploy.sh /usr/local/bin/me-deploy
+#   sudo cp deploy/me-deploy.service deploy/me-deploy.timer /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl start me-deploy            # dry run before enabling the timer
+#   sudo systemctl enable --now me-deploy.timer
+#   journalctl -u me-deploy -f
+[Unit]
+Description=Check for new commits and deploy me.su.edu.bd
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=deploy
+Group=deploy
+
+# Build-time database credentials, and nothing else. systemd reads this file as
+# root before dropping to User=, so the build receives the values in its
+# environment while `deploy` can never read the file. Runtime secrets are not
+# here on purpose: the build has no use for BETTER_AUTH_SECRET,
+# CLOUDINARY_API_SECRET, RESEND_API_KEY or INITIAL_SUPER_ADMIN_PASSWORD, so it
+# never sees them. Those stay in .env.production, read only by me-platform.
+EnvironmentFile=/etc/me-platform/build.env
+
+Environment=NODE_ENV=production
+WorkingDirectory=/var/www/sites/me.su.edu.bd
+ExecStart=/usr/local/bin/me-deploy
+
+# /run is not writable by deploy, so the lock file cannot simply live there.
+# This creates /run/me-deploy owned by the service user instead.
+RuntimeDirectory=me-deploy
+RuntimeDirectoryMode=0700
+
+# A cold npm ci plus a full Next build. Generous, but bounded.
+TimeoutStartSec=1800
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=me-deploy
+
+# Two settings from me-platform.service's hardening block are deliberately
+# absent, and copying that block wholesale breaks this unit on both counts:
+#
+#   NoNewPrivileges  blocks the setuid transition sudo needs, and the last step
+#                    of a deployment restarts the service through sudo.
+#   ProtectHome      hides /home/deploy, where npm keeps its cache; the build
+#                    fails without it.
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+LockPersonality=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+ProtectSystem=full
