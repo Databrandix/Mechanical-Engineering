@@ -200,15 +200,40 @@ Point `DATABASE_URL` at the intended Neon branch before running it.
 
 ## Redeploying
 
+The build prerenders pages that read the database, so `DATABASE_URL` and
+`DIRECT_URL` have to be present *again* for every rebuild. The build-time
+`.env` is deliberately not left on the server between releases, so recreate it
+and remove it as part of the deploy.
+
+Runtime secrets are not involved here: they stay in the root-owned
+`.env.production`, which systemd re-reads when the service restarts.
+
 ```bash
 cd /var/www/sites/me.su.edu.bd
 git pull
+
+# Only needed when package-lock.json changed.
 npm ci
+
+# Build-time database credentials, removed again below.
+cat > .env <<'EOF'
+DATABASE_URL="postgresql://...pooler...neon.tech/...?sslmode=require"
+DIRECT_URL="postgresql://...neon.tech/...?sslmode=require"
+EOF
+chmod 600 .env
+
 npm run build
+rm .env
+
 # .next was rebuilt, so restore the ISR cache symlink from step 5:
 ln -sfn /var/www/sites/me-platform-cache .next/standalone/.next/cache
+
 sudo systemctl restart me-platform
 ```
+
+Nothing from steps 1-7 above is repeated: the `me-web` user, `.env.production`,
+the cache directory, the systemd unit, the Nginx vhost, the certificate and the
+DNS record are all one-time setup.
 
 ## Rollback
 
