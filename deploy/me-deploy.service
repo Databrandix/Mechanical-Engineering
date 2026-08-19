@@ -80,6 +80,20 @@ ProtectSystem=strict
 ReadWritePaths=/var/www/sites/me.su.edu.bd
 ReadWritePaths=/var/www/sites/me-platform-cache
 
+# sudo needs this even though the rule is NOPASSWD. It opens its timestamp file
+# under /run/sudo/ts before checking whether authentication is required at all,
+# and with the rest of the filesystem read-only that open fails -- at which
+# point sudo falls back to asking for a password and `sudo -n` dies. The
+# failure reads as "a password is required", which sends you looking at the
+# sudoers rule rather than at the sandbox. Verified against the real unit:
+#
+#   sudo: unable to open /run/sudo/ts/995: Read-only file system
+#   sudo: a password is required
+#
+# Scope is sudo's own timestamp directory; nothing else under /run becomes
+# writable.
+ReadWritePaths=/run/sudo
+
 # Two settings are deliberately absent, and adding them breaks this unit:
 #
 #   NoNewPrivileges   blocks the setuid transition sudo needs, and the last
