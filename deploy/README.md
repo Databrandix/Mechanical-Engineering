@@ -273,40 +273,65 @@ deliberate human action.
 
 ### Install
 
-```bash
-# 0. Let deploy hand the server/ tree to the me-web group after each build.
-#    Required — see "Why server/ needs group write" below. An SSH session that
-#    is already open will not see the new group; log out and back in.
-sudo usermod -aG me-web deploy
+Automatic deployment runs as **`me-build`**, an account that exists only to
+build this one site — never as `deploy`. `deploy` owns
+`/var/www/sites/su.edu.bd` and belongs to `su-web`, so a build running as
+`deploy` could rewrite the main university site. Moving the automation to its
+own account, plus `ProtectSystem=strict` in the unit, closes that path without
+altering SU's files, permissions or service in any way.
 
-# 1. Build credentials: DATABASE_URL and DIRECT_URL only, nothing else.
+```bash
+# 0. The build account. No home, no shell: it is reachable only through
+#    systemd. Membership of me-web is required — changing a file's group needs
+#    membership of the target group, and the post-build step hands the ISR
+#    server tree to me-web.
+sudo useradd --system --no-create-home --shell /usr/sbin/nologin me-build
+sudo usermod -aG me-web me-build
+
+# 1. Hand the ME release to me-build. --no-dereference matters: without it the
+#    chown follows .next/standalone/.next/cache out of the tree and strips the
+#    me-web group from the shared cache directory, breaking ISR silently.
+#    .env.production is root-owned and must be put back immediately afterwards.
+sudo chown -R --no-dereference me-build:me-build /var/www/sites/me.su.edu.bd
+sudo chown root:root /var/www/sites/me.su.edu.bd/.env.production
+sudo chmod 600      /var/www/sites/me.su.edu.bd/.env.production
+sudo chown me-build:me-web /var/www/sites/me-platform-cache
+sudo chmod 2775            /var/www/sites/me-platform-cache
+
+# 2. Remove the build-time .env. Credentials now arrive from systemd, and the
+#    deploy script refuses to run while this file exists.
+sudo rm -f /var/www/sites/me.su.edu.bd/.env
+
+# 3. Build credentials: DATABASE_URL and DIRECT_URL only, nothing else.
 sudo install -d -o root -g root -m 0700 /etc/me-platform
 sudo install -o root -g root -m 0600 /dev/null /etc/me-platform/build.env
 sudo nano /etc/me-platform/build.env          # see deploy/build.env.example
 
-# 2. Sudoers rule. Validate BEFORE installing — a malformed file in
+# 4. Sudoers rule. Validate BEFORE installing — a malformed file in
 #    sudoers.d locks every account out of sudo.
 cd /var/www/sites/me.su.edu.bd
 sudo visudo -c -f deploy/sudoers.me-deploy
 sudo install -o root -g root -m 0440 deploy/sudoers.me-deploy /etc/sudoers.d/me-deploy
 
-# 3. Script and units.
+# 5. Script and units.
 sudo install -o root -g root -m 0755 deploy/auto-deploy.sh /usr/local/bin/me-deploy
 sudo cp deploy/me-deploy.service deploy/me-deploy.timer /etc/systemd/system/
 sudo systemctl daemon-reload
 
-# 4. Dry run first, with the timer still off.
+# 6. Dry run first, with the timer still off. ProtectSystem=strict is the one
+#    setting most likely to surface an unanticipated write path, so watch this
+#    run before trusting it unattended.
 sudo systemctl start me-deploy
 journalctl -u me-deploy -n 50 --no-pager
 
-# 5. Enable polling.
+# 7. Enable polling.
 sudo systemctl enable --now me-deploy.timer
 systemctl list-timers me-deploy.timer
 ```
 
-Once this is installed there is no permanent `.env` on the server: the build
-receives its two database variables from systemd, and nothing writes them to
-disk. If you had created one for a manual build, delete it.
+After step 1, `deploy` can no longer build this site by hand: it does not own
+the release and `git` refuses to work on a repository owned by someone else.
+That is the point. Deploy on demand with `sudo systemctl start me-deploy`.
 
 ### Where the secrets live
 
@@ -349,11 +374,16 @@ EACCES: permission denied, open
 /var/www/sites/me.su.edu.bd/.next/standalone/.next/server/app/index.html
 ```
 
-The build runs as `deploy` and creates that tree as `deploy:deploy`, mode 775
-on directories and 664 on files. `me-web` belongs to no group but its own, so
-it matches "other" — read and traverse, no write.
+The build creates that tree owned by whichever account ran it, mode 775 on
+directories and 664 on files. `me-web` belongs to no group but its own, so it
+matches "other" — read and traverse, no write.
 
-**`deploy` stays the owner.** It is the account that builds, rewrites and
+Two accounts appear below. `deploy` is the build account for a manual redeploy;
+`me-build` replaces it once automatic deployment is installed, and from that
+point `deploy` no longer owns or builds this site. Everything in this section
+holds either way — substitute whichever account is building.
+
+**The build account stays the owner.** It is what builds, rewrites and
 replaces this tree on every deployment, and ownership is what lets it do that.
 Handing ownership to `me-web` would invert the relationship: the service
 account would own files it only ever needs to update in place, and the build
@@ -396,14 +426,23 @@ sudo -u me-web test -w "$SERVER/app" && echo writable
 ### Privilege boundary
 
 ```
-deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart me-platform.service
+me-build ALL=(root) NOPASSWD: /usr/bin/systemctl restart me-platform.service
 ```
 
-Exactly one command. No wildcard, because `systemctl restart *` would also
-cover `su-platform.service`. Verify the boundary holds — this should be denied:
+Exactly one command, granted to `me-build` alone. No wildcard, because
+`systemctl restart *` would also cover `su-platform.service`.
+
+The filesystem boundary is enforced separately, by the unit rather than by
+sudo: `ProtectSystem=strict` with `ReadWritePaths=` limited to the ME release
+and its cache means the kernel refuses any write elsewhere — including
+everything under `/var/www/sites/su.edu.bd` — regardless of what the build
+does or who owns the files.
+
+Verify both, as `me-build`:
 
 ```bash
-sudo -n systemctl restart su-platform.service    # expected: a sudo error
+sudo -u me-build -H sudo -n systemctl restart su-platform.service   # must be denied
+sudo -u me-build test -w /var/www/sites/su.edu.bd && echo writable  # must print nothing
 ```
 
 ### Watching it

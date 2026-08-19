@@ -11,8 +11,16 @@
 # /usr/bin/systemctl), and the unit name is spelled out in full. No wildcard,
 # because `systemctl restart *` would also cover su-platform.service.
 #
+# The grant is to me-build, the account that exists only to build this site --
+# never to `deploy`, which owns /var/www/sites/su.edu.bd and belongs to su-web.
+#
 # What this deliberately does NOT grant: nginx, apt, any shell, any filesystem
 # command, and any unit other than me-platform.service. Even if the deploy
 # script were replaced entirely, it cannot stop the su.edu.bd site, reload
 # Nginx, or install software.
-deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart me-platform.service
+#
+# Note that restarting me-platform makes systemd read .env.production as root
+# and pass every runtime secret to whatever code the build produced. That is
+# inherent to deploying from source and is not closed by this rule; it is
+# closed upstream, by controlling who can push to main.
+me-build ALL=(root) NOPASSWD: /usr/bin/systemctl restart me-platform.service

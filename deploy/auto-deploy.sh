@@ -17,7 +17,10 @@ CACHE=/var/www/sites/me-platform-cache
 SERVER="$RELEASE/.next/standalone/.next/server"
 UNIT=me-platform.service
 BRANCH=main
-LOCKFILE=/run/me-deploy/deploy.lock
+# systemd sets RUNTIME_DIRECTORY from the unit's RuntimeDirectory=, and removes
+# that directory when the unit stops. The fallback keeps a hand-run invocation
+# working instead of dying on a missing lock path.
+LOCKFILE="${RUNTIME_DIRECTORY:-/tmp}/me-deploy.lock"
 
 log() { printf '%s\n' "$*"; }
 die() { printf 'ABORT: %s\n' "$*" >&2; exit 1; }
@@ -31,6 +34,17 @@ if ! flock -n 9; then
 fi
 
 cd "$RELEASE" || die "release directory missing: $RELEASE"
+
+# Build credentials come from the unit's EnvironmentFile
+# (/etc/me-platform/build.env, root-owned 0600) and must exist nowhere else. A
+# .env in the release is a readable copy of the database credentials sitting on
+# disk between builds, which is exactly what this deployment is arranged to
+# avoid -- and Next.js would load it in preference to nothing at all, so a stale
+# one could also quietly point the build at the wrong database. Fail rather than
+# warn: a warning in a journal nobody reads is not a control.
+if [ -e "$RELEASE/.env" ]; then
+  die "$RELEASE/.env exists; build credentials must come from systemd only. Remove it."
+fi
 
 # The working tree must be pristine. Nothing in this script ever discards local
 # changes: no reset --hard, no clean, no checkout of arbitrary commits, no
@@ -65,7 +79,12 @@ git pull --ff-only origin "$BRANCH" || die "git pull --ff-only failed"
 # reinstalling here does not disturb it.
 if ! git diff --quiet "$LOCAL" "$REMOTE" -- package-lock.json; then
   log "package-lock.json changed; reinstalling dependencies"
-  npm ci --no-audit --no-fund || die "npm ci failed"
+  # --ignore-scripts: a dependency's install hook would otherwise run arbitrary
+  # code as me-build on every lockfile change. Verified safe for this project --
+  # the Prisma query engine, sharp's libvips and esbuild's binary all arrive as
+  # platform-specific optional dependencies rather than postinstall downloads,
+  # and `prisma generate` is invoked explicitly by `npm run build` below.
+  npm ci --no-audit --no-fund --ignore-scripts || die "npm ci failed"
 fi
 
 # `npm run build` runs `prisma generate` — code generation from the schema file,

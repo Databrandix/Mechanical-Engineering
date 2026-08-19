@@ -7,6 +7,11 @@
 #   sudo systemctl start me-deploy            # dry run before enabling the timer
 #   sudo systemctl enable --now me-deploy.timer
 #   journalctl -u me-deploy -f
+#
+# Runs as me-build, an account that exists only to build this one site. It is
+# deliberately NOT the `deploy` account: `deploy` owns /var/www/sites/su.edu.bd
+# and belongs to su-web, so a build running as `deploy` could rewrite the main
+# university site. me-build owns the ME release and nothing else.
 [Unit]
 Description=Check for new commits and deploy me.su.edu.bd
 After=network-online.target
@@ -14,23 +19,36 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-User=deploy
-Group=deploy
+User=me-build
+Group=me-build
+# me-build must also be a member of me-web. Changing a file's group requires
+# membership of the target group, and the post-build step hands the ISR server
+# tree to me-web so the running service can write regenerated pages into it.
 
 # Build-time database credentials, and nothing else. systemd reads this file as
 # root before dropping to User=, so the build receives the values in its
-# environment while `deploy` can never read the file. Runtime secrets are not
+# environment while me-build can never read the file. Runtime secrets are not
 # here on purpose: the build has no use for BETTER_AUTH_SECRET,
 # CLOUDINARY_API_SECRET, RESEND_API_KEY or INITIAL_SUPER_ADMIN_PASSWORD, so it
 # never sees them. Those stay in .env.production, read only by me-platform.
 EnvironmentFile=/etc/me-platform/build.env
 
 Environment=NODE_ENV=production
+Environment=NEXT_TELEMETRY_DISABLED=1
+
 WorkingDirectory=/var/www/sites/me.su.edu.bd
 ExecStart=/usr/local/bin/me-deploy
 
-# /run is not writable by deploy, so the lock file cannot simply live there.
-# This creates /run/me-deploy owned by the service user instead.
+# me-build has no home directory, and ProtectHome= hides /home in any case, so
+# npm and Next.js have nowhere of their own to write. systemd supplies both
+# directories, creates them owned by the service user, and exports the paths.
+StateDirectory=me-build
+CacheDirectory=me-build
+Environment=HOME=%S/me-build
+Environment=npm_config_cache=%C/me-build
+
+# The deploy script takes its lock here; systemd exports the path as
+# $RUNTIME_DIRECTORY and removes the directory when the unit stops.
 RuntimeDirectory=me-deploy
 RuntimeDirectoryMode=0700
 
@@ -41,17 +59,31 @@ StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=me-deploy
 
-# Two settings from me-platform.service's hardening block are deliberately
-# absent, and copying that block wholesale breaks this unit on both counts:
-#
-#   NoNewPrivileges  blocks the setuid transition sudo needs, and the last step
-#                    of a deployment restarts the service through sudo.
-#   ProtectHome      hides /home/deploy, where npm keeps its cache; the build
-#                    fails without it.
+# ---------------------------------------------------------------- hardening
+ProtectHome=yes
 PrivateTmp=true
 ProtectKernelTunables=true
 ProtectKernelModules=true
 ProtectControlGroups=true
 LockPersonality=true
 RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
-ProtectSystem=full
+
+# The whole filesystem is read-only except the two paths below. This is what
+# actually enforces the boundary against the neighbouring su.edu.bd deployment:
+# not ownership, not group membership, but the kernel refusing the write. It
+# holds even if the script is replaced or the build runs hostile code, and it
+# requires no change of any kind to SU's files, permissions or service.
+#
+# StateDirectory, CacheDirectory, RuntimeDirectory and PrivateTmp remain
+# writable on their own; they do not need listing here.
+ProtectSystem=strict
+ReadWritePaths=/var/www/sites/me.su.edu.bd
+ReadWritePaths=/var/www/sites/me-platform-cache
+
+# Two settings are deliberately absent, and adding them breaks this unit:
+#
+#   NoNewPrivileges   blocks the setuid transition sudo needs, and the last
+#                     step of a deployment restarts the service through sudo.
+#   RestrictSUIDSGID  blocks `chmod g+s`, which the ISR permission repair sets
+#                     on the server/ directories so that route directories
+#                     created at runtime inherit the me-web group.
