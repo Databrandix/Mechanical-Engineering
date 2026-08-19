@@ -480,6 +480,69 @@ To stop automatic deployment without uninstalling anything:
 sudo systemctl disable --now me-deploy.timer
 ```
 
+## Operating notes
+
+Four things that have already gone wrong once, each of which cost hours to
+diagnose because the symptom pointed somewhere other than the cause.
+
+### Never run `npm run build` by hand on the server
+
+```bash
+sudo -u me-build sh -c 'cd /var/www/sites/me.su.edu.bd && npm run build'   # DON'T
+```
+
+A shell started this way does not receive `/etc/me-platform/build.env`, so
+`DATABASE_URL` is empty. The build gets far enough to delete `.next` and then
+dies while collecting page data, leaving a release with no `BUILD_ID` and a
+site that cannot start. Credentials reach a build only through systemd, so the
+only correct way to build is:
+
+```bash
+sudo systemctl start me-deploy
+```
+
+A missing `.next/BUILD_ID` is the quickest way to recognise this state: Next.js
+writes that file first, so its absence means the build never finished.
+
+### Never leave temporary files in the release directory
+
+The deploy script refuses to run on a dirty working tree, and `git status`
+counts untracked files. Parking a broken build as `.next.failed-<date>` inside
+the release stops **every** deployment with:
+
+```
+?? .next.failed-20260819/
+ABORT: working tree is dirty; refusing to deploy
+```
+
+The guard is doing its job — the mistake is putting the artifact there. Keep
+salvage copies in `/var/backups/` instead.
+
+### A backup of `.next` can be self-inconsistent
+
+`.next/static/` comes from a build. `.next/standalone/.next/server/app/` is
+rewritten at runtime whenever a page revalidates. Take a backup hours after a
+deployment and the two halves can belong to different builds: the prerendered
+HTML asks for chunk filenames that the `static/` in the same backup does not
+contain, and restoring it serves 404s for JavaScript that never existed
+together.
+
+Take the backup immediately after a deployment, or exclude `server/app` from it
+and let Next.js regenerate. To recover from a mismatched restore, delete the
+prerendered files for the affected route and let the server rebuild them:
+
+```bash
+sudo -u me-build rm -f .next/standalone/.next/server/app/index.{html,rsc,meta}
+```
+
+### Stale chunk 404s are usually not a missing file
+
+Hashed chunk names change on every build. A browser holding HTML from an
+earlier build will ask for filenames that no longer exist, and the fix is a
+hard refresh, not a redeploy. Before assuming files were lost, compare the
+prefix: `2585-6d1c58e8….js` and `2585-c26b21c4….js` are the same module from
+two different builds.
+
 ## Rollback
 
 ```bash
